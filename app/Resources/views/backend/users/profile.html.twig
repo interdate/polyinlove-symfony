@@ -1,0 +1,219 @@
+<h1 class="ui header right">
+    <i class="user icon"></i>
+    <div class="content">
+        <span class="username">{{ user.username }}</span>
+        <div class="sub header">User profile</div>
+    </div>
+</h1>
+
+
+<div class="left close">
+    <i class="icon remove circle olive big " onclick="$.kfModal.close();"></i>
+</div>
+
+<div class="clear"></div>
+
+<div class="ui divider"></div>
+
+<div class="ui secondary menu">
+    <a class="item active" data-tab="1">
+        {# <i class="sign in icon circular"></i> #}
+        details
+    </a>
+    <a class="item" data-tab="2">
+        {# <i class="user icon circular"></i> #}
+        profile
+    </a>
+    <a class="item" data-tab="3">
+        {# <i class="info icon circular"></i> #}
+        about me
+    </a>
+    <a class="item" data-tab="4">
+        {# <i class="info icon circular"></i> #}
+        admin
+    </a>
+</div>
+<div class="ui tab segment active" data-tab="1">
+
+    <div class="ui large ribbon label">Ip of last entrance</div>
+    <p>{{ user.ip }}</p>
+    <p><b>date:</b> {{ user.lastLoginAt|date("d/m/Y H:i") }}</p>
+    <div class="ui divider"></div>
+
+    <div class="ui large ribbon label">user name</div>
+    <p>{{ user.username }}</p>
+    <div class="ui divider"></div>
+
+    <div class="ui large ribbon label"> Facebook id</div>
+    <p>{{ user.facebook }}</p>
+    <div class="ui divider"></div>
+
+    <div class="ui large ribbon label">E-mail</div>
+    <p>{{ user.email }}</p>
+    <div class="ui divider"></div>
+
+
+    <div class="ui large ribbon label">Telephone</div>
+    <p>{{ user.phone }}</p>
+    <div class="ui divider"></div>
+
+
+    <div class="ui large ribbon label">sex</div>
+    <p>{{ user.gender.name }}</p>
+    <div class="ui divider"></div>
+
+
+    {# <div class="ui large ribbon label">מחפש/ת</div>
+    <p>{{ user.lookingGender.name }}</p><div class="ui divider"></div> #}
+
+    <div class="ui large ribbon label">birthdate</div>
+    <p>{{ user.birthday|date('d/m/Y') }}</p>
+
+</div>
+
+<div class="ui tab segment" data-tab="2">
+
+    <div class="ui large ribbon label">country of residence</div>
+    <p>{{ user.country.name }}</p>
+    <div class="ui divider"></div>
+
+    <div class="ui large ribbon label">area of residence</div>
+    <p>{{ user.region.name }}</p>
+    <div class="ui divider"></div>
+
+    <div class="ui large ribbon label">city</div>
+    <p>{{ user.city.name }}</p>
+    <div class="ui divider"></div>
+
+    <div class="ui large ribbon label">height</div>
+    <p>{{ user.height }}</p>
+    <div class="ui divider"></div>
+
+    {# <div class="ui large ribbon label">עיר</div> #}
+    {# <p>{{ user.body.name }}</p><div class="ui divider"></div> #}
+
+    <div class="ui large ribbon label">family status</div>
+    <p>{{ user.relationshipStatus.name }}</p>
+    <div class="ui divider"></div>
+
+    <div class="ui large ribbon label">relationship type</div>
+    <p>{{ user.relationshipType.name }}</p>
+    <div class="ui divider"></div>
+
+{#    <div class="ui large ribbon label">details</div>#}
+{#    <p>{{ user.relationshipTypeDetails }}</p>#}
+{#    <div class="ui divider"></div>#}
+
+    <div class="ui large ribbon label">sexual preference</div>
+    <p>{{ user.sexOrientation.name }}</p>
+    <div class="ui divider"></div>
+
+{#    <div class="ui large ribbon label">details</div>#}
+{#    <p>{{ user.sexOrientationDetails }}</p>#}
+{#    <div class="ui divider"></div>#}
+
+    <div class="ui large ribbon label">I am looking for:</div>
+    <p>
+        {% for lookingFor in user.lookingFor %}
+            {# {{ loop.last ? lookingFor.name : lookingFor.name . ', ' }} #}
+        {% endfor %}
+    </p>
+    <div class="ui divider"></div>
+
+{#    <div class="ui large ribbon label">details</div>#}
+{#    <p>{{ user.lookingForDetails }}</p>#}
+{#    <div class="ui divider"></div>#}
+
+    <div class="ui large ribbon label">ethnicity</div>
+    <p>{{ user.origin.name }}</p>
+    <div class="ui divider"></div>
+
+    <div class="ui large ribbon label">smoking?</div>
+    <p>{{ user.smoking.name }}</p>
+    <div class="ui divider"></div>
+
+
+    {# <div class="ui large ribbon label">כאן למטרת</div> #}
+    {# <p> #}
+    {# {% for purpose in user.purposes %} #}
+    {# {{ purpose.name }}{% if not loop.last %},{% endif %} #}
+    {# {% endfor %} #}
+    {# </p> #}
+
+
+</div>
+<div class="ui tab segment" data-tab="3">
+    {# <div class="field {% if form.about.vars.errors|length %}error{% endif %}"> #}
+    {# <div class="label">{{ form_label(form.about) }}</div> #}
+    {# <div class="textarea">{{ form_widget(form.about) }}</div> #}
+    {# </div> #}
+
+    <div class="ui large ribbon label">about me</div>
+    <p>{{ user.about }}</p>
+    <div class="ui divider"></div>
+
+    {# <div class="field {% if form.looking.vars.errors|length %}error{% endif %}"> #}
+    {# <div class="label">{{ form_label(form.looking) }}</div> #}
+    {# <div class="textarea">{{ form_widget(form.looking) }}</div> #}
+    {# </div> #}
+
+    <div class="ui large ribbon label">I am looking for:</div>
+    <p>{{ user.looking }}</p>
+    <div class="ui divider"></div>
+
+    <div class="field">
+{#        <div class="ui large ribbon label">Who may message me/us:</div>#}
+        {% if user.getContactGender|length > 0 %}
+            <div class="chkright">
+                {% for contact in user.getContactGender %}
+                    <div class="checkboxes clearfix">
+                        {{ contact.name }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <br> anybody
+        {% endif %}
+    </div>
+
+    <div class="field">
+        <div class="ui large ribbon label" style="display: block; width: 13%; margin-top: 18px;">גיל</div>
+        <div class="label" style="width: 24px;margin-top: 6px; display: inline-block;"> from -</div>
+        <div class="select" style="width:28px; display: inline-block;">{{ user.ageFrom }}</div>
+        <div class="label" style="width: 29px; margin-top: 7px; display: inline-block;">to -</div>
+        <div class="select" style="width:43px; display: inline-block">{{ user.ageTo }}</div>
+    </div>
+</div>
+
+<div class="ui tab segment" data-tab="4">
+
+    <div class="ui large ribbon label">Email me about new messages</div>
+    <p>{% if user.isSentEmail %}yes{% else %}no{% endif %}</p>
+
+    <div class="ui large ribbon label">Push notifications to my phone about new messages</div>
+    <p>{% if user.isSentPush %}yes{% else %}no{% endif %}</p>
+
+    <div class="ui large ribbon label">user appears on main page</div>
+    <p>{% if user.isOnHomepage %}yes{% else %}no{% endif %}</p>
+    <div class="ui divider"></div>
+
+    {% if user.adminComments|length %}
+        <div class="ui large ribbon label">comments</div>
+        <p>{{ user.adminComments }}</p>
+        <div class="ui divider"></div>
+    {% endif %}
+
+    {% if user.banReason|length %}
+        <div class="ui large ribbon label">user was blocked because</div>
+        <p>{{ user.banReason }}</p>
+        <div class="ui divider"></div>
+    {% endif %}
+
+    {% if user.freezeReason|length %}
+        <div class="ui large ribbon label">user was frozen because</div>
+        <p>{{ user.freezeReason }}</p>
+    {% endif %}
+
+</div>
+
+<div class="clear"></div>

@@ -1,0 +1,14 @@
+{
+  "background_color": "#e20020",
+  "description": "PolyinLove - The premier dating app for the polyamory community",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "192x192",
+      "type": "icons/ico"
+    }
+  ],
+  "name": "PolyInLove",
+  "short_name": "PolyInLove"
+}

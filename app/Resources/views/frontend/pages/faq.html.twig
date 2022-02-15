@@ -1,0 +1,28 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block title %}{{ seo.title }}{% endblock %}
+{% block meta_description %}{{ seo.description }}{% endblock %}
+
+{% block content %}
+    <div class="midsec">
+        <h1>FAQ</h1>
+        <div class="allforum">
+            <div class="forumbox">
+                {% for category in categories %}
+                   {% if category.faq | length > 0 %} <div class="titlesec">{{ category.name }}</div>
+                        <div class="shelot cont">
+                            <ul>
+                                {% for faq in category.faq %}
+                                    <li>
+                                        <a href="#" class="faqtitle"><span><strong>{{ faq.name }}</strong></span></a>
+                                        <div class="fcont"><span>{{ faq.content }}</span></div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,433 @@
+{% extends "backend/layout.html.twig" %}
+
+{% block content %}
+
+    {{ include('backend/header.html.twig', { 'header': 'manage users', 'sub_header': current_filter_data.title, 'icon': 'users' }) }}
+
+    <div class="internal_sidebar start">
+
+        <div class="scroll">
+
+            <div class="headerIcon"><i class="big {{ current_filter_data.icon }} icon circular"></i></div>
+
+            <div class="ui left vertical large menu active black inverted">
+
+                {% for filter_name, value in filters %}
+
+                    {% if filter_name != 'search' %}
+
+                        {% if filter_name == current_filter_data.name %}
+                            {% set active = 'active' %}
+                            {% set sel = 'red' %}
+                        {% else %}
+                            {% set active = '' %}
+                            {% set sel = '' %}
+                        {% endif %}
+
+                        <a class="item {{ active }}" href="{{ path('admin_users', {'filter': filter_name}) }}">
+                            <div class="ui label {{ sel }}">{{ filters[filter_name].total_number }}</div>
+                            <i class="{{ filters[filter_name].icon }} {% if filter_name != 'error_paying' %}inverted {% endif %}icon"></i>
+                            {{ filters[filter_name].title }}
+                        </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+            <div class="clear"></div>
+            <br>
+            {# TODO edit getAdminStatistic  in database. Now the statistics get 1 more then the real photo count.
+    after that in this file edit 43 and 55 lines.
+
+    UPD. i remove this -1 because its calculate fine. but in the statistic anythink changed. need to try see this later #}
+            {% if stat.waiting_photos > 0 %}
+                <div class="ui horizontal divider sb_divider">
+                    <i class="wait icon"></i>
+                    Approve photos
+                </div>
+
+
+                <div style="text-align: center;">
+
+                    <div class="ui one statistics"
+                         onclick="window.location.href='{{ path('admin_users_photos_waiting') }}'">
+                        <div class="statistic green" id="waiting_for_approval">
+                            <div class="value">
+                                <i class="photo icon"></i> {{ stat.waiting_photos }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="clear"></div>
+                <br>
+
+            {% endif %}
+
+            <div class="ui horizontal divider sb_divider">
+                <i class="bar chart big icon"></i>
+                reports
+            </div>
+
+            <div class="ui left vertical large menu active black inverted flagged_reports">
+
+                {% for report in reports %}
+
+                    <a class="item {% if null != current_report and report.id == current_report.id %}active{% endif %}">
+                        <div class="ui label hidden"></div>
+                        <div class="ui label"> 38</div>
+                        <i class="angle right inverted right icon"></i>
+                        {{ report.name }}
+                        <form action="{{ path('admin_users', {'filter': 'report'}) }}" method="post">
+                            <input type="hidden" name="reportId" value="{{ report.id }}">
+                        </form>
+                    </a>
+                {% endfor %}
+
+                <a class="item" href="{{ path('admin_users_reports') }}">
+                    <div class="ui label hidden"></div>
+                    <i class="angle right inverted right icon"></i>
+                    List of all reports </a>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="page_content users_content">
+
+        <table class="ui single line table pink users">
+            <thead>
+            <tr class="actions">
+                <th colspan="12">
+                    <div class="start act_text">
+
+                        <h4 class="ui header">
+                            <i class="checkmark box icon"></i>
+                            <div class="content">
+                                Actions
+                                <div class="sub header">with marked</div>
+                            </div>
+                        </h4>
+
+                    </div>
+
+                    <div class="divider start"></div>
+
+                    <div class="start">
+                        <button class="ui green icon button activate" data-position="top center" data-content="activate">
+                            <i class="checkmark icon"></i>
+                        </button>
+
+                        <button class="ui red icon button deactivate" data-position="top center" data-content="block">
+                            <i class="ban icon"></i>
+                        </button>
+                    </div>
+
+                    <div class="divider start"></div>
+
+                    <div class="start">
+
+                        <button class="ui purple icon button freeze" data-position="top center" data-content="freeze">
+                            <i class="asterisk icon"></i>
+                        </button>
+
+                        <button class="ui orange icon button unfreeze" data-position="top center"
+                                data-content="unfreeze">
+                            <i class="sun icon"></i>
+                        </button>
+
+                    </div>
+
+                    <div class="divider start"></div>
+
+
+                    <div class="start">
+
+                        <button class="ui olive icon button flag" data-position="top center" data-content="mark">
+                            <i class="flag icon"></i>
+                        </button>
+
+                        <button class="ui blue icon button unflag" data-position="top center" data-content="unmark">
+                            <i class="outline flag icon"></i>
+                        </button>
+
+                    </div>
+
+                    <div class="divider start"></div>
+
+
+                    <div class="start">
+                        <button class="ui black icon button delete" data-position="top center" data-content="remove">
+                            <i class="trash icon"></i>
+                        </button>
+                    </div>
+
+                    <div class="divider start"></div>
+
+                    <div class="start act_text">
+
+                        <h4 class="ui header">
+                            <i class="settings icon"></i>
+                            <div class="content">
+                                actions
+                                <div class="sub header">followability</div>
+                            </div>
+                        </h4>
+
+                    </div>
+
+                    <div class="divider start"></div>
+
+                    <div class="start">
+
+                        {% if current_filter_data.name == 'search' %}
+                            <button class="ui icon pink button report" data-position="top center"
+                                    data-content="create report">
+                                <i class="bar chart icon"></i>
+                            </button>
+                        {% endif %}
+
+                        <button class="ui icon green button export" data-position="top center"
+                                data-content="export to -CSV">
+                            <i class="table icon"></i>
+                        </button>
+
+                        <button class="ui icon orange button point" data-position="top center" data-content="award point">
+                            <i class="selected radio icon"></i>
+                        </button>
+
+                    </div>
+
+                </th>
+            </tr>
+            <tr>
+                <th class="slim_3">
+
+                    <div class="ui checkbox small" id="sel_all">
+                        <input type="checkbox" value="">
+                        <label></label>
+                    </div>
+
+                </th>
+                <th class="slim_2">Photos</th>
+                <th class="slim">number</th>
+                <th>username</th>
+                <th class="slim">age</th>
+                <th>email</th>
+                <th>properties</th>
+                <th>manage</th>
+                <th class="slim_2">active</th>
+                <th class="slim_2"> emai activated</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+
+                    <td class="sel_item">
+                        {% if user.id != app.user.id %}
+                            <div class="ui checkbox small">
+                                <input type="checkbox" value="">
+                                <label></label>
+                            </div>
+                        {% endif %}
+                    </td>
+
+                    <td class="user_photo">
+                        {% set mainPhoto = user.getMainPhoto %}
+                        {# {% if mainPhoto %} #}
+                        <img style="height: 50px; width: 50px;"
+                             src="{% if mainPhoto is not null %}{{ mainPhoto.getFaceWebPath }}{% endif %}"
+                             data-position="top center" data-content="Edit photos"
+                                {% if mainPhoto %} data-photo-id="{{ mainPhoto.getId }}" {% endif %}
+                        >
+
+                        <input type="hidden"
+                               value="{% if mainPhoto is not null %}{{ mainPhoto.getFaceWebPath }}{% endif %}">
+                        {# {% endif %} #}
+                    </td>
+                    <td>{{ user.id }}</td>
+                    <td class="username"><a class="ui label">{{ user.username }}</a></td>
+                    <td>{{ user.age }}</td>
+                    <td>{{ user.email }}</td>
+                    <td class="user_props">
+
+                        {% if user.loginFrom != null %}
+
+                            {% if user.loginFrom.id == 1 %}
+
+                                {{ include('backend/users/login_from.html.twig', {
+                                    'icon': 'desktop violet',
+                                    'loginFrom': user.loginFrom.name,
+                                    'date': user.lastLoginAt|date("d/m/Y"),
+                                    'time': user.lastLoginAt|date("H:i")
+                                }) }}
+
+                            {% elseif user.loginFrom.id == 5 %}
+
+                                {{ include('backend/users/login_from.html.twig', {
+                                    'icon': 'apple grey',
+                                    'loginFrom': user.loginFrom.name,
+                                    'date': user.lastLoginAt|date("d/m/Y"),
+                                    'time': user.lastLoginAt|date("H:i")
+                                }) }}
+
+                            {% elseif user.loginFrom.id == 6 %}
+
+                                {{ include('backend/users/login_from.html.twig', {
+                                    'icon': 'android olive',
+                                    'loginFrom': user.loginFrom.name,
+                                    'date': user.lastLoginAt|date("d/m/Y"),
+                                    'time': user.lastLoginAt|date("H:i")
+                                }) }}
+
+                            {% else %}
+
+                                {{ include('backend/users/login_from.html.twig', {
+                                    'icon': 'mobile violet',
+                                    'loginFrom': user.loginFrom.name,
+                                    'date': user.lastLoginAt|date("d/m/Y"),
+                                    'time': user.lastLoginAt|date("H:i")
+                                }) }}
+
+                            {% endif %}
+
+                        {% endif %}
+
+                        <div class=""><i class="map pin icon violet" data-position="top center"
+                                         data-html="<p style='direction:ltr;'>IP: {{ user.ip }}<br>Last login: {{ user.lastLoginAt|date("d/m/Y H:i") }}<br>Register Date: {{ user.signUpDate|date("d/m/Y H:i") }}</p>"></i>
+                        </div>
+                        {% if user.gender.id == 1 or user.gender.id == 4 %}
+                            <div class=""><i class="male pink icon" data-position="top center"
+                                             data-content="{{ user.gender.name }}"></i></div>
+                        {% endif %}
+
+                        {% if user.gender.id == 3 or user.gender.id == 2 %}
+                            <div class=""><i class="female pink icon" data-position="top center"
+                                             data-content="{{ user.gender.name }}"></i></div>
+                        {% endif %}
+
+                        {% if user.isPaying() %}
+                            <div class=""><i class="star green icon" data-position="top center" data-content="subscriber"></i>
+                            </div>
+                        {% endif %}
+
+                        <div class=""><i class="asterisk purple icon {% if not user.isFrozen %}hidden{% endif %}"
+                                         data-position="top center" data-content="frozen"></i></div>
+                        <div class=""><i class="flag olive icon {% if not user.isFlagged %}hidden{% endif %}"
+                                         data-position="top center" data-content="flagged"></i></div>
+
+
+                    </td>
+                    <td class="manage_user">
+                        <i class="envelope icon blue link" data-position="top center"
+                           data-content="send personal message"></i>
+                        <i class="edit icon blue link" data-position="top center" data-content="edit profile"></i>
+                        <a href="{{ path('admin_messenger_user', {'userId': user.id, 'page': 1 }) }}" target="_blank">
+                            <i class="chat icon blue link" data-position="top center"
+                               data-content="messages (opens in new tab)"></i>
+                        </a>
+                        {# <i class="diamond icon blue link" data-position="top center" data-content="ניהול פרטי מנוי"></i> #}
+                        <i class="sign in icon blue link" data-position="top center"
+                           data-content="enter site as user"></i>
+                        {% if not user.isVerify %}
+                            <i class="calendar check icon blue link addVerify" data-position="top center"
+                               data-content="verify user"></i>
+                        {% else %}
+                            <i class="calendar check icon blue link disabled" data-position="top center"
+                               data-content="is verified"></i>
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        <div class="ui toggle checkbox small is_active">
+                            <input type="checkbox" name="isActive"
+                                   {% if user.isActive %}checked="checked"{% endif %}
+                                    {% if user.id == app.user.id %}disabled="disabled"{% endif %}>
+                            <label></label>
+                        </div>
+                        <input type="hidden" class="userId" value="{{ user.id }}">
+                        <input type="hidden" class="userUsername" value="{{ user.username }}">
+                    </td>
+
+                    <td>
+                        <div class="ui toggle checkbox small is_activated">
+                            <input type="checkbox" name="isActivated"
+                                   {% if user.isActivated %}checked="checked"{% endif %}
+                                    {% if user.id == app.user.id %}disabled="disabled"{% endif %}>
+                            <label></label>
+                        </div>
+                        <input type="hidden" class="userId" value="{{ user.id }}">
+                    </td>
+
+                </tr>
+            {% endfor %}
+
+            </tbody>
+            <tfoot>
+            <tr>
+                <th colspan="12">
+
+                    {{ knp_pagination_render(users) }}
+
+                </th>
+            </tr>
+            </tfoot>
+        </table>
+
+
+    </div>
+
+
+    <form method="post" id="search_filter_form">
+
+        {% if data is defined %}
+            {% for key,value in data %}
+                {% if data[key] is iterable %}
+                    {% for key2,value2 in data[key] %}
+                        <input type="hidden" name="advancedSearch[{{ key }}][{{ key2 }}]" value="{{ value2 }}">
+                    {% endfor %}
+                {% else %}
+                    <input type="hidden" name="advancedSearch[{{ key }}]" value="{{ value }}"
+                           id="advancedSearch_{{ key }}">
+                {% endif %}
+
+            {% endfor %}
+        {% endif %}
+
+
+        {% if null != current_report %}
+            <input type="hidden" name="reportId" value="{{ current_report.id }}">
+        {% endif %}
+
+        <input type="hidden" name="fileName" value="">
+
+        <input type="submit" class="hidden">
+
+    </form>
+
+    <form id="ajaxHelper">
+        <input type="hidden" name="data" value='{{ data|json_encode()|raw }}'>
+    </form>
+
+    <div class="ui modal adminPrivateMessage">
+        <div class="header"></div>
+        <div class="content">
+            <textarea name="message" id="sendMessage" style="width: 100%;" rows="10"></textarea>
+            <input type="hidden" name="user_id" value="{{ app.user.id }}" class="user_id">
+            <input type="hidden" name="contact_id" value="0" class="contact_id">
+        </div>
+        <div class="actions">
+            <div class="ui approve button" id="sendAdminMessage">Send</div>
+            <div class="ui cancel button">Cancel</div>
+        </div>
+    </div>
+
+{% endblock %}

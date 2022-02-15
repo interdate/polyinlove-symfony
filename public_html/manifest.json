@@ -1,0 +1,22 @@
+{
+  "short_name": "PolyinLove",
+  "name": "PolyinLove",
+  "icons": [
+    {
+      "src": "/images/icon.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    }
+  ],
+  "serviceworker": {
+    "src": "firebase-messaging-sw.js",
+    "scope": "/"
+  },
+  "start_url": "/app.php",
+  "background_color": "#000000",
+  "display": "standalone",
+  "scope": "/",
+  "orientation": "portrait-primary",
+  "theme_color": "#000000",
+  "gcm_sender_id": "103953800507"
+}

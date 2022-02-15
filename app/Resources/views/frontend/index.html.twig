@@ -1,0 +1,351 @@
+{% extends 'frontend/layout.html.twig' %}
+
+{% block title %}{{ seo.title }}{% endblock %}
+{% block meta_description %}{{ seo.description }}{% endblock %}
+
+{% block container %}
+
+
+
+
+    <div class="main-container">
+    <header>
+        <div class="wrap clearfix">
+            <div class="menu">
+                <a href="#" class="tglmenu"></a>
+                {% if mobile %}
+                    <div class="menu1-login menu1-unlogin mobile-menu-divs">
+                        <ul class="mobile-menu-ul">
+                            <a href="{{ path('password_recovery') }}">
+                                <li>
+                                    {% trans %} Forgot password {% endtrans %}
+                                    <i class="blocked-icon"></i>
+                                </li>
+                            </a>
+                            <a href="{{ path('contact') }}">
+                                <li>
+                                    {% trans %} Contact us {% endtrans %}
+                                    <i class="envelope outline icon"></i>
+                                </li>
+                            </a>
+                            <a href="{{ path('sign_up') }}">
+                                <li>
+                                    {% trans %} Sign up free {% endtrans %}
+                                    <i class="signup-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                             class="s-ion-icon">
+                                            <path style="fill:white;"
+                                                  d="M304 256c52.805 0 96-43.201 96-96s-43.195-96-96-96-96 43.201-96 96 43.195 96 96 96zm0 48c-63.598 0-192 32.402-192 96v48h384v-48c0-63.598-128.402-96-192-96zM112 224v-64H80v64H16v32h64v64h32v-64h64v-32h-64z"></path>
+                                        </svg>
+                                    </i>
+                                </li>
+                            </a>
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <div class="logo"><a href="/"><img src="/images/logo.png" alt="{{ site_name }} | polyamory"></a></div>
+                {% if mobile %}
+                    <a href="{{ path('sign_up') }}">
+                        <button class="header-join-now">{% trans %}
+                                Join Free!{% endtrans %}</button>
+                    </a>
+                {% endif %}
+                <div class="right">
+                    {% if not mobile %}
+                        <div class="topbtns">
+                            <a href="{{ path('sign_up') }}" class="frmbtn"> {% trans %} Join Free {% endtrans %}</a>
+                            <a href="#" class="logbtn"> {% trans %} Login {% endtrans %} </a>
+                        </div>
+                    {% endif %}
+
+                    <div class="form">
+                        <form action="{{ path('login_check') }}" method="post" id="login_form">
+                            <input type="text" placeholder="{% trans %}
+                            username/ email/ phone number{% endtrans %}"
+                                   class="txtbox" id="usernameLogin" name="_username" value="{{ last_username }}"/>
+                            <input type="password" placeholder="{% trans %} Password {% endtrans %}" class="txtbox"
+                                   name="_password"/>
+                            <input type="submit" value="{% trans %}Enter{% endtrans %}"
+                                   class="btn" onclick="$('#login_form').submit();"/>
+                            <a href="{{ path('password_recovery') }}"
+                               class="forgot-pwd">{% trans %} Forgot Password {% endtrans %}</a>
+                            <input type="hidden" name="_target_path" value="{{ path('homepage') }}">
+                            <input type="hidden" class="facebookLoginId" name="facebook" value="0">
+                            <input type="hidden" class="fb" name="fb" value="0">
+{#                            <button class="facebook-mobile-login-btn" onclick="checkLoginState()">#}
+{#                                {% trans %}Login with#}
+{#                                {% endtrans %}#}
+{#                                <div class="ficon"><i class="facebook f icon"></i></div>#}
+{#                            </button>#}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- header end -->
+    {% if error %}
+        <div class="ui compact message red loginError">
+            <p>{{ error.message }}</p>
+        </div>
+    {% endif %}
+    {% if not mobile %}
+        <div class="hmslider slides">
+
+        {% for slide in slides %}
+            <div class="slide"
+                 style="height: 660px; background-image: url('{{ asset(slide.imageName) }}'); background-repeat: no-repeat;background-position: center;background-size: cover; ">
+                <div class="caption">
+                    <div class="capinn">
+                        <{{ slide.headerType }}>{{ slide.name|raw }}</{{ slide.headerType }}>
+                    <p>{{ slide.content|raw }}</p>
+                    <div class="joinbtn"><a href="{{ path('sign_up') }}">{% trans %} Join Now Free {% endtrans %}</a>
+                    </div>
+                    <div class="btmbtn">{# <a href="https://itunes.apple.com/il/app/greendate-%D7%92%D7%A8%D7%99%D7%A0%D7%93%D7%99%D7%99%D7%98/id1282964919?mt=8" target="_blank" class="apple-icon">&nbsp;</a> #}
+                        <a href="{{ google_play }}" target="_blank"
+                           class="andriod-icon"></a></div>
+                </div>
+            </div>
+            <input type="hidden" value="{{ slide.imageName }}" class="imageName">
+            </div>
+        {% endfor %}
+
+        </div>
+    {% else %}
+        <div class="login-background">
+            <div class="login-container-background" style="display: none">
+                <form action="{{ path('login_check') }}" method="post" class="mobile-login-form">
+                    <input type="text" placeholder="{% trans %}username/ email/ phone number{% endtrans %}"
+                           class="txtbox" id="usernameLogin" name="_username" value="{{ last_username }}"/>
+                    <input type="password" placeholder="{% trans %} Password {% endtrans %}" class="txtbox"
+                           name="_password"/>
+                    <input type="hidden" class="facebookLoginId" name="facebook" value="0">
+                    <span class="forgot-password">
+                            <a href="{{ path('password_recovery') }}"> {% trans %} Forgot your password? {% endtrans %} </a>
+                            </span>
+
+                    <input type="submit" value="{% trans %}Login{% endtrans %}">
+                    {# <button class="facebook-login"> {% trans %} Login with facebook {% endtrans %} </button> #}
+                </form>
+{#                <button class="facebook-mobile-login-btn" onclick="checkLoginState()">{% trans %} Login with#}
+{#                        <div class="ficon"><i class="facebook f icon"></i></div> {% endtrans %}</button>#}
+            </div>
+            <div class="first-login-mobile-btns">
+                <button class="first-mobile-login-btn">{% trans %} Login {% endtrans %}</button>
+                {# <button class="facebook-mobile-login-btn" onclick="checkLoginState()">{% trans %} כניסה עם פייסבוק {% endtrans %}</button> #}
+            </div>
+        </div>
+
+    {% endif %}
+
+    {% if(banners) %}
+        {% set i = random(banners|length -1) %}
+        <a href="{{ banners[i].href }}" target="_blank">
+            <img class="banner" src="{{ asset(banners[i].img) }}" alt="{{ site_name }}" style="margin: 0 auto;"
+                 data-id="{{ banners[i].id }}"/>
+        </a>
+    {% endif %}
+    <!-- hmslider end -->
+
+    <div class="whyjoin">
+        <div class="heading"><{{ homePageBlocks[0].headerType }}
+            >{{ homePageBlocks[0].name }}</{{ homePageBlocks[0].headerType }}>
+    </div>
+    <ul class="clearfix flexbox">
+        {# <div class="top-li"> #}
+        <li>
+            <div class="icondiv"><img src="/images/2sec.png" alt="{{ site_name }}"></div>
+            <h4>{{ homePageBlocks[0].block4 }}</h4>
+        </li>
+        <li>
+            <div class="icondiv"><img src="/images/2sec2.png" alt="{{ site_name }}"></div>
+            <h4>{{ homePageBlocks[0].block3 }}</h4>
+        </li>
+        <li>
+            <div class="icondiv"><img src="/images/2sec3.png" alt="{{ site_name }}"></div>
+            <h4>{{ homePageBlocks[0].block2 }}</h4>
+        </li>
+        {# </div> #}
+        {# <div class="bottom-li"> #}
+        <li>
+            <div class="icondiv"><img src="/images/2sec4.png" alt="{{ site_name }}"></div>
+            <h4>{{ homePageBlocks[0].block1 }}</h4>
+        </li>
+        <li>
+            <div class="icondiv"><img src="/images/2sec5.png" alt="{{ site_name }}"></div>
+            <h4>{{ homePageBlocks[0].block5 }}</h4>
+        </li>
+        {# </div> #}
+    </ul>
+    <div class="freereg"><a href="{{ path('sign_up') }}">{% trans %} Join Free Now {% endtrans %}</a></div>
+    </div>
+    <!-- whyjoin end -->
+{#    <div class="qsearch">#}
+
+{#        <div class="wrap" id="faces_container">#}
+
+{#            <div id="faces_init_data" class="hidden">#}
+{#                {% for user in users %}#}
+{#                    <div class="item">#}
+{#                        <input type="hidden" class="faceImageName" value="{{ user.getMainPhoto.getFaceWebPath }}">#}
+{#                        <input type="hidden" class="url" value="{{ user.getMainPhoto.getFaceWebPath }}">#}
+{#                        <input type="hidden" class="username" value="{{ user.username }}">#}
+{#                        <input type="hidden" class="age" value="{{ user.age }}">#}
+{#                    </div>#}
+{#                {% endfor %}#}
+{#            </div>#}
+
+{#            <div class="face_wrapper first"><img class="face" alt="{{ site_name }}"></div>#}
+{#            <div class="face_wrapper second"><img class="face" alt="{{ site_name }}"></div>#}
+{#            <div class="face_wrapper third"><img class="face" alt="{{ site_name }}"></div>#}
+{#            <div class="face_wrapper fourth"><img class="face" alt="{{ site_name }}"></div>#}
+{#            <div class="face_wrapper fifth"><img class="face" alt="{{ site_name }}"></div>#}
+
+{#            <script src="{{ asset('js/faces.js') }}"></script>#}
+{#            <input type="hidden" id="sign_up_path" value="{{ path('sign_up') }}">#}
+
+{#            <div class="heading"><{{ homePageBlocks[1].headerType }}#}
+{#                >{{ homePageBlocks[1].name }}</{{ homePageBlocks[1].headerType }}>#}
+{#        </div>#}
+{#        <div class="qform">#}
+
+{#            <form action="{{ path('public_search_results') }}" method="post">#}
+
+{#                <div class="field">#}
+{#                    <div class="label">{{ form_label(form.gender) }}</div>#}
+{#                    <div class="select">{{ form_widget(form.gender) }}</div>#}
+{#                </div>#}
+
+
+{#                <div class="field">#}
+{#                    <div class="label">{{ form_label(form.contactGender) }}</div>#}
+{#                    <div class="select">{{ form_widget(form.contactGender) }}</div>#}
+{#                </div>#}
+
+
+{#                <div class="field">#}
+{#                    <div class="label">{{ form_label(form.lookingFor) }}</div>#}
+{#                    <div class="select">{{ form_widget(form.lookingFor) }}</div>#}
+{#                </div>#}
+
+
+{#                {{ form_rest(form) }}#}
+
+{#                <div class="field">#}
+{#                    <div class="field2">#}
+{#                        <input type="button" value="{% trans %} Search {% endtrans %}" class="btn"#}
+{#                               onclick="$(this).siblings('input[type=submit]').click()">#}
+{#                        <input type="submit" class="hidden">#}
+{#                    </div>#}
+{#                </div>#}
+
+{#            </form>#}
+
+{#        </div>#}
+{#    </div>#}
+    </div>
+    <!-- qsearch end -->
+{#Hidden untill we get some users to display#}
+{#    <div class="parallax">#}
+{#        <div class="wrap">#}
+{#            <div class="contbox">#}
+{#                <p>{{ homePageBlocks[2].block1 }}</p>#}
+{#                <div class="freereg"><a href="{{ path('sign_up') }}">{% trans %} To Join Free {% endtrans %}</a></div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+    <!-- parallax end -->
+
+    <div class="hp-articles">
+        <div class="wrap">
+            <div class="heading"><a href="{{ path('magazine') }}" id="mag"><{{ homePageBlocks[3].headerType }}
+                    >{{ homePageBlocks[3].name }}</{{ homePageBlocks[3].headerType }}></a></div>
+            <ul class="clearfix">
+
+                {% for article in articles %}
+                    <li>
+                        <a href="{{ path('magazine_article', {'uri': article.uri }) }}">
+                            <div class="imagediv" {# style="background-image: url({{ article.imageName }})" #}>
+                                <img class="main-articles-images" src="{{ article.imageName }}"
+                                     alt="{{ article.imageAlt }}">
+                                {# <input type="hidden" value="{{ article.imageName }}" class="homepageImageName"> #}
+                            </div>
+                        </a>
+                        <a href="{{ path('magazine_article', {'uri': article.uri }) }}" class="readmore">
+                            <h3>{{ article.name }}</h3></a>
+                        <p>
+                            {% if article.brief|length > 127 %}
+                                {{ article.brief|slice(0,126) }}...
+                            {% else %}
+                                {{ article.brief }}
+                            {% endif %}
+                        </p>
+                        <a href="{{ path('magazine_article', {'uri': article.uri }) }}"
+                           class="readmore">{% trans %} Read more {% endtrans %}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <!-- hp-articles end -->
+
+    <div class="howjoin">
+        <div class="wrap">
+            <div class="heading"><{{ homePageBlocks[4].headerType }}
+                >{{ homePageBlocks[4].name }}</{{ homePageBlocks[4].headerType }}>
+        </div>
+        <h3>{{ homePageBlocks[4].block1 }}</h3>
+        <div class="freereg"><a href="{{ path('sign_up') }}">{% trans %} To Join Free {% endtrans %}</a></div>
+    </div>
+    </div>
+    <!-- howjoin -->
+
+    <div class="connect">
+        <div class="wrap clearfix">
+            <div class="heading"><{{ homePageBlocks[5].headerType }}
+                >{{ homePageBlocks[5].name }}</{{ homePageBlocks[5].headerType }}>
+        </div>
+        <div class="connect-background"></div>
+        <div class="applinks">
+            <a href="{{ google_play }}" class="android"
+               target="_blank">
+                <div class="background-links"></div>
+            </a>
+        </div>
+    </div>
+    </div>
+    <!-- connect end -->
+
+    </div>
+
+{#    <div class="ui mini facebookLoginPop modal" style="display:none!important;">#}
+{#        <div class="header">#}
+{#            {% trans %}#}
+{#                Login with Facebook#}
+{#            {% endtrans %}#}
+{#        </div>#}
+{#        <div class="content">#}
+{#            {% trans %}Would you like to log into an existing account or create a new one with Facebook?#}
+{#            {% endtrans %}#}
+{#        </div>#}
+
+{#        <div class="facebookLoginPop-actions">#}
+{#            <a class="login" onclick="loginFacebookWithExistAccount()">#}
+{#                #}{##}{# <i class="checkmark icon"></i> #}
+{#                {% trans %}Use existing account#}
+{#                {% endtrans %}#}
+{#            </a>#}
+{#            <a href="" class="registration">#}
+{#                #}{##}{# <div class="ui green ok button " style="float:left"> #}
+{#                #}{##}{# <i class="checkmark icon"></i> #}
+{#                {% trans %}Create new account#}
+{#                {% endtrans %}#}
+{#                #}{##}{# </div> #}
+{#            </a>#}
+{#        </div>#}
+{#    </div>#}
+
+    <!-- Main Container -->
+{% endblock %}

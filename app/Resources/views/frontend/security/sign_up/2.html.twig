@@ -1,0 +1,340 @@
+<script>
+    $(document).ready(function () {
+        $('.registration2-btn').click(function () {
+            $('.registration2-popup').modal('show');
+        })
+    })
+</script>
+
+{% if errors %}
+    <div class="errors">
+        <div class="ui orange message">
+            <div class="content">
+                <div class="header">
+                    {% trans %}  Please fill the following fields {% endtrans %}
+                </div>
+                <p>
+                    {% if errors_text | length > 0 %}
+                <ul>
+                    {% for error in errors_text %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}
+<div class="hmaformsec two">
+
+    <h3>{% trans %} Create Profile {% endtrans %}</h3>
+
+    <div class="field {% if form.birthday.vars.errors|length or errors_text['birthday'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.birthday) }}</div>
+        <div class="select s2">{{ form_widget(form.birthday.day) }}</div>
+        <div class="select s2">{{ form_widget(form.birthday.month) }}</div>
+        <div class="select s2">{{ form_widget(form.birthday.year) }}</div>
+    </div>
+
+    <div class="field {% if form.country.vars.errors|length or errors_text['country'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.country) }}</div>
+        <div class="select">{{ form_widget(form.country) }}</div>
+    </div>
+
+    <div class="field {% if form.region.vars.errors|length or errors_text['region'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.region) }}</div>
+        <div class="select">{{ form_widget(form.region) }}</div>
+    </div>
+
+    <div class="field {% if form.region.vars.errors|length or errors_text['city'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.city) }}</div>
+        <div class="select">{{ form_widget(form.city) }}</div>
+    </div>
+
+{#    <div class="field {% if form.city.vars.errors|length or errors_text['city'] is defined %}error{% endif %}">#}
+{#        <div class="label">{{ form_label(form.city) }}</div>#}
+{#        {% if not mobile %}#}
+{#            <div class="select">{{ form_widget(form.city) }}</div>#}
+{#        {% else %}#}
+{#            <div class="select" style="display: none">{{ form_widget(form.city) }}</div>#}
+{#            <div class="cityDropdown" onclick="myFunction()">#}
+{#                <span class="choicedText"></span>#}
+{#                <div id="myDropdown" class="dropdown-content">#}
+{#                    <input type="text" placeholder="search..." id="myInput" onkeyup="filterFunction()">#}
+{#                    <ul>#}
+{#                        {% for choice in form.city.vars['choices'] %}#}
+{#                            <li data-value="{{ choice.value }}"> {{ choice.label }}</li>#}
+{#                        {% endfor %}#}
+{#                        <li class="hidden noResults"> {% trans %} no results {% endtrans %} </li>#}
+{#                    </ul>#}
+{#                </div>#}
+{#            </div>#}
+{#        {% endif %}#}
+{#    </div>#}
+
+    <script>
+
+        // when a country is selected, only regions of that country are displayed
+        const countryInput = document.getElementById('sign_up_two_country');
+        const regionInput = document.getElementById('sign_up_two_region');
+        const cityInput = document.getElementById('sign_up_two_city');
+
+        countryInput.addEventListener('change', changeEvent => {
+            fetch('/open_api/v1/regions/' + changeEvent.target.value)
+                .then(response => response.json())
+                .then(res => {
+                    regionInput.replaceChildren(
+                        ...res.map(option => {
+                            const optionElement = document.createElement('option');
+                            optionElement.value = option.id;
+                            optionElement.setAttribute('data-uw-styling-context', 'true');
+                            optionElement.innerText = option.name;
+                            return optionElement;
+                        }));
+                    const chooseOption = document.createElement('option');
+                    chooseOption.value = "";
+                    chooseOption.setAttribute('data-uw-styling-context', 'true');
+                    chooseOption.innerText = 'Choose';
+                    regionInput.prepend(chooseOption);
+                });
+        })
+
+        //when a region is selected, ony cities of that region are displayed
+        regionInput.addEventListener('change', changeEvent => {
+            fetch('/open_api/v1/cities/' + changeEvent.target.value)
+                .then(response => response.json())
+                .then(res => {
+                    cityInput.replaceChildren(
+                        ...res.map(option => {
+                            const optionElement = document.createElement('option');
+                            optionElement.value = option.id;
+                            optionElement.setAttribute('data-uw-styling-context', 'true');
+                            optionElement.innerText = option.name;
+                            return optionElement;
+                        }));
+                    const chooseOption = document.createElement('option');
+                    chooseOption.value = "";
+                    chooseOption.setAttribute('data-uw-styling-context', 'true');
+                    chooseOption.innerText = 'Choose';
+                    cityInput.prepend(chooseOption);
+                });
+        })
+
+    </script>
+
+
+    <div class="field {% if form.zipCode.vars.errors|length or errors_text['zipCode'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.zipCode) }}</div>
+        <div class="inputdiv">{{ form_widget(form.zipCode) }}</div>
+    </div>
+
+    <div class="field {% if form.height.vars.errors|length or errors_text['height'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.height) }}</div>
+        <div class="inputdiv height">{{ form_widget(form.height) }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">{{ form_label(form.body) }}</div>
+        <div class="select">{{ form_widget(form.body) }}</div>
+    </div>
+
+    <div class="field {% if form.relationshipStatus.vars.errors|length or errors_text['relationshipStatus'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.relationshipStatus) }}</div>
+        <div class="select">{{ form_widget(form.relationshipStatus) }}</div>
+    </div>
+
+    <div class="field {% if form.relationshipType.vars.errors|length or errors_text['relationshipType'] is defined %}error{% endif %}"
+         style="position:relative;">
+        <div class="label">{{ form_label(form.relationshipType) }}</div>
+        {% if  mobile %}
+            <input type="button" class="registration2-btn" value="?">
+        {% endif %}
+        <div class="select"
+             style=" {% if mobile %} width: 90%; margin-left: 4px; {% endif %}">{{ form_widget(form.relationshipType) }}</div>
+        {% if not mobile %}
+            <input type="button" class="registration2-btn" value="?">
+        {% endif %}
+    </div>
+
+    <div class="field {% if form.sexOrientation.vars.errors|length or errors_text['sexOrientation'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.sexOrientation) }}</div>
+        <div class="select">{{ form_widget(form.sexOrientation) }}</div>
+
+    </div>
+    <div class="registration-small-text">
+        <small>{% trans %} Choose the most suitable option{% endtrans %}</small>
+    </div>
+
+    <div class="field {% if form.lookingFor.vars.errors|length %}error{% endif %}">
+        <div class="label">{{ form_label(form.lookingFor) }}</div>
+    </div>
+
+    <div class="field for-label">
+
+        <div class="checkboxes">
+            {% for lookingFor in form.lookingFor %}
+                <div class="ui checkbox chkbox">
+                    {{ form_widget(lookingFor) }}
+                    {{ form_label(lookingFor) }}
+                </div>
+                {% if loop.index == 4 %}
+                    <div class="clr"></div>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <div class="field">
+        <div class="label">{{ form_label(form.origin) }}</div>
+        <div class="select">{{ form_widget(form.origin) }}</div>
+    </div>
+
+    <div class="field {% if form.smoking.vars.errors|length or errors_text['smoking'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.smoking) }}</div>
+        <div class="select">{{ form_widget(form.smoking) }}</div>
+    </div>
+
+    <div class="field padd">
+        <input type="button" class="nextstage" accept="" value="{% trans %}next stage{% endtrans %}">
+        <input type="button" class="return" value="{% trans %}back{% endtrans %}" onclick="$('#prev_stage').click();">
+        <input type="submit" id="next_stage" class="hidden">
+        <input type="submit" id="prev_stage" class="hidden" name="flow_signUp_transition"
+               value="{% trans %}back{% endtrans %}" formnovalidate="formnovalidate">
+    </div>
+
+</div>
+
+<div class="ui modal registration2-popup">
+    <div class="header">{% trans %} About relationship types{% endtrans %}
+        {% if not mobile %}
+{#            <img src="/images/logo.png" alt="" style="#}
+{#    float: right;#}
+{#    width: 18%;#}
+">
+        {% endif %}
+    </div>
+    <div class="content">
+        <ul class="ui list">
+            {% trans %}
+                <li>
+                    <b>Hierarchical polyamory</b> - A relationship where there is a main couple, often marriage, and
+                    within that secondary relationships</b>
+                </li>
+                <li>
+                    <b>A-hierarchical polyamory</b>
+                    - All relation ships are of the same status, there is no primary and secondary relationships.
+                </li>
+                <li>
+                    <b>Solo poly</b> - A polyamory person who lives alone, and is not interested in sharing a home with a
+                    partner.
+                </li>
+                <li>
+                    <b>Relationship anarchy</b>
+                    - All partners are of equal importance
+                </li>
+                <li>
+                    <b>Third in a triad</b>
+                    A polyamory person who joins an established partnership, and has a romantic relationship with
+                    one more of the partners in the couple.
+                </li>
+            {% endtrans %}
+        </ul>
+    </div>
+    <div class="actions">
+        <div class="ui cancel button red">{% trans %} Cancel {% endtrans %}</div>
+    </div>
+</div>
+<div class="ui modal registration2-popup">
+    <div class="header">PolyInLove - explanation about relationships
+        {% if not mobile %}
+            <img src="/images/logo.png" alt="" style="
+    float: left;
+    width: 18%;
+">
+        {% endif %}
+    </div>
+    <div class="content">
+        <ul class="ui list">
+            {% trans %}
+                <li>
+                    <b>hierarchical polyamory</b> - A relationship where there is a main couple, often marriage, and
+                    within that secondary relationships</b>
+                </li>
+                <li>
+                    <b>a-hierarchical polyamory</b>
+                    - all relation ships are of the same status, there is no primary and secondary relationships.
+                </li>
+                <li>
+                    <b>solo poly</b>a polyamory person who lives alone, and is not intrested in sharing a home with a
+                    partner.
+                </li>
+                <li>
+                    <b>relationship anarchy</b>
+                    - all partners are of equal importance
+                </li>
+                <li>
+                    <b>third in a triad</b>
+                    a polyamory person who joins an established partnership, and has a romantic relationship with
+                    one more of the partners in the couple.
+                </li>
+            {% endtrans %}
+        </ul>
+    </div>
+    <div class="actions">
+        <div class="ui cancel button red">{% trans %} Cancel {% endtrans %}</div>
+    </div>
+</div>
+
+{#<script>#}
+{#    var myDropdowm = $('#myDropdown');#}
+
+{#    /* When the user clicks on the button,#}
+{#    toggle between hiding and showing the dropdown content */#}
+{#    function myFunction() {#}
+{#        myDropdowm.addClass('show')#}
+{#        $('.hiddenContainer').css({'display': 'block'});#}
+{#    }#}
+
+{#    function filterFunction() {#}
+{#        var isResult = false;#}
+{#        var input, filter, ul, li, a, i;#}
+{#        input = document.getElementById("myInput");#}
+{#        filter = input.value.toUpperCase();#}
+{#        div = document.getElementById("myDropdown");#}
+{#        a = div.getElementsByTagName("li");#}
+{#        var noResults = $('.cityDropdown li.noResults');#}
+{#        for (i = 0; i < a.length; i++) {#}
+{#            txtValue = a[i].textContent || a[i].innerText;#}
+{#            if (txtValue.toUpperCase().indexOf(filter) > -1) {#}
+{#                a[i].style.display = "";#}
+{#                if (!noResults.hasClass('.hidden')) {#}
+{#                    noResults.addClass('hidden')#}
+{#                }#}
+{#                isResult = true;#}
+{#            } else {#}
+{#                a[i].style.display = "none";#}
+{#            }#}
+{#        }#}
+
+{#        if (!isResult) {#}
+{#            noResults.removeClass('hidden')#}
+{#        }#}
+{#    }#}
+
+{#    $('.cityDropdown li').click(function () {#}
+{#        myDropdowm.removeClass('show')#}
+{#        $('.choicedText').text($(this).text())#}
+{#        $('#sign_up_two_city').val($(this).attr('data-value'))#}
+{#        $('.hiddenContainer').css({'display': 'none'});#}
+{#        return false;#}
+{#    })#}
+
+{#    $('.hiddenContainer').click(function () {#}
+{#        myDropdowm.removeClass('show')#}
+{#        $('.hiddenContainer').css({'display': 'none'});#}
+{#    })#}
+
+{#</script>#}

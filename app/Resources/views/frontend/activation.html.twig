@@ -1,0 +1,138 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+    <div class="container code midsec">
+        <div class="activation-container">
+            {% if sent %}
+                <br>
+                <div class="contact-success">
+                    {% trans %}
+                        Your message was successfully sent to the site admins
+                    {% endtrans %}
+                </div>
+            {% endif %}
+
+            {% if error %}
+                <div class="errors">
+                    <div class="ui orange message">
+                        {{ error }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <form class="ui form" action="" method="POST">
+                <div class="fields">
+                    <div class="field">
+                        <label class="activation-label">
+                            {% trans %}Enter activation code{% endtrans %}
+                        </label>
+                        <input type="text" name="code" class="code">
+                        <button class="send" type="submit">
+                            {% trans %}
+                                Send
+                            {% endtrans %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            {% if app.user.codeCount <= 1 %}
+                <div class="row">
+                    <button class="smsReset">
+                        {% trans %}
+                            click to resend
+                        {% endtrans %}
+                    </button>
+                    <br><small>
+                        {% trans %}
+                            (note that re-sending is available only once)
+                        {% endtrans %}
+                    </small>
+                </div>
+            {% endif %}
+
+            <button onclick="" class="activation-problems">
+                {% trans %}
+                    Having a problem with activation? click to Contact us
+                {% endtrans %}
+            </button>
+
+            <div class="harsama-midsec" style="display: none">
+                <form method="post" novalidate>
+
+                    <div class="errors hidden empty_fields">
+                        <div class="ui orange message">
+                            <div class="content">
+                                <div class="header">
+                                    {% trans %}
+                                        Complete marked fields
+                                    {% endtrans %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hmaformsec three">
+                        <div class="field_2">
+                            <div class="label">{{ form_label(form.email) }}</div>
+                            <div class="inputdiv">{{ form_widget(form.email) }}</div>
+                            <div class="clear"></div>
+                        </div>
+                        <br>
+
+                        <div class="field_2">
+                            <div class="label">{{ form_label(form.subject) }}</div>
+                            <div class="inputdiv">{{ form_widget(form.subject) }}</div>
+                            <div class="clear"></div>
+                        </div>
+                        <br>
+
+                        <div class="field_2">
+                            <div class="label">{{ form_label(form.text) }}</div>
+                            <div class="textarea">{{ form_widget(form.text) }}</div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                    <input type="submit" class="hidden" id="send">
+
+                    {{ form_rest(form) }}
+
+                </form>
+                <div class="clearfix">
+                    <input type="button" value="{% trans %}Send{% endtrans %}" class="free contact_submit">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui modal change-email">
+        <div class="header">
+            {% trans %}Change email{% endtrans %}
+        </div>
+        <form action="{{ path('user_update_email') }}">
+            <div class="image content">
+                <div class="description">
+                    <p>
+                        {% trans %}
+                            If you entered the wrong email, please fill in the correct one here:
+                        {% endtrans %}
+                    </p>
+                    <label for="email">{% trans %}Email{% endtrans %}
+                    </label>
+                    <input type="email" name="email" id="email" value="{{ app.user.email }}">
+                </div>
+            </div>
+            <div class="actions">
+                <div class="ui black deny button">
+                    {% trans %}
+                        Nope
+                    {% endtrans %}
+                </div>
+                <div class="ui positive right labeled icon button">
+                    <input type="submit" value="{% trans %}Submit{% endtrans %}">
+                    <i class="checkmark icon"></i>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

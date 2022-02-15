@@ -1,0 +1,222 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+
+    <div class="midsec">
+        {% if not mobile %}
+        <div class="quicksrch mainQuickSearch">
+            <h3 class="tgl_mqs">{% trans %} Quick Search {% endtrans %}
+                <div class="white-circle"> +</div>
+            </h3>
+
+
+            <form action="{{ path('user_search_results') }}" method="post" class="qs hidden"
+                  style="padding: 18px 15px 0;">
+                <div class="form-container">
+                    <div class="right-section">
+                        <div class="gender">
+                            <h5>{{ form_label(form.gender) }}</h5>
+                            <div class="half">
+                                {% for gender in form.gender %}
+                                <div class="ui checkbox">
+                                    {{ form_widget(gender) }}
+                                    {{ form_label(gender) }}
+                                    {% if loop.index == 2 %}
+                                </div>
+                            </div>
+                            <div class="half">
+                                {% else %}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="ageFrom">
+                        <h5 style="float: left;margin: 5px 0 10px;">{{ form_label(form.ageFrom) }}</h5>
+                        <div class="smlabel">
+                            <label class="from">{% trans %} from - {% endtrans %}</label>
+                        </div>
+                        <div class="select"> {{ form_widget(form.ageFrom) }}</div>
+                        <div class="smlabel">{{ form_label(form.ageTo) }}</div>
+                        <div class="select">{{ form_widget(form.ageTo) }}</div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="lookingFor">
+                        <div class="half">
+                            {% for lookingFor in form.lookingFor %}
+                            <div class="ui checkbox">
+                                {% if loop.index == 2 %}
+                            </div>
+                        </div>
+                        <div class="half">
+                            {% else %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </form>
+        </div>
+
+{#        <div class="left-section">#}
+{#            <div id="country" class="country">#}
+{#                <h5>{{ form_label(form.country) }}</h5>#}
+{#                <div class="half">#}
+{#                    {% for country in form.country %}#}
+{#                        <div class="ui checkbox">#}
+{#                            {{ form_widget(country) }}#}
+{#                            {{ form_label(country) }}#}
+{#                        </div>#}
+{#                    {% endfor %}#}
+{#                </div>#}
+{#            </div>#}
+
+{#            <div id="quick_search_sidebar_region"></div>#}
+
+{#        </div>#}
+{#        <script>#}
+{#            const $country = $('#country');#}
+{#            $country.change(function () {#}
+{#                const $form = $(this).closest('form');#}
+{#                const data = {};#}
+{#                data["quick_search_sidebar[country]"] = document.querySelector('#country input:checked').value;#}
+
+{#                // Submit data via AJAX to the form's action path.#}
+{#                $.ajax({#}
+{#                        url: '{{ path('user_homepage') }}',#}
+{#                        type: $form.attr('method'),#}
+{#                        data: data,#}
+{#                        complete: function (html) {#}
+{#                            console.log(html)#}
+{#                            // Replace current position field ...#}
+{#                            // document.getElementById('quick_search_sidebar_region').replaceWith()#}
+{#                        }#}
+
+{#                    }#}
+{#                );#}
+{#            });#}
+{#        </script>#}
+
+        <input type="submit" class="free" onclick="$(this).parents('form').submit()" value="{% trans %}
+                Search{% endtrans %}">
+        <div class="clear"></div>
+    </div>
+
+    </form>
+
+    <div class="left_sep hidden"><span>{% trans %} Or {% endtrans %}</span></div>
+
+    <form action="{{ path('user_search_results') }}" method="post" class="qs hidden" style="padding: 0 15px;">
+        <div class="btmform clearfix">
+            <div class="lablediv">{{ form_label(form.username) }}</div>
+            <div class="inputdiv">{{ form_widget(form.username) }}</div>
+            <input type="hidden" id="quickSearch_filter" name="quickSearch[filter]" value="lastActivity">
+            <a class="free" href="#">{% trans %} Search {% endtrans %}</a>
+            <input type="submit" class="hidden">
+        </div>
+
+        <div class="left_sep hidden"><span>{% trans %} Or {% endtrans %}</span></div>
+    </form>
+
+    <div class="advance-search-btn hidden">
+        <a href="{{ path('user_search_advanced') }}" class="adv-srch">
+            <button>
+                {% trans %} Advanced Search {% endtrans %}
+            </button>
+        </a>
+    </div>
+    </div>
+    {% endif %}
+    <!-- quicksrch end -->
+
+    {% if(banners) %}
+        {% set i = random(banners|length -1) %}
+        <a href="{{ banners[i].href }}" target="_blank">
+            <img class="banner" src="{{ asset(banners[i].img) }}" style="margin: 0 auto;"
+                 data-id="{{ banners[i].id }}"/>
+        </a>
+    {% endif %}
+
+    {% if not mobile %}
+        <h1>{% trans %} New Members  {% endtrans %}  </h1>
+    {% endif %}
+
+    {% if app.user %}
+
+     {% set filter =  'lastActivity' %}
+
+    {% if not mobile and newUsers|length > 0 %}
+    <div class="filterby clearfix">
+        <div class="flytitle">{% trans %}
+                Filter by:{% endtrans %}  </div>
+        <div class="select">
+            <select id="searchFilter">
+                <option value="new"{% if filter == 'new' %} selected="selected"{% endif %}>
+                    {% trans %}New Members
+                    {% endtrans %}
+                </option>
+                {% if data.withPhoto is not defined or not data.withPhoto %}
+                    <option value="photo" {% if filter == 'photo' %} selected="selected"{% endif %}>
+                        {% trans %}With Profile pics
+                        {% endtrans %}
+                    </option>
+                {% endif %}
+                <option value="lastActivity"{% if filter == 'lastActivity' %} selected="selected"{% endif %}>
+                    {% trans %}Last seen
+                    {% endtrans %}
+                </option>
+                <option value="popularity"{% if filter == 'popularity' %} selected="selected"{% endif %}>
+                    {% trans %}Popularity
+                    {% endtrans %}
+                </option>
+                <option value="verifiedUser"{% if filter == 'verifiedUser' %} selected="selected"{% endif %}>{% trans %}Verified users
+                    {% endtrans %}</option>
+            </select>
+        </div>
+        {% elseif not newUsers|length > 0 %}
+             <p> {{ noResults }}</p>
+        {% endif %}
+
+        {% endif %}
+
+        <form action="{{ app.request.requesturi }}" method="post" id="search_filter_form">
+
+            {% if data is defined %}
+                {% for key,value in data %}
+                    {% if data[key] is iterable %}
+                        {% for key2,value2 in data[key] %}
+                            <input type="hidden" name="advancedSearch[{{ key }}][{{ key2 }}]" value="{{ value2 }}"/>
+                        {% endfor %}
+                    {% else %}
+                        <input type="hidden" name="advancedSearch[{{ key }}]" value="{{ value }}"
+                               id="advancedSearch_{{ key }}"/>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <input type="hidden" name="advancedSearch[filter]" value="{{ filter }}" id="advancedSearch_filter"/>
+            {% endif %}
+
+            <input type="submit" class="hidden">
+
+        </form>
+    </div>
+
+
+    {% if newUsers|length > 0 %}
+        {{ include ('frontend/user/users_list.html.twig', {'users': newUsers, 'filter': filter, 'page': page}) }}
+    {% else %}
+         <p>{{ noResults }}</p>
+    {% endif %}
+    </div><!-- midsec end -->
+
+    <script>
+        $(document).load(function () {
+
+            setTimeout(function () {
+                returnToResults('userId', 'page')
+            }, 500)
+        });
+    </script>
+
+{% endblock %}

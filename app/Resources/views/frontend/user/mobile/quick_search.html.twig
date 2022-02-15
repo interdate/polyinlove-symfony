@@ -1,0 +1,74 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+
+<div class="search-page-container">
+
+    <form action="{{ path('user_search_results') }}" class="mobile-quick-search" method="post">
+
+        <div class="field">
+            <label for="">{{ form_label(form.gender) }}</label>
+            <div class="select">
+                {{ form_widget(form.gender) }}
+            </div>
+        </div>
+
+        <div class="field">
+            <label>{{ form_label(form.ageFrom) }}</label>
+            <span class="from mqs">{% trans %}From -{% endtrans %}</span>
+            <div class="select">
+                {{ form_widget(form.ageFrom) }}
+            </div>
+        </div>
+
+        <div class="field">
+            <label>{{ form_label(form.ageTo) }}</label>
+            <div class="select">
+                {{ form_widget(form.ageTo) }}
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="">{{ form_label(form.lookingFor) }}</label>
+            <div class="select">
+                {{ form_widget(form.lookingFor) }}
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="">{{ form_label(form.region) }}</label>
+            <div class="select">
+                {{ form_widget(form.region) }}
+            </div>
+        </div>
+        <input class="mobile-form-submit-btn" type="submit" value="{% trans %} Search {% endtrans %}">
+
+
+
+    </form>
+
+    <div class="or">
+        {% trans %} Or {% endtrans %}
+    </div>
+
+    <form action="{{ path('user_search_results') }}" class="mobile-quick-search" method="post">
+        <div class="field username">
+            <label for="">{{ form_label(form.username) }}</label>
+            <div class="inputdiv">
+                {{ form_widget(form.username) }}
+            </div>
+        </div>
+
+        <input class="mobile-form-submit-btn" type="submit" value="{% trans %} Search {% endtrans %}">
+    </form>
+</div>
+
+    <div class="or">
+        {% trans %} Or {% endtrans %}
+    </div>
+
+    <a href="{{ path('user_search_advanced') }}">
+        <button class="mobile-form-submit-btn advance-search-btn">{% trans %} Advanced Search {% endtrans %}</button>
+    </a>
+
+{% endblock %}

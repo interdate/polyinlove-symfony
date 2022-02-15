@@ -1,0 +1,538 @@
+{# {% extends 'frontend/layout.html.twig' %} #}
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" id="style" rel="stylesheet" href="#">
+    <script>
+        {#        var script = document.createElement('link'); #}
+        {#        script.href = "https://www.polydate.co.il/libs/semantic/dist/semantic.rtl.min.css"; #}
+        {#        document.getElementsByTagName('head')[0].appendChild(script); #}
+        document.getElementById('style').href = "/libs/semantic/dist/semantic.rtl.min.css";
+    </script>
+    <link rel="stylesheet" href="{{ asset('css/style.css?v=6') }}"/>
+    <link rel="stylesheet" href="{{ asset('js/slick/slick.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/perfect-scrollbar.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/mobile.css?v=2') }}">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-DQ69H7T8L7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-DQ69H7T8L7');
+    </script>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="SKYPE_TOOLBAR" content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"/>
+    <meta name="description"
+          content="פולידייט - אתר ההכרויות הראשון לקהילה הפוליאמורית בישראל. פוליאמוריה היא הדרך שלכם? מונוגמיה לא מתאימה לכם? בואו להכיר בפולידייט!">
+    <meta property="og:image" content="{{ asset('favicon.ico') }}"/>
+    <meta name="google-site-verification" content="R7mMy8ZlnFQ5_D4xkD_wwkHMfLH66TNqM-LKycMy6GQ"/>
+    {# <meta property="og:url"           content="https://www.your-domain.com/your-page.html" /> #}
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="PolyDate"/>
+    <meta property="og:description"
+          content="פולידייט - אתר ההכרויות הראשון לקהילה הפוליאמורית בישראל. פוליאמוריה היא הדרך שלכם? מונוגמיה לא מתאימה לכם? בואו להכיר בפולידייט!"/>
+    <meta name="keywords"
+          content="polydate,פוליאמוריה הכרויות,פולידייט,זוגיות פוליאמורית,אתר נישואים פתוחים,פוליאמוריה יחסים פתוחים,מונוגמיה נישואים,פתוחים נישוא">
+
+    <title>פולידייט - אתר הכרויות לקהילה הפוליאמורית</title>
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
+    <meta name="apple-mobile-web-app-title" content="PolyDate">
+    <meta name="application-name" content="PolyDate">
+    <link rel="apple-touch-icon" href="{{ asset('images/icon.png') }}">
+    <link rel="icon" href="{{ asset('images/icon.png') }}">
+    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+</head>
+<body>
+
+<script>
+    var LOCALE = "{{ app.request.locale }}";
+    {% if not(app.user == null) %}
+    var isPay = "{{ app.user.isPaying }}";
+    {% endif %}
+    {% if mobile is defined %}
+    var MOBILE = "{{ mobile }}";
+    {% endif %}
+
+</script>
+<script src="{{ asset('libs/jquery/jquery-2.1.4.min.js') }}"></script>
+{# <script src="{{ asset('libs/semantic/dist/semantic.min.js') }}"></script> #}
+{# <script id="js" src="#"></script> #}
+<script>
+    //window.load = function () {
+    var script = document.createElement('script');
+    script.src = "/libs/semantic/dist/semantic.min.js";
+    document.getElementsByTagName('head')[0].appendChild(script);
+    //}
+
+
+    // document.getElementById('js').src = "https://www.polydate.co.il/libs/semantic/dist/semantic.min.js";
+    // $.getScript("https://www.polydate.co.il/libs/semantic/dist/semantic.min.js", function () {
+    //
+    // });
+</script>
+<script src="{{ asset('js/slick/slick.js') }}"></script>
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '926730101039549',
+            cookie: true,
+            xfbml: true,
+            version: 'v5.0'
+        });
+
+        FB.AppEvents.logPageView();
+
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {
+            return;
+        }
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    //        FB.getLoginStatus(function(response) {
+    //            statusChangeCallback(response);
+    //        });
+
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<div class="fullscreen-container"></div>
+<div class="hiddenContainer"></div>
+<div class="bingo-overlay"></div>
+
+<div class="main-container">
+    <header>
+        <div class="wrap clearfix">
+
+            <div class="menu">
+                <a href="#" class="tglmenu"></a>
+                <div class="menu1-login menu1-unlogin mobile-menu-divs">
+                    <ul class="mobile-menu-ul">
+                        <a href="{{ path('password_recovery') }}">
+
+                            <li>
+                                {% trans %} Forgot password {% endtrans %}
+                                <i class="blocked-icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('contact') }}">
+                            <li>
+                                {% trans %} Contact us {% endtrans %}
+                                <i class="envelope outline icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('sign_up') }}">
+                            <li>
+                                {% trans %} Sign up free {% endtrans %}
+                                <i class="signup-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="s-ion-icon">
+                                        <path style="fill:white;"
+                                              d="M304 256c52.805 0 96-43.201 96-96s-43.195-96-96-96-96 43.201-96 96 43.195 96 96 96zm0 48c-63.598 0-192 32.402-192 96v48h384v-48c0-63.598-128.402-96-192-96zM112 224v-64H80v64H16v32h64v64h32v-64h64v-32h-64z"></path>
+                                    </svg>
+                                </i>
+                            </li>
+                        </a>
+                    </ul>
+                    {#                    TODO add when relevant #}
+{#                    <div class="applinks">#}
+{#                        {% if isAndroid %}#}
+{#                            <a href="https://play.google.com/store/apps/details?id=il.co.polydate" class="android"#}
+{#                               target="_blank">#}
+{#                                <img src="/images/button_latest.png" alt="">#}
+{#                            </a>#}
+{#                        {% else %}#}
+{#                            <a href="https://apps.apple.com/il/app/polydate/id1577768073" class="ios" target="_blank">#}
+{#                                <div class="background-links"></div>#}
+{#                            </a>#}
+{#                        {% endif %}#}
+{#                    </div>#}
+
+                </div>
+
+                <div class="logo"><a href="/"><img src="/images/logo.png" alt="alt="{{ site_name }}" | polyamory"></a>
+                </div>
+                <a href="{{ path('sign_up') }}">
+                    <button class="header-join-now">Register Free!</button>
+                </a>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- header end -->
+    {% if error %}
+        <div class="ui compact message red loginError">
+            <p>{{ error.message }}</p>
+        </div>
+    {% endif %}
+    <div class="login-background">
+        <div class="login-container-background" style="display: none;height: auto !important;padding-bottom: 30px;">
+            <form action="{{ path('login_check') }}" method="post" class="mobile-login-form">
+                <input type="text" placeholder="username / email"
+                       class="txtbox" id="usernameLogin" name="_username" value="{{ last_username }}"/>
+                <input type="password" placeholder="{% trans %} Password {% endtrans %}" class="txtbox"
+                       name="_password"/>
+                <input type="hidden" class="facebookLoginId" name="facebook" value="0">
+                <span class="forgot-password" style="display: block;margin-top: 10px;">
+                            <a href="{{ path('password_recovery') }}"> {% trans %} Forgot password? {% endtrans %} </a>
+                            </span>
+                <div class="clr"></div>
+                <input type="submit" value="Login" style="position: relative">
+
+            </form>
+            {#            <button class="facebook-mobile-login-btn"  onclick="checkLoginState()">{% trans %} Enter using  <div class="ficon"><i class="facebook f icon"></i></div> {% endtrans %}</button></input> #}
+        </div>
+        <div class="first-login-mobile-btns">
+            <button class="first-mobile-login-btn">{% trans %} Login {% endtrans %}</button>
+        </div>
+    </div>
+
+    {% if(banners) %}
+        {% set i = random(banners|length -1) %}
+        <a href="{{ banners[i].href }}" target="_blank">
+            <img class="banner" src="{{ asset(banners[i].img) }}" alt="PolyinLove | polyamory" style="margin: 0 auto;"
+                 data-id="{{ banners[i].id }}"/>
+        </a>
+    {% endif %}
+    <!-- hmslider end -->
+
+    <div class="whyjoin">
+        <div class="heading"><{{ homePageBlocks[0].headerType }}
+            >{{ homePageBlocks[0].name }}</{{ homePageBlocks[0].headerType }}>
+    </div>
+    <ul class="clearfix">
+        <div class="top-li">
+            <li>
+                <div class="icondiv"><img src="/images/2sec.png" alt="PolyinLove | polyamory"></div>
+                <h4>{{ homePageBlocks[0].block4 }}</h4>
+            </li>
+            <li>
+                <div class="icondiv"><img src="/images/2sec2.png" alt="PolyinLove | polyamory"></div>
+                <h4>{{ homePageBlocks[0].block3 }}</h4>
+            </li>
+            <li>
+                <div class="icondiv"><img src="/images/2sec3.png" alt="PolyinLove | polyamory"></div>
+                <h4>{{ homePageBlocks[0].block2 }}</h4>
+            </li>
+        </div>
+        <div class="bottom-li">
+            <li>
+                <div class="icondiv"><img src="/images/2sec4.png" alt="PolyinLove | polyamory"></div>
+                <h4>{{ homePageBlocks[0].block1 }}</h4>
+            </li>
+            <li>
+                <div class="icondiv"><img src="/images/2sec5.png" alt="PolyinLove | polyamory"></div>
+                <h4>{{ homePageBlocks[0].block5 }}</h4>
+            </li>
+        </div>
+    </ul>
+    <div class="freereg"><a href="{{ path('sign_up') }}">{% trans %} To Join {% endtrans %}</a></div>
+</div>
+<!-- whyjoin end -->
+
+{# <div class="qsearch"> #}
+
+{#    <div class="wrap" id="faces_container"> #}
+
+{#        <div id="faces_init_data" class="hidden"> #}
+{#            {% for user in users %} #}
+{#                <div class="item"> #}
+{#                    <input type="hidden" class="faceImageName" value="{{ user.getMainPhoto.getFaceWebPath }}"> #}
+{#                    <input type="hidden" class="url" value="{{ user.getMainPhoto.getFaceWebPath }}"> #}
+{#                    <input type="hidden" class="username" value="{{ user.username }}"> #}
+{#                    <input type="hidden" class="age" value="{{ user.age }}"> #}
+{#                </div> #}
+{#            {%endfor %} #}
+{#        </div> #}
+
+{#        <div class="face_wrapper first"><img class="face" alt="פולידייט | פוליאמוריה"></div> #}
+{#        <div class="face_wrapper second"><img class="face" alt="פולידייט | פוליאמוריה"></div> #}
+{#        <div class="face_wrapper third"><img class="face" alt="פולידייט | פוליאמוריה"></div> #}
+{#        <div class="face_wrapper fourth"><img class="face" alt="פולידייט | פוליאמוריה"></div> #}
+{#        <div class="face_wrapper fifth"><img class="face" alt="פולידייט | פוליאמוריה"></div> #}
+
+{#        <script src="{{ asset('js/faces.js') }}"></script> #}
+{#        <input type="hidden" id="sign_up_path" value="{{ path('sign_up') }}"> #}
+
+
+
+{#        <div class="heading"><{{ homePageBlocks[1].headerType }}>{{ homePageBlocks[1].name }}</{{ homePageBlocks[1].headerType }}></div> #}
+{#    <div class="qform"> #}
+
+{#        <form action="{{ path('public_search_results') }}" method="post"> #}
+
+{#            <div class="field"> #}
+{#                <div class="label">{{ form_label(form.gender) }}</div> #}
+{#                <div class="select" >{{ form_widget(form.gender) }}</div> #}
+{#            </div> #}
+
+
+
+{#            <div class="field"> #}
+{#                <div class="label">{{ form_label(form.contactGender) }}</div> #}
+{#                <div class="select" >{{ form_widget(form.contactGender) }}</div> #}
+{#            </div> #}
+
+
+{#            <div class="field"> #}
+{#                <div class="label">{{ form_label(form.lookingFor) }}</div> #}
+{#                <div class="select" >{{ form_widget(form.lookingFor) }}</div> #}
+{#            </div> #}
+
+
+
+
+{#            {{ form_rest(form) }} #}
+
+{#            <div class="field"> #}
+{#                <div class="field2"> #}
+{#                    <input type="button" value="{% trans %} Search {% endtrans %}" class="btn" onclick="$(this).siblings('input[type=submit]').click()"> #}
+{#                    <input type="submit" class="hidden"> #}
+{#                </div> #}
+{#            </div> #}
+
+{#        </form> #}
+
+{#    </div> #}
+{# </div> #}
+</div>
+<!-- qsearch end -->
+
+<div class="parallax">
+    <div class="wrap">
+        <div class="contbox">
+            <p>{{ homePageBlocks[2].block1 }}</p>
+            <div class="freereg"><a href="{{ path('sign_up') }}">{% trans %} To Free Join {% endtrans %}</a></div>
+        </div>
+    </div>
+</div>
+<!-- parallax end -->
+<script>
+    $(window).load(function () {
+        // setTimeout(function () {
+        var html = '<ul class="clearfix">';
+        {% for article in articles %}
+        {% set article_url = path("magazine_article", {"uri": article.uri }) %}
+        html += '<li><a href="';
+        html += '{{ article_url }}';
+        html += '"><div class="imagediv">' +
+            '<img class="main-articles-images" src="{{ article.imageName }}" alt="{{ article.imageAlt }}">' +
+            '</div></a>' +
+            '<a href="{{ article_url }}" class="readmore"><h3>{{ article.name }}</h3></a>' +
+            '<p>';
+        {% if article.brief|length > 127 %}
+        html += '{{ article.brief|slice(0,126) }}...';
+        {% else %}
+        html += '{{ article.brief }}';
+        {% endif %}
+        html += '</p><a href="{{ article_url }}" class="readmore">{% trans %} Read more {% endtrans %}</a>' +
+            '</li>';
+        {% endfor %}
+        html += '</ul>';
+        $('.hp-articles .wrap .heading').after(html);
+
+    });
+</script>
+<div class="hp-articles">
+    <div class="wrap">
+        <div class="heading"><a href="{{ path('magazine') }}" id="mag"><{{ homePageBlocks[3].headerType }}
+                >{{ homePageBlocks[3].name }}</{{ homePageBlocks[3].headerType }}></a></div>
+    </div>
+</div>
+<!-- hp-articles end -->
+
+<div class="howjoin">
+    <div class="wrap">
+        <div class="heading"><{{ homePageBlocks[4].headerType }}
+            >{{ homePageBlocks[4].name }}</{{ homePageBlocks[4].headerType }}>
+    </div>
+    <h3>{{ homePageBlocks[4].block1 }}</h3>
+    <div class="freereg"><a href="{{ path('sign_up') }}">{% trans %} To Free Join {% endtrans %}</a></div>
+</div>
+</div>
+<!-- howjoin -->
+
+<div class="connect">
+    <div class="wrap clearfix">
+        <div class="heading"><{{ homePageBlocks[5].headerType }}
+            >{{ homePageBlocks[5].name }}</{{ homePageBlocks[5].headerType }}>
+    </div>
+    <div class="connect-background"></div>
+    <div class="applinks">
+        {% if isAndroid %}
+            <a href="https://play.google.com/store/apps/details?id=il.co.polydate" class="android" target="_blank">
+                <div class="background-links"></div>
+            </a>
+        {% else %}
+            <a href="https://apps.apple.com/il/app/polydate/id1577768073" class="ios" target="_blank">
+                <div class="background-links"></div>
+            </a>
+        {% endif %}
+    </div>
+
+</div>
+</div>
+<!-- connect end -->
+
+</div>
+
+<div class="ui mini facebookLoginPop modal" style="display:none!important;">
+    <div class="header">Login with Facebook</div>
+    <div class="content">
+        Would you like to create a new account or link an existing one?
+    </div>
+
+
+    <div class="facebookLoginPop-actions">
+        <a class="login" onclick="loginFacebookWithExistAccount()">
+            Use existing account
+        </a>
+        <a href="" class="registration">
+            Create new account
+        </a>
+    </div>
+
+
+</div>
+
+{% set footerBlocks = getFooterBlocks() %}
+
+<footer>
+    <div class="wrap clearfix">
+        {% for block in footerBlocks %}
+            <div class="menudiv{{ loop.index }}">
+                <h4>{{ block.name }}</h4>
+                <ul>
+                    {% for page in block.pages %}
+                        {% if page.isActive %}
+                            <li><a href="{{ path('pages_page', {'uri': page.uri}) }}">{{ page.name }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if loop.index == 1 %}
+                        {% if not app.user %}
+                            <li><a href="{{ path('users_public_list') }}">חברים באתר</a></li>
+                        {% endif %}
+                    {% endif %}
+                    {% if loop.index == 3 %}
+                        <li><a href="{{ path('faq') }}">{% trans %} Faq {% endtrans %}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endfor %}
+
+        <div class="leftsect">
+            <div class="topsec clearfix">
+                <div class="social-icon clearfix">
+                    <h5>Join us!</h5>
+                    <a href="{{ facebook_group_link }}" class="social-fb" target="_blank"><img
+                                src="/images/footer-facebook-icon.png" alt="{{ site_name }} | polyamory"></a>
+                    <a href="{{ instagram_link }}" class="social-google" target="_blank"><img
+                                src="/images/footer-insta-icon.png" alt="{{ site_name }} | polyamory"></a>
+                </div>
+                <div class="email-icon social-icon">
+                    <h5>{% trans %} Contact Us {% endtrans %}</h5>
+                    <a href="{{ path('contact') }}"><img src="/images/footer-contact-icon.png"
+                                                         alt="{{ site_name }} | polyamory"></a>
+                </div>
+                <div class="facebook-row">
+                    <img src="/images/footer-facebook.png" alt="{{ site_name }} | polyamory" onclick="checkLoginState()">
+                    <a href="{{ path('sign_up') }}">
+                        <button class="footer-free-signup"> {% trans %} Free sign up {% endtrans %}</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wrap2"><a class="scroltop" href="#"></a></div>
+</footer>
+<!-- footer end -->
+
+<div id="popup1" class="popupmainopen">
+
+    <div class="ui active disabled dimmer inverted" id="profile_dimmer">
+        <div class="ui text large loader disabled">loading</div>
+    </div>
+
+    <a class="close" href="#"></a>
+
+
+    <div id="user_data"></div>
+
+</div>
+<!-- popup1 -->
+
+<div class="overlay"></div>
+
+<div class="ui active disabled dimmer" id="global_dimmer">
+    <div class="ui text large loader disabled">Loading</div>
+</div>
+
+<script type="text/javascript" src="/js/all.js?v=37"></script>
+<script src="{{ asset('js/ls/ls.js') }}"></script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-75937910-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+{% block javascripts %}{% endblock %}
+<style>
+    body .userway.userway_p7 {
+        top: 79px !important;
+
+    }
+</style>
+<script type="text/javascript">
+    var _userway_config = {
+        // position below will override position set via widget
+        // position: 7,
+        // uncomment the following line to override color set via widget
+        //color: '#053e67',
+        account: 'Ucgiiw876R',
+        language: 'he',
+    };
+
+</script>
+<script type="text/javascript" src="https://cdn.userway.org/widget.js"></script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+

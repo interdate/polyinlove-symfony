@@ -1,0 +1,42 @@
+app:
+  resource: "@AppBundle/Controller/"
+  type: annotation
+  prefix: /
+
+
+app_api:
+  type: rest
+  prefix: /api
+  resource: "api_routes.yml"
+
+open_api:
+  type: rest
+  prefix: /open_api
+  resource: "open_api_routes.yml"
+
+_liip_imagine:
+  resource: "@LiipImagineBundle/Resources/config/routing.xml"
+
+sonata_admin_area:
+  resource: "@SonataAdminBundle/Resources/config/routing/sonata_admin.xml"
+  prefix: /sonata-admin
+
+_sonata_admin:
+  resource: .
+  type: sonata_admin
+  prefix: /sonata-admin
+
+open_api_v1:
+  type: rest
+  prefix: /v1
+  resource: AppBundle\Controller\Api\V1\OpenController
+
+
+NelmioApiDocBundle:
+  resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+  prefix: /docs/api
+
+
+logout:
+  path: /logout
+

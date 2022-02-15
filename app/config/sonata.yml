@@ -1,0 +1,12 @@
+services:
+  sonata_admin.faq_category:
+    class: AppBundle\SonataAdmin\FaqCategoryAdmin
+    arguments: [~, AppBundle\Entity\FaqCategory, ~]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: FaqCategory }
+
+    sonata_admin.article:
+      class: AppBundle\SonataAdmin\ArticleAdmin
+      arguments: [~, AppBundle\Entity\Article, ~]
+      tags:
+        - { name: sonata.admin, manager_type: orm, label: Article }

@@ -1,0 +1,401 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}{{ site_name }} - The home of non-monogamous dating{% endblock %}
+
+{% set downloadApp = getDownloadApp(app.request) %}
+
+{% block meta %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="SKYPE_TOOLBAR" content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"/>
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+    <meta property="og:image" content="{{ asset('favicon.ico') }}"/>
+    <meta name="google-site-verification" content="R7mMy8ZlnFQ5_D4xkD_wwkHMfLH66TNqM-LKycMy6GQ"/>
+    {# <meta property="og:url"           content="https://www.your-domain.com/your-page.html" /> #}
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="{{ site_name }}"/>
+    <meta property="og:description"
+          content="{{ site_name }} - The dating site for the polyamory community. Is monogamy not your thing? Come join us at {{ site_name }}!"/>
+    {# <meta property="og:image"         content="https://www.your-domain.com/path/image.jpg" /> #}
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('libs/semantic/dist/semantic.css?v=') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css?v=') }}{{ random() }}"/>
+    <link rel="stylesheet" href="{{ asset('js/slick/slick.css') }}"/>
+
+    {% if app.user %}
+
+        <link rel="stylesheet" href="{{ asset('libs/jquery.qtip/jquery.qtip.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('libs/jquery-ui/css/cupertino/jquery-ui-1.10.4.custom.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('libs/emoticons/support/skype/emoticons.css') }}">
+        <link rel="stylesheet" href="https://use.typekit.net/ozm3yus.css">
+        {% if mobile is defined and mobile %}
+            <link rel="stylesheet" href="{{ asset('css/jquery.mobile-1.4.5.css') }}">
+        {% endif %}
+        {# <link rel="stylesheet" href="{{ asset('css/messenger.css') }}"> #}
+
+
+    {% endif %}
+
+    <link rel="stylesheet" href="{{ asset('css/perfect-scrollbar.min.css') }}">
+    {% if mobile is defined and mobile %}
+        <link rel="stylesheet" href="{{ asset('css/mobile.css?v=13') }}">
+    {% endif %}
+
+{% endblock %}
+
+{% block js %}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F7XYR7GL23"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-F7XYR7GL23');
+    </script>
+
+    {# <script src="{{ asset('js/jquery-1.11.0.min.js') }}"></script> #}
+    <script src="{{ asset('libs/jquery/jquery-2.1.4.min.js') }}"></script>
+
+
+    <script src="{{ asset('libs/semantic/dist/semantic.min.js') }}"></script>
+    <script src="{{ asset('js/slick/slick.js') }}"></script>
+
+    {% if mobile is defined and mobile %}
+        <script src="{{ asset('js/jquery.mobile-1.4.5.js') }}"></script>
+    {% endif %}
+    <script>
+        {# TODO - fix facebook login #}
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '926730101039549',
+                cookie: true,
+                xfbml: true,
+                version: 'v5.0'
+            });
+
+            FB.AppEvents.logPageView();
+
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+    </script>
+
+    {% if app.user and app.request.get('_route') != 'sign_up_photo' and app.request.get('_route') != 'sign_up_photos' %}
+
+        <script src="{{ asset('libs/jquery-ui/js/jquery-ui-1.10.4.custom.min.js') }}"></script>
+        <script src="{{ asset('libs/jquery.qtip/jquery.qtip.min.js') }}"></script>
+        <script src="{{ asset('libs/emoticons/lib/emoticons.js') }}"></script>
+        <script src="{{ asset('js/tinyscrollbar.js') }}"></script>
+        <script src="{{ asset('js/perfect-scrollbar-with-mousewheel.min.js') }}"></script>
+        <script src="{{ asset('js/perfect-scrollbar.min.js') }}"></script>
+
+        <script src="{{ asset('js/messenger.js') }}"></script>
+        <script src="{{ asset('js/jquery.ns-autogrow.min.js') }}"></script>
+
+
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+    <div class="fullscreen-container"></div>
+    <div class="hiddenContainer"></div>
+    <div class="bingo-overlay"></div>
+    {% block container %}{% endblock %}
+
+    {% set footerBlocks = getFooterBlocks() %}
+
+    <footer class="{% if (mobile is defined and mobile) and app.request.get('_route') != 'homepage' %} hidden {% endif %}">
+        {# <div class="wrap clearfix"> #}
+        <div class="flex">
+            {% for block in footerBlocks %}
+                <div class="menudiv{{ loop.index }}">
+                    <h4>{{ block.name }}</h4>
+                    <ul>
+                        {% for page in block.pages %}
+                            {% if page.isActive %}
+                                <li><a href="{{ path('pages_page', {'uri': page.uri}) }}">{{ page.name }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if loop.index == 1 %}
+                            {% if not app.user %}
+                                <li><a href="{{ path('users_public_list') }}">{% trans %}
+                                            Members online{% endtrans %}</a></li>
+                            {% endif %}
+                        {% endif %}
+                        {% if loop.index == 3 %}
+                            <li><a href="{{ path('faq') }}">{% trans %} Faq {% endtrans %}</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endfor %}
+            {# <div class="leftsect"> #}
+            <div class="flex-end">
+                {# <div class="topsec clearfix"> #}
+                {# <div class="social-icon clearfix"> #}
+                <div class="flex">
+                    <div class="social-icon">
+                        <h5>{% trans %}Join us!
+                            {% endtrans %}</h5>
+                        <a href="{{ facebook_group_link }}" class="social-fb" target="_blank"><img
+                                    src="/images/footer-facebook-icon.png" alt="{{ site_name }}"></a>
+
+                        <a href="{{ instagram_link }}" class="social-google"
+                           target="_blank"><img src="/images/footer-insta-icon.png" alt="{{ site_name }}"></a>
+                        {% if mobile %}
+                        {% endif %}
+                    </div>
+                    <div class="email-icon social-icon">
+                        <h5>{% trans %} Contact Us {% endtrans %}</h5>
+                        <a href="{{ path('contact') }}"><img src="/images/footer-contact-icon.png"
+                                                             alt="{{ site_name }}"></a>
+                    </div>
+                </div>
+{#                <div class="facebook-row">#}
+{#                    <img src="/images/footer-facebook.png" alt="{{ site_name }}" onclick="checkLoginState()">#}
+{#                    <button class="footer-free-signup"> {% trans %} Free sign up {% endtrans %}#}
+{#                        <a href="{{ path('sign_up') }}">#}
+{#                        </a>#}
+{#                    </button>#}
+{#                </div>#}
+                {# </div> #}
+                {# <div class="fb-regist"><a href="#"></a></div> #}
+            </div>
+        </div>
+        <div class="wrap2"><a class="scroltop" href="#"></a></div>
+    </footer>
+    <!-- footer end -->
+
+
+    <div id="popup1" class="popupmainopen">
+
+        <div class="ui active disabled dimmer inverted" id="profile_dimmer">
+            <div class="ui text large loader disabled">{% trans %}
+                    Loading{% endtrans %}</div>
+        </div>
+
+        <a class="close" href="#"></a>
+
+
+        <div id="user_data"></div>
+
+    </div>
+    <!-- popup1 -->
+
+    <div class="overlay"></div>
+
+    <div class="ui active disabled dimmer" id="global_dimmer">
+        <div class="ui text large loader disabled">{% trans %}
+                Loading{% endtrans %}</div>
+    </div>
+
+
+
+    {% if app.user %}
+
+        <input type="hidden" id="currentUserId" value="{{ app.user.id }}"/>
+        <input type="hidden" id="currentUserImage" value=""/>
+
+        <input type="hidden" value="{{ app.user.apiKey }}" id="apiKey">
+        <input type="hidden" value="{{ messenger.config.payment.text }}" id="paymentText">
+        <input type="hidden" value="{{ path('user_payment') }}" id="paymentLink">
+        <input type="hidden" value="{{ messenger.config.payment.linkText }}" id="paymentLinkText">
+        <input type="hidden" value="{{ messenger.config.points.linkText }}" id="pointsLinkText">
+
+        <div id="splashBingoTemplate">
+            <div [ATTRID]="splashBingo">
+                <div class="wrap">
+                    <div onclick="closeBingo();" class="cancel"></div>
+                    <img class="bingoImg" src="https://{{ base_url }}/images/bingo/bingo.png"/>
+                    <div class="clear"></div>
+                    <div class="rightPhoto">
+                        <div class="imageBingo"></div>
+                    </div>
+                    <div class="leftPhoto">
+                        <div class="imageBingo"></div>
+                    </div>
+                    <div class="plus"></div>
+                    <div class="clear"></div>
+                    <div class="textSplash"> [USERNAME] {% trans %} liked your photo too! {% endtrans %}</div>
+                    <div class="chat" onclick="openDialog()">{% trans %}Send a Message{% endtrans %}</div>
+                    <div class="ignore" onclick="closeBingo();">{% trans %}Keep Going - Next{% endtrans %}</div>
+                    <input type="hidden" class="contactId" value="">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="chatsArea"></div>
+        <div class="popup pgal0">
+            <div class="popup_div">
+                <div class="popup-container">
+                    <input type="hidden" name="" id="dialogLink"
+                           value="{{ path('messenger_dialog_open', {'userId': app.user.id, 'contactId': 'CONTACT_ID'}) }}">
+                    <a href="{{ path('view_user', {id: 'userID'}) }}">
+                        <div class="pop_title">
+                            {# <img src="/images/logo.png" alt=""> #}
+                            <div class="username">
+                                <span>[USER_NAME]</span>,
+                            </div>
+
+                            <span class="userage">['USER_AGE']</span>
+
+                            {# <span class="userarea">[USER_AREA]</span> #}
+                        </div>
+                    </a>
+                    <div class="pop_img" style="background:url([USER_IMG]) no-repeat; background-size:cover;"></div>
+                    <div class="arrow circle right icon">
+                        <i class="chevron right icon"></i>
+                    </div>
+                    <div class="arrow circle left icon">
+                        <i class="chevron left icon"></i>
+                    </div>
+                    {# <div class="popup_top cf"> #}
+                    <div class="pop_con">
+                        <a href=""><img alt="redthumb" src="https://{{ base_url }}/images/redthumb.png"/></a>
+                        <a href=""><img alt="pmsg" src="https://{{ base_url }}/images/pmsg.png"/></a>
+                        <a href=""><img alt="thumbgreen" src="https://{{ base_url }}/images/thumbgreen.png"/></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+        <div id="templates">
+            <div id="chatTemplate">
+                <div class="chatWindow rounded" id="[CONTACT_ID]">
+                    <div class="header rounded"></div>
+                    <div class="contactName"><a onclick="viewUserProfile([CONTACT_ID], $(this).offset().top)">[CONTACT_NAME]</a>
+                    </div>
+                    <div class="close rounded"></div>
+                    <div class="minimize rounded"></div>
+                    <div class="body">
+                        <br>
+                        <div class="scrollbar1">
+                            <div class="scrollbar">
+                                <div class="track">
+                                    <div class="thumb"></div>
+                                </div>
+                            </div>
+                            <div class="viewport">
+                                <div class="overview">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <textarea id="message"></textarea>
+                </div>
+            </div>
+
+
+            <div id="chatMessageSectionTemplate">
+                <div class="messageSection [DIRECTION]" id="chatMessageSection_[MESSAGE_SECTION_ID]">
+                    <div class="imageWrap pos rounded">
+                        <a {# href="[PROFILE_ID]" #}
+                                onclick="viewUserProfile([PROFILE_ID], $('.contactName').offset().top)" target="_blank"><img
+                                    alt="" class="userPicture" src="USER_PICTURE"></a>
+                    </div>
+                    <div class="messageWrap pos rounded">
+                        <div class="message">
+                            [MESSAGE]
+                            <div class="clear"></div>
+                            <div class="status">[STATUS]</div>
+                            <div class="dateTime">[DATE_TIME]</div>
+                            <i class="trash icon trash-icon"></i>
+                            <div class="clear" data-id="MESSAGE_ID"></div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="date"></div>
+                </div>
+                <div class=""></div>
+            </div>
+
+            <div id="dialogMessageSectionTemplate">
+                <div class="chatbox [DIRECTION] message [STATUS] messageSection"
+                     id="dialogMessageSection_[MESSAGE_SECTION_ID]">
+                    <h4>[MESSAGE]</h4>
+                    <div class="timerdiv dateTime">[DATE_TIME]</div>
+                    <i class="trash icon trash-icon delete-message-link" onclick="deleteMessage(this)"
+                       data-id="MESSAGE_ID"></i>
+                </div>
+            </div>
+
+            <div id="emoticonsTemplate" class="hidden">
+                <div class="emoticons_wrapper"></div>
+            </div>
+
+            <div id="arenaSlideTemplate">
+                <li class="slid" id="[ID]">
+                    <div class="img">
+                        <div class="pop_title">
+                            {# /images/nlogobig.png #}
+                            <a class="logo_pop" href="{{ path('user_homepage') }}"><img alt="" src="/images/logo.png"/></a>
+                            <span><a href="{{ path('view_user', {id: 'userID'}) }}"
+                                     style="color: inherit;">[USERNAME]</a>,</span> [AGE], [AREA]
+                        </div>
+                        <div class="pop_img"
+                             style="background:url([IMAGE]) no-repeat center; background-size:contain;"></div>
+                    </div>
+                </li>
+            </div>
+
+            <div id="sideUsersTemplate">
+                <div class="rptimgbox boxcont" data-position="top right" data-title="_Guy" data-content="New York, 31">
+
+                    <input type="hidden" class="userId" value="[USER_ID]">
+                    <input type="hidden" class="userGenderId" value="[USER_GENDER_ID]">
+                    <a class="f1" href="[USER_PROFILE]">
+                        <img src="[USER_IMAGE]" alt="" class="sidebarPhoto" style="height: 128px; width: 154px;">
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    {% endif %}
+
+    {% if downloadApp %}
+
+    {% endif %}
+    <script type="text/javascript" src="/js/all.js?v={{ random() }}"></script>
+    <script src="{{ asset('js/ls/ls.js') }}"></script>
+
+
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-75937910-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+
+{% endblock %}
+

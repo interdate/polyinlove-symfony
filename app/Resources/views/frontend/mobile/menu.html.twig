@@ -1,0 +1,65 @@
+
+
+        <div class="menu">
+            <a href="#" class="tglmenu"></a>
+            <div class="menu1-login mobile-menu-divs">
+                {% if app.user %}
+                    <div class="menu-user-image-block">
+                        <div class="menu-settings-trigger">
+                            <i class="cogs icon"></i>
+                        </div>
+                        <div class="clear"></div>
+                        <div class="menu-user-image">
+                            <img src="{{ app.user.getMainPhoto().getFaceWebPath() }}" alt="">
+                        </div>
+                    </div>
+                    <div class="username">
+                        {{ app.user.name }}
+                    </div>
+                {% endif %}
+                <ul class="mobile-menu-ul">
+                    <li> login nemu 1</li>
+                    <li> login nemu 2</li>
+                    <li> login nemu 3</li>
+                    <li class="menu-list-trigger"> login menu 4</li>
+                    <li> login nemu 5</li>
+                    <li> login nemu 6</li>
+                    <li> login nemu 7</li>
+                    <li> login nemu 8</li>
+                </ul>
+            </div>
+            <div class="menu1-unlogin mobile-menu-divs">
+                <ul class="mobile-menu-ul">
+                    <li> unlogin menu 1</li>
+                    <li> unlogin menu 2</li>
+                    <li> unlogin menu 3</li>
+                    <li> unlogin menu 4</li>
+                </ul>
+            </div>
+            <div class="menu2-settings mobile-menu-divs">
+                <div class="menu-back-button"><button class="ui basic button" style="color: white!important">{% trans %} Back {% endtrans %}</button> </div>
+                <ul class="mobile-menu-ul">
+                    <li> settings menu 1</li>
+                    <li> settings menu 2</li>
+                    <li> settings menu 3</li>
+                    <li> settings menu 4</li>
+                    <li> settings menu 5</li>
+                    <li> settings menu 6</li>
+                    <li> settings menu 7</li>
+                    <li> settings menu 8</li>
+                </ul>
+            </div>
+            <div class="menu3-lists mobile-menu-divs">
+                <div class="menu-back-button"><button class="ui basic button" style="color: white!important">{% trans %} Back {% endtrans %}</button> </div>
+                <ul class="mobile-menu-ul">
+                    <li>lists menu 1</li>
+                    <li>lists menu 2</li>
+                    <li>lists menu 3</li>
+                    <li>lists menu 4</li>
+                    <li>lists menu 5</li>
+                    <li>lists menu 6</li>
+                    <li>lists menu 7</li>
+                </ul>
+            </div>
+        </div>
+

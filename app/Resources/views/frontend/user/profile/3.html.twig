@@ -1,0 +1,104 @@
+{% if errors %}
+    <div class="errors">
+        <div class="ui orange message">
+            <div class="content">
+                <div class="header">
+                    PLease fill out the following fields
+                </div>
+                <p>
+                    {{ form_errors(form.about) }}
+                    {{ form_errors(form.looking) }}
+                    {% if errors_text | length > 0 %}
+                <ul>
+                    {% for error in errors_text %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<div class="hmaformsec three">
+    <div class="field {% if form.about.vars.errors|length or errors_text['about'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.about) }} <small>
+                {% trans %}(at least 10 letters long)
+                {% endtrans %}
+            </small></div>
+        <div class="textarea">{{ form_widget(form.about) }}</div>
+    </div>
+
+    <div class="field {% if form.looking.vars.errors|length or errors_text['looking'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.looking) }} <small>
+                {% trans %}(at least 10 letters long)
+                {% endtrans %}
+            </small></div>
+        <div class="textarea">{{ form_widget(form.looking) }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">{{ form_label(form.children) }}</div>
+        <div class="select">{{ form_widget(form.children) }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">{{ form_label(form.religion) }}</div>
+        <div class="select">{{ form_widget(form.religion) }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">{{ form_label(form.nutrition) }}</div>
+        <div class="select">{{ form_widget(form.nutrition) }}</div>
+    </div>
+
+{#    <h5 style="margin-bottom: 20px">#}
+{#        {% trans %}#}
+{#            Who may message me#}
+{#        {% endtrans %}#}
+{#    </h5>#}
+
+    <div class="field">
+        <div class="label {% if form.contactGender.vars.errors|length %}error{% endif %}"
+             style="margin-top: -3px">{{ form_label(form.contactGender) }}</div>
+
+        <div class="chkright" style="width: unset;">
+            <div class="checkboxes clearfix">
+                {% for contactGender in form.contactGender %}
+                    <div class="ui checkbox chkbox" style="min-width: 69px">
+                        {{ form_widget(contactGender) }}
+                        {{ form_label(contactGender) }}
+                    </div>
+
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <h5 style="margin-bottom: 20px">
+        {% trans %}
+            the following ages may message me
+        {% endtrans %}
+    </h5>
+
+    <div class="field">
+        {% if not mobile %}
+            <div class="label" style="width: 97px; margin-top: 7px;">{{ form_label(form.ageFrom) }}</div>
+            <div class="select" style="width:80px;">{{ form_widget(form.ageFrom) }}</div>
+
+            <div class="label" style="width: 30px;margin-top: 6px;">{{ form_label(form.ageTo) }}</div>
+            <div class="select" style="width:80px;">{{ form_widget(form.ageTo) }}</div>
+
+        {% else %}
+            <div class="label" style="width: 92px; margin-top: 7px;">{{ form_label(form.ageFrom) }}</div>
+            <div class="select" style="width:60px;">{{ form_widget(form.ageFrom) }}</div>
+
+            <div class="label"
+                 style="width: 26px;margin-top: 6px; margin-right: 8px;">{{ form_label(form.ageTo) }}</div>
+            <div class="select" style="width:60px; margin-left: 10px">{{ form_widget(form.ageTo) }}</div>
+        {% endif %}
+    </div>
+
+</div>

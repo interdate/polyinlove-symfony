@@ -1,0 +1,255 @@
+{% if mobile is not defined or not mobile %}
+{# {% if not  mobile %} #}
+<div class="hmaformsec three">
+    <h3>Add Photo</h3>
+
+    <input type="hidden" id="save_photo_data_url" value="{{ path('user_photo_data') }}">
+    <input type="hidden" id="photos_url" value="{{ path('sign_up_photos') }}">
+    <input type="hidden" id="mainPhotoAlreadyExists" value="0">
+    <div class="harsm4 harsm5">
+        <input type="file" class="browseinput registrPhotoInput hidden" name="photo"
+               accept="image/x-png,image/gif,image/jpeg">
+        <div class="clr"></div>
+
+        <div class="harsm4 clearfix">
+
+            <div class="rightinfo">
+                {% if mobile is not defined or not mobile %}
+
+                    {#                    {% if not mobile %} #}
+                    <div class="browseupload">
+
+                        <input type="button" class="browsebutt" onclick="$('.registrPhotoInput').click()"
+                               value="{% trans %}browse{% endtrans %}">
+                        <input type="text" class="browseinput" value="">
+                        <div class="clr"></div>
+                    </div>
+                {% endif %}
+                <div class="descp">
+                    {% trans %}
+
+                        You may upload up to 4 pictures. Please use jpg format only<br/>
+
+                        If you encountered a problem, you may email the site admins at:
+                        <br/>
+                    {% endtrans %}
+                    <a href="mailto:{{ contact_email }}">{{ contact_email }}</a><br/>
+                    {% trans %}Please mention the email
+                    address you
+                    used to sign up to the site with.
+                </div>
+                <br>
+                <p>
+                    Every photo uploaded to the site must be approved by the admins. Our office hours are Sun-
+                    Thu, 09:00 -
+                    16:00 IST.
+                </p>
+
+
+                <h5>Your Photo must be:</h5>
+
+                <ul>
+                    <li>a picture of yourself</li>
+                    <li>clear, and of good quality</li>
+                    <li>no nudity, partial or full</li>
+                    <li>no pictures of children</li>
+                </ul>
+                {% endtrans %}
+
+                {% if mobile is defined and mobile %}
+                    <div class="browseupload">
+                        <input type="button" class="browsebutt" onclick="$('.registrPhotoInput').click()"
+                               value="{% trans %}broswse{% endtrans %}">
+                        <input type="text" class="browseinput" value="">
+                        <div class="clr"></div>
+                    </div>
+                    <div class="ui progress" style="top: 88px">
+                        <div class="bar">
+                            <div class="progress"></div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="leftproimage" style="background-image: url({{ app.user.getNoPhoto() }})"></div>
+
+        </div>
+
+        <div class="clr padd"></div>
+
+        <div class="field padd">
+            <input type="button" class="nextstage skipstep" value="{% trans %}Skip this stage{% endtrans %}"
+                   onclick="window.location.href='{{ path('homepage') }}'">
+            <a href="{{ path('user_profile', {tab: 3}) }}"> <input type="button" class="return"
+                                                                   value="{% trans %}back{% endtrans %}"></a>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% if mobile is defined and mobile %}
+
+    <script>
+        function edit(isMain, isValid, id) {
+            closePhotoActions();
+            var ul = $('.photos-action-ul');
+            var photosActionBlock = $('.photos-action');
+            console.log($('.photo-' + id).find('.private'));
+            var isPrivate = $('.photo-' + id).find('.private').hasClass('hidden') ? false : true;
+            photosActionBlock.find('.status').text(isValid ? 'approved' : 'awaiting approval');
+            if (!isMain && !isPrivate) {
+                ul.find('.setPrivate').removeClass('hidden');
+                ul.find('.setMain').removeClass('hidden');
+            }
+
+            if (isPrivate && !isMain) {
+                ul.find('.unsetPrivate').removeClass('hidden');
+            }
+
+            if (isValid && !isPrivate && !isMain) {
+                ul.find('.setMain').removeClass('hidden')
+            }
+
+            photosActionBlock.find('.photoId').val(id);
+            photosActionBlock.removeClass('hidden');
+        }
+
+        function closePhotoActions() {
+            var ul = $('.photos-action-ul');
+            ul.find('.setPrivate').addClass('hidden');
+            ul.find('.setMain').addClass('hidden');
+            ul.find('.unsetPrivate').addClass('hidden');
+            ul.find('.setMain').addClass('hidden')
+            $('.photos-action').addClass('hidden');
+        }
+
+        function setMain() {
+            var photoId = $('.photos-action').find('.photoId').val();
+            console.log(photoId);
+            $.ajax({
+                url: '/' + '/user/photo/main/' + photoId,
+                success: function (res) {
+                    location.reload();
+                }
+            });
+        }
+
+        function setPrivate() {
+            var photoId = $('.photos-action').find('.photoId').val();
+            $.ajax({
+                url: '/' + '/user/photo/private/' + photoId,
+                success: function () {
+                    $('.photo-' + photoId).find('.private').toggleClass('hidden');
+                    closePhotoActions();
+                }
+            })
+        }
+
+        function deletePhoto() {
+            var photoId = $('.photos-action').find('.photoId').val();
+            $.ajax({
+                url: '/' + '/user/photo/delete/' + photoId,
+                success: function () {
+                    $('photo-' + photoId).remove();
+                    closePhotoActions();
+                }
+            })
+        }
+    </script>
+
+    <div class="container">
+
+        <div class="description" *ngIf="photos?.length == 1 && dataPage?.noPhoto == dataPage?.photos[0].face">
+        </div>
+        <div class="photos">
+            {% for photo in app.user.photos %}
+
+            {% endfor %}
+            {% for photo in app.user.photos %}
+            {% endfor %}
+            <div class="main photo" onclick="$('.mobile-upload-photo').click()">
+                <div class="wrap">
+                    <div class="photo-img" style="background-image: url({{ app.user.getNoPhoto() }})"></div>
+                    <span class="num">1</span>
+                    <span class="add">
+                            <div class="plus circle addPhoto"></div>
+                        </span>
+                </div>
+            </div>
+            <input type="file" name="image" class="mobile-upload-photo hidden browseinput photoInput registrPhotoInput"
+                   accept="image/x-png,image/gif,image/jpeg">
+            <input type="submit" value="" class="mobile-submit-photo hidden submitPhoto"></div>
+        <div class="description" *ngIf="!(photos?.length == 1 && dataPage?.noPhoto == dataPage?.photos[0].face)">
+            <div class="clr"></div>
+            <div [innerHTML]="description"></div>
+        </div>
+        {% trans %}
+            <div class="descp">
+
+                You may upload up to 4 pictures. Please use jpg format only<br/>
+
+                If you encountered a problem, you may email the site admins at:
+                <br/>
+                {% endtrans %}
+
+                <a href="mailto:{{ contact_email }}">{{ contact_email }}</a><br/> {% trans %}Please mention the email address
+                you
+                used to sign up to the site with.
+            </div>
+            <br>
+            <p>
+                Every photo uploaded to the site must be approved by the admins. Our office hours are Sun- Thu, 09:00 -
+                16:00 IST.
+            </p>
+
+
+            <h5>Your Photo must be:</h5>
+
+            <ul>
+                <li>a picture of yourself</li>
+                <li>clear, and of good quality</li>
+                <li>no nudity, partial or full</li>
+                <li>no pictures of children</li>
+            </ul>
+        {% endtrans %}
+        <br>
+
+        <div class="photos-action hidden">
+            <div class="photos-action-title placeholder right">{% trans %}Edit Photo{% endtrans %}</div>
+            <div class="photos-action-title placeholder left">{% trans %} State {% endtrans %}<span
+                        class="status"></span></div>
+            <ul class="photos-action-ul">
+                <li class="setMain hidden" onclick="setMain()">
+                    <i class="user outline icon"></i>
+                    <span>{% trans %}set as main image{% endtrans %}</span>
+                </li>
+                <li class="delete" onclick="mobileDeletePhoto()">
+                    <i class="trash alternate outline icon"></i>
+                    <span>{% trans %}remove{% endtrans %}</span>
+                </li>
+                <li class="setPrivate hidden" onclick="setPrivate()">
+                    <i class="eye slash icon"></i>
+                    <span>{% trans %}Make private{% endtrans %}</span>
+                </li>
+                <li class="unsetPrivate hidden" onclick="setPrivate()">
+                    <i class="eye icon"></i>
+                    <span>{% trans %}make public{% endtrans %}</span>
+                </li>
+                <li class="cancel" onclick="closePhotoActions()">
+                    <i class="close icon"></i>
+                    <span>{% trans %}cancel{% endtrans %}</span>
+                </li>
+            </ul>
+            <input type="hidden" name="" class="photoId" value="">
+        </div>
+
+
+        <div class="field padd">
+            <input type="button" class="nextstage skipstep" value="{% trans %}skip this stage{% endtrans %}"
+                   onclick="window.location.href='{{ path('homepage') }}'">
+            <a href="{{ path('user_profile', {tab: 3}) }}"> <input type="button" class="return"
+                                                                   value="{% trans %}back{% endtrans %}"></a>
+        </div>
+    </div>
+{% endif %}

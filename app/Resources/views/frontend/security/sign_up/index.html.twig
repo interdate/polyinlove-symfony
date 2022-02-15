@@ -1,0 +1,76 @@
+{% extends "frontend/main_layout.html.twig" %}
+
+{% block container %}
+
+    <div class="main-container">
+
+        <div class="headerinn">
+{#            <div class="topbar">#}
+{#                <ul class="wrap clearfix">#}
+{#                    <li><span class="uimg"><img src="/images/inner-head-user.png" alt=""></span> <span class="uname">Hello, guest</span></li>#}
+{#                </ul>#}
+{#            </div>#}
+
+            <div class="logo-menu">
+                <div class="wrap clearfix">
+                    <div class="innlogo"><a href="/"><img src="/images/logo.png" alt=""></a></div>
+                </div>
+            </div>
+        </div>
+        <!-- headerinn end -->
+
+        {% set step = flow is defined ? flow.getCurrentStepNumber() : 4 %}
+
+        <div class="innercont">
+            <div class="wrap clearfix">
+                <div class="harsama-main">
+                    <div class="harsama-midsec">
+                        <ul class="stepssec clearfix">
+                            <li {% if step >= 1 %}class="completed"{% endif %}><span class="nos">1</span><span class="label">{% trans %} Registration {% endtrans %}</span></li>
+                            <li {% if step >= 2 %}class="completed"{% endif %}><span class="nos">2</span><span class="label">{% trans %} Create Profile {% endtrans %}</span></li>
+                            <li {% if step >= 3 %}class="completed"{% endif %}><span class="nos">3</span><span class="label">{% trans %} A little about me / us {% endtrans %}</span></li>
+                            <li {% if step >= 4 %}class="completed"{% endif %}><span class="nos">4</span><span class="label">{% trans %} Upload image {% endtrans %}</span></li>
+                        </ul>
+
+                        <!-- stepssec end -->
+
+                        <form action="{{ path('sign_up') }}" method="post" id="sign_up_form" novalidate>
+
+                            <div class="errors hidden empty_fields">
+                                <div class="ui orange message">
+                                    <div class="content">
+                                        <div class="header">
+                                            {% trans %}Please fill in the marked fields{% endtrans %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if step < 4 %}
+                                {{ include ('frontend/security/sign_up/' ~ step ~ '.html.twig', {'form': form}) }}
+                            {% else %}
+                                {% if photos is defined %}
+                                    {{ include ('frontend/security/sign_up/photos.html.twig') }}
+                                {% else %}
+                                    {{ include ('frontend/security/sign_up/photo.html.twig') }}
+                                {% endif %}
+                            {% endif %}
+
+                            {% if form is defined %}
+                                {{ form_rest(form) }}
+                            {% endif %}
+
+                        </form>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- harsama-main end -->
+            </div>
+        </div>
+        <!-- innercont -->
+
+    </div>
+    <!-- Main Container -->
+
+{% endblock %}

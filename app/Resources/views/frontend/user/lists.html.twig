@@ -1,0 +1,67 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+	<div class="asideR mobile">
+    	{% if app.user %}
+			<div class="greybox">
+            	<a href="#" class="tgl">{% trans %} Lists {% endtrans %}</a>
+                <h3>
+                    {% trans %}Lists
+                    {% endtrans %}
+                </h3>
+                <div class="greyboxmid">
+                	<ul>
+                    	<li>
+                        	<a href="{{ path('user_list_viewed_me') }}">
+                            	<i><img src="/images/right-menu-2.png" alt="" /></i>
+                                {% trans %} Viewed {% endtrans %}
+                                {% if statistics.viewedMe > 0 %}<span>({{ statistics.viewedMe }})</span>{% endif %}
+                            </a>
+                        </li>
+                        <li>
+                        	<a href="{{ path('user_list_viewed') }}">
+                            	<i><img src="/images/right-menu-3.png" alt="" /></i>
+                                {% trans %} Viewed Me {% endtrans %}
+                                {% if statistics.viewed > 0 %}<span>({{ statistics.viewed }})</span>{% endif %}
+                            </a>
+                        </li>
+                        <li>
+                        	<a href="{{ path('user_list_connected') }}">
+                                <i><img src="/images/right-menu-4.png" alt="" /></i>
+                                {% trans %} Contacted {% endtrans %}
+                                {% if statistics.connected > 0 %}<span>({{ statistics.connected }})</span>{% endif %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('user_list_connected_me') }}">
+                                <i><img src="/images/right-menu-5.png" alt="" /></i>
+                                {% trans %} Contacted Me {% endtrans %}
+                                {% if statistics.connectedMe > 0 %}<span>({{ statistics.connectedMe }})</span>{% endif %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('user_list_favorited') }}">
+                                <i><img src="/images/right-menu-6.png" alt="" /></i>
+                                {% trans %} Favorited {% endtrans %}
+                                {% if statistics.favorited > 0 %}<span>({{ statistics.favorited }})</span>{% endif %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('user_list_favorited_me') }}">
+                                <i><img src="/images/right-menu-7.png" alt="" /></i>
+                                {% trans %} Favorited Me  {% endtrans %}
+                                {% if statistics.favoritedMe > 0 %}<span>({{ statistics.favoritedMe }})</span>{% endif %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('user_list_black_listed') }}">
+                                <i><img src="/images/right-menu-8.png" alt="" /></i> {% trans %} Blocked {% endtrans %}
+                                {% if statistics.blacklisted > 0 %}<span>({{ statistics.blacklisted }})</span>{% endif %}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

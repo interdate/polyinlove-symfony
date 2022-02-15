@@ -1,0 +1,45 @@
+<div id="header">
+    <div class="left" id="header_wrapper">
+        <h1 class="ui header">
+            <i class="{{ icon }} icon"></i>
+            <div class="content">
+                {{ header }}
+                {% if sub_header is defined %}
+                    <div class="sub header">{{ sub_header }}</div>{% endif %}
+            </div>
+        </h1>
+    </div>
+
+    {% if users is defined %}
+        <div class=" ui red button">
+            number of users <span class="usersLength"></span>
+        </div>
+
+        <div class=" ui red button">
+            number of users without "Here for" <span class="userNoForLength"></span>
+        </div>
+    {% endif %}
+
+    <div class="right" id="search">
+        <button class="ui icon button massive">
+            <i class="icon sidebar"></i>
+        </button>
+    </div>
+
+    <div class="right" id="homepage">
+        <a href="{{ path('user_homepage') }}" target="_blank">
+            <button class="ui icon button massive">
+                <i class="icon home"></i>
+            </button>
+        </a>
+    </div>
+
+    <div class="right" id="logout">
+        <button class="ui icon button massive" onclick="window.location.href='{{ path('logout') }}'">
+            <i class="icon power"></i>
+        </button>
+    </div>
+
+</div>
+
+<div class="clear"></div>

@@ -1,0 +1,975 @@
+{% extends 'frontend/main_layout.html.twig' %}
+
+{% block container %}
+
+    {% set routeName = app.request.get('_route') %}
+    {% set routeArr = routeName|split('_') %}
+    {% set parentPageName = routeArr[0] %}
+
+
+    {% if routeName == 'user_users_online' or not app.user %}
+        {% set sidebarHeader = 'new' %}
+        {% set sidebarHeaderLink = path('user_homepage') %}
+        {% set sidebarUsers = getNewUsers() %}
+    {% else %}
+        {% set sidebarHeader = 'online' %}
+        {% set sidebarHeaderLink = path('user_users_online') %}
+        {% set sidebarUsers = getUsersOnline(app.request.attributes.get('page')) %}
+
+    {% endif %}
+
+    {% if app.user %}
+
+    {% endif %}
+
+    {% if (app.request.get('_route') != 'user_profile') and app.user and not app.user.getLookingFor() | length %}
+        <div class="background"
+             style="position:fixed;top: 0;right: 0;left: 0;bottom: 0; background-color: black; opacity: 0.5; z-index: 999"></div>
+        <div class="ui mini active modal" style="width: 320px;margin-right: -155px;z-index: 9999">
+            {# <div class="header">מילוי פרטים</div> #}
+            <div class="content">
+                <p>
+                    {% trans %}
+                        Welcome back to{% endtrans %} {{ site_name }}!
+                    <br>
+                    {% trans %}To continue using the site, please fill out the "here for" field on
+                        your profile
+                    {% endtrans %}
+                </p>
+            </div>
+            <div class="actions">
+                <a href="{{ path('user_profile', {tab: 2}) }}">
+                    <div class="ui approve button">
+                        {% trans %}To edit the field, click here.
+                        {% endtrans %}
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    {% endif %}
+    <div class="main-container">
+
+        <div class="menu">
+            {% if mobile and app.user %}
+                <a href="#" class="tglmenu login-tglmenu"></a>
+                <div class="menu1-login mobile-menu-divs">
+                    {% if app.user %}
+                        <div class="menu-user-image-block">
+                            <div class="menu-settings-trigger">
+                                <i class="cogs icon"></i>
+                            </div>
+                            <div class="clear"></div>
+                            <a href="{{ path('user_profile', {tab: 4}) }}">
+                                <div class="menu-user-image"
+                                     style="background-image: url({{ app.user.getMainPhoto() ? app.user.getMainPhoto().getFaceWebPath() : app.user.getNoPhoto() }});"></div>
+                            </a>
+                        </div>
+                        <div class="username" style="text-align: center; margin-top: -9px;">
+                            {{ app.user.username }}
+                        </div>
+                    {% endif %}
+                    <ul class="mobile-menu-ul">
+                        <a href="{{ path('messenger') }}">
+                            <li>
+                                <div class="menu-num inbox_count hidden"></div>
+                                {% trans %} New messages {% endtrans %}
+                                <i class="messages-icon"></i>
+                            </li>
+                        </a>
+
+                        <a href="{{ path('user_users_photo_request') }}">
+                            <li>
+                                <div class="menu-num showPhoto hidden"></div>
+                                <div class="ask-to">{% trans from "excep" %} Requests to see {% endtrans %}</div>
+                                <br>
+                                {% trans from "excep" %} private photos {% endtrans %}
+                                <i class="showPhoto-icon"></i>
+                            </li>
+                        </a>
+                        {# <img src="/images/main/ask-photos.png" alt="" /> #}
+
+                        {# <a  href="" > #}{# Arena #}
+                        <li onclick="openPopup()">
+                            {% trans %} Arena {% endtrans %}
+                            <i class="arena-icon"></i>
+                        </li>
+                        {# </a> #}
+                        <a href="{{ path('user_users_notifications') }}">
+                            <li>
+
+                                <div class="menu-num arena hidden"></div>
+
+                                {% trans %} Notifications {% endtrans %}
+                                <i class="notification-icon"></i>
+                            </li>
+                        </a>
+                        {# <a href=""> #}
+                        <li class="menu-list-trigger">
+                            <i>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="s-ion-icon">
+                                    <path style="fill: white"
+                                          d="M176 64h64v384h-64zM80 336h64v112H80zM272 272h64v176h-64zM368 176h64v272h-64z"></path>
+                                </svg>
+                            </i>
+                            {% trans %} Lists {% endtrans %}
+
+                            <i class="chevron left icon" style="float: left"></i>
+                        </li>
+                        {# </a> #}
+                        <a href="{{ path('user_search_mobile') }}">
+                            <li>
+                                {% trans from "excep" %} Search {% endtrans %}
+                                <i class="search icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('faq') }}">
+                            <li>
+                                {% trans %} Faq {% endtrans %}
+                                <i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="s-ion-icon">
+                                        <path style="fill:white;"
+                                              d="M256 48C141.2 48 48 141.2 48 256s93.2 208 208 208 208-93.2 208-208S370.8 48 256 48zm21 312h-42V235h42v125zm0-166h-42v-42h42v42z"></path>
+                                    </svg>
+                                </i>
+                            </li>
+                        </a>
+                        <a href="{{ path('contact') }}">
+                            <li>
+                                {% trans %} Contact us {% endtrans %}
+                                <i class="envelope outline icon"></i>
+                            </li>
+                        </a>
+                        {# <a href="{{ path('user_payment') }}"> #}
+                        {# <li> #}
+                        {# {% trans %} Subscription {% endtrans %} #}
+                        {# <i class="subscription-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="s-ion-icon"><path style="fill:white;" d="M256 32c-70.7 0-128 57.3-128 128s57.3 128 128 128 128-57.3 128-128S326.7 32 256 32zm0 208c-44.2 0-80-35.8-80-80s35.8-80 80-80 80 35.8 80 80-35.8 80-80 80zM193.7 307.4c-19.1-8.1-36.2-19.6-50.8-34.3-1.4-1.4-2.8-2.8-4.1-4.3L64 400h96l48 80 48-105.8 25.5-56.2c-8.4 1.3-16.9 2-25.5 2-21.6 0-42.5-4.2-62.3-12.6zM373.3 268.9c-1.3 1.4-2.7 2.9-4.1 4.3-14.6 14.6-31.7 26.2-50.7 34.2L294 361.2l-21.9 48.4L304 480l48-80h96l-74.7-131.1z"></path></svg></i> #}
+                        {# </li> #}
+                        {# </a> #}
+{#                        TODO - add#}
+{#                        <img src="/images/button_latest.png" alt="">#}
+                    </ul>
+                </div>
+
+
+
+
+                <div class="{% if not app.user %}menu1-login {% endif %} menu1-unlogin mobile-menu-divs">
+                    <ul class="mobile-menu-ul">
+                        {# <li> unlogin menu 1</li> #}
+
+                        <a href="{{ path('password_recovery') }}">
+
+                            <li>
+                                {% trans %} Forgot password {% endtrans %}
+                                <i class="blocked-icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('contact') }}">
+                            <li>
+                                {% trans %} Contact us {% endtrans %}
+                                <i class="envelope outline icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('sign_up') }}">
+                            <li>
+                                {% trans %} Sign up free {% endtrans %}
+                                <i class="signup-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="s-ion-icon">
+                                        <path style="fill:white;"
+                                              d="M304 256c52.805 0 96-43.201 96-96s-43.195-96-96-96-96 43.201-96 96 43.195 96 96 96zm0 48c-63.598 0-192 32.402-192 96v48h384v-48c0-63.598-128.402-96-192-96zM112 224v-64H80v64H16v32h64v64h32v-64h64v-32h-64z"></path>
+                                    </svg>
+                                </i>
+                            </li>
+                        </a>
+                    </ul>
+                </div>
+
+                <div class="menu2-settings mobile-menu-divs">
+                    <div class="menu-back-button">
+                        <button class="ui basic button"
+                                style="color: white!important">{% trans %} Back {% endtrans %}</button>
+                    </div>
+                    <ul class="mobile-menu-ul">
+
+                        <a href="{{ path('user_profile') }}">
+                            <li>
+                                {% trans %} Edit Profile {% endtrans %}
+                                <i class="edit-profile-icon"></i>
+                            </li>
+                        </a>
+
+
+                        <a href="{{ path('user_profile', {'tab': 4}) }}">
+                            <li>
+                                {% trans %} Edit Photos{% endtrans %}
+                                <i class="edit-photos-icon"></i>
+                            </li>
+                        </a>
+
+                        <a href="{{ path('user_settings') }}">
+                            <li>
+                                {% trans %} Settings {% endtrans %}
+                                <i class="cogs icon"></i>
+                            </li>
+                        </a>
+
+                        <a href="{{ path('view_user', {'id': app.user.id}) }}">
+                            <li>
+                                {% trans %} My profile {% endtrans %}
+                                <i class="profile-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="s-ion-icon">
+                                        <path style="fill:white;"
+                                              d="M256 256c52.805 0 96-43.201 96-96s-43.195-96-96-96-96 43.201-96 96 43.195 96 96 96zm0 48c-63.598 0-192 32.402-192 96v48h384v-48c0-63.598-128.402-96-192-96z"></path>
+                                    </svg>
+                                </i>
+                            </li>
+                        </a>
+
+
+                        <a href="{{ path('user_change_password') }}">
+                            <li>
+                                {% trans %} Edit Password {% endtrans %}
+                                <i class="change-password-icon"></i>
+                            </li>
+                        </a>
+
+
+                        <a href="{{ path('user_freeze_account') }}">
+                            <li>
+                                {% trans %} Freeze Account {% endtrans %}
+                                <i class="freeze-account-icon"></i>
+                            </li>
+                        </a>
+
+
+                        <a href="{{ path('contact') }}">
+                            <li>
+                                {% trans %} Contact us {% endtrans %}
+                                <i class="envelope outline icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('logout') }}">
+                            <li>
+                                {% trans %} Logout {% endtrans %}
+                                <i class="disconnect-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="s-ion-icon">
+                                        <path style="fill:white;"
+                                              d="M192 277.4h189.7l-43.6 44.7L368 352l96-96-96-96-31 29.9 44.7 44.7H192v42.8z"></path>
+                                        <path style="fill:white;"
+                                              d="M255.7 421.3c-44.1 0-85.5-17.2-116.7-48.4-31.2-31.2-48.3-72.7-48.3-116.9 0-44.1 17.2-85.7 48.3-116.9 31.2-31.2 72.6-48.4 116.7-48.4 44 0 85.3 17.1 116.5 48.2l30.3-30.3c-8.5-8.4-17.8-16.2-27.7-23.2C339.7 61 298.6 48 255.7 48 141.2 48 48 141.3 48 256s93.2 208 207.7 208c42.9 0 84-13 119-37.5 10-7 19.2-14.7 27.7-23.2l-30.2-30.2c-31.1 31.1-72.5 48.2-116.5 48.2zM448.004 256.847l-.849-.848.849-.849.848.849z"></path>
+                                    </svg>
+                                </i>
+                            </li>
+                        </a>
+                        {# <li> settings menu 8</li> #}
+                    </ul>
+                </div>
+                <div class="menu3-lists mobile-menu-divs">
+                    <div class="menu-back-button">
+                        <button class="ui basic button"
+                                style="color: white!important">{% trans %} Back {% endtrans %}</button>
+                    </div>
+                    <ul class="mobile-menu-ul">
+                        <a href="{{ path('user_list_viewed_me') }}">
+                            <li>
+
+                                <div class="menu-num viewedMe hidden"></div>
+
+                                {% trans %} Viewed Me{% endtrans %}
+                                <i class="viewed-icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('user_list_viewed') }}">
+                            <li>
+
+                                <div class="menu-num viewed hidden"></div>
+
+                                {% trans %} Viewed {% endtrans %}
+                                <i class="viewedMe-icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('user_list_connected') }}">
+                            <li>
+
+                                <div class="menu-num connected hidden"></div>
+
+                                {% trans %} Contacted  {% endtrans %}
+                                <i class="contacted-icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('user_list_connected_me') }}">
+                            <li>
+
+                                <div class="menu-num connectedMe hidden"></div>
+
+                                {% trans %} Contacted Me  {% endtrans %}
+                                <i class="contactedMe-icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('user_list_favorited') }}">
+                            <li>
+
+                                <div class="menu-num favorited hidden"></div>
+
+                                {% trans %} Favorited  {% endtrans %}
+                                <i class="favorited-icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('user_list_favorited_me') }}">
+                            <li>
+
+                                <div class="menu-num favoritedMe hidden"></div>
+
+                                {% trans %} Favorited Me {% endtrans %}
+                                <i class="favoritedMe-icon"></i>
+                            </li>
+                        </a>
+                        <a href="{{ path('user_list_black_listed') }}">
+                            <li>
+
+                                <div class="menu-num blacklisted hidden"></div>
+
+                                {% trans %} Blocked  {% endtrans %}
+                                <i class="blocked-icon"></i>
+                            </li>
+                        </a>
+                    </ul>
+                </div>
+
+
+            {% endif %}
+        </div>
+        <div class="headerinn scroll">
+            {#            <div class="topbar"> #}
+            {#                {% if app.user %} #}
+            {#                    <ul class="wrap clearfix"> #}
+            {#                        <li> #}
+
+
+            {#                        </li> #}
+            {#                        <li> #}
+            {#                            <a href="{{ path('logout') }}" class="logout">({% trans %} Logout {% endtrans %})</a> #}
+            {#                        </li> #}
+            {#                        <li> #}
+
+            {#                            <a href="{{ path('view_user', {'id': app.user.id}) }}" class="view_my_profile"> #}
+            {#                            <span class="uimg"> #}
+            {#                                <img src="{% if app.user.getMainPhoto is not null %}{{ app.user.getMainPhoto.getFaceWebPath }}{% else %}{{ app.user.getNoPhoto }}{% endif %}" #}
+            {#                                     alt=""></span> <span #}
+            {#                                        class="uname">{% trans %} Hi {% endtrans %} {{ app.user.username }} #}
+            {#                                <input id="top_thumb" type="hidden" #}
+            {#                                       value="{% if app.user.getMainPhoto is not null %}{{ app.user.getMainPhoto.getFaceWebPath }}{% else %}{{ app.user.getNoPhoto }}{% endif %}"> #}
+            {#                            </span> #}
+            {#                                <input type="hidden" value="{{ app.user.id }}" id="my_user_id"> #}
+            {#                            </a> #}
+            {#                        </li> #}
+
+
+            {#                    </ul> #}
+            {#                {% else %} #}
+            {#                    <div class="form wrap clearfix"> #}
+            {#                        <form action="{{ path('login_check') }}" method="post" id="login_form"> #}
+            {#                            <input type="text" placeholder="{% trans %} Username or Email {% endtrans %}" class="txtbox" #}
+            {#                                   name="_username" value=""/> #}
+            {#                            <input type="password" placeholder="{% trans %} Password {% endtrans %}" class="txtbox" #}
+            {#                                   name="_password"/> #}
+            {#                            <input type="button" value="{% trans %} Login {% endtrans %}" class="btn" #}
+            {#                                   onclick="$('#login_form').submit();"/> #}
+            {#                            <a href="{{ path('password_recovery') }}" #}
+            {#                               class="forgot-pwd">{% trans %} Forgot Password {% endtrans %}</a> #}
+            {#                            <input type="hidden" name="_target_path" value="{{ path('homepage') }}"> #}
+            {#                            <div class="clearfix"></div> #}
+            {#                        </form> #}
+
+            {#                    </div> #}
+            {#                {% endif %} #}
+
+
+            {#            </div> #}
+
+            <div class="logo-menu">
+                <div class="wrap clearfix">
+                    <div class="innlogo"><a href="/"><img src="/images/logo.png" alt=""></a></div>
+
+                    {% if not mobile %}
+
+                        <ul class="menu" id="menu">
+                            <li>
+                                <a href="{{ path('user_homepage') }}"{% if parentPageName == 'user' and routeName != 'user_search_advanced' %} class="active"{% endif %}>{% trans %} Home Page {% endtrans %}</a>
+                            </li>
+                            {% if app.user %}
+                                <li>
+                                    <a href="{{ path('messenger') }}"{% if parentPageName == 'messenger' %} class="active"{% endif %}>{% trans %} Messages {% endtrans %}</a>
+                                </li>
+                            {% endif %}
+                            <li class="desktop"><a
+                                        href="{{ path('user_search_advanced') }}" {% if routeName == 'user_search_advanced' %} class="active"{% endif %}> {% trans from "excep" %} Search {% endtrans %}</a>
+                            </li>
+                            <li class="desktop"><a
+                                        href="{{ path('magazine') }}"{% if parentPageName == 'magazine' %} class="active"{% endif %}>{% trans %} Magazine {% endtrans %}</a>
+                            </li>
+
+
+                            {% if app.user %}
+                                <li class="mobileli">
+                                    <a href="{{ path('mobile_user_lists') }}"{% if routeName == 'mobile_user_lists' %} class="active"{% endif %}>{% trans %} Lists {% endtrans %}</a>
+                                </li>
+                                <li class="mobileli">
+                                    <a href="{{ path('mobile_user_account') }}"{% if routeName == 'mobile_user_account' %} class="active"{% endif %}>{% trans %} My Profile {% endtrans %}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li>
+                                <a href="{{ path('faq') }}"{% if parentPageName == 'faq' %} class="active"{% endif %}>{% trans %} Faq {% endtrans %}</a>
+                            </li>
+                            {% if app.user and ((getSettings().isCharge and app.user.isPaying) or app.user.id == 111 or app.user.id == 124 or app.user.id == 3348) %}
+                                <li>
+                                    <a href="{{ path('user_payment') }}"{% if routeName == 'user_payment' %} class="active"{% endif %}>
+                                        {% trans %}Purchase subscription
+                                        {% endtrans %}
+                                    </a></li>
+                            {% endif %}
+                            <li><a href="#"
+                                   onclick="openPopup()" {% if parentPageName == 'arena' %} class="active"{% endif %}>{% trans %} Arena {% endtrans %}</a>
+                            </li>
+                            {% if app.user %}
+                                <li class="mobileli">
+                                    <a href="{{ path('logout') }}"
+                                       class="logout">{% trans %} Logout {% endtrans %}</a>
+                                </li>
+                            {% endif %}
+                            <li>
+                                <a href="{{ path('contact') }}"{% if parentPageName == 'contact' %} class="active"{% endif %}>{% trans %} Contact {% endtrans %}</a>
+                            </li>
+                        </ul>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+        <!-- headerinn end -->
+
+
+        <div class="innercont">
+            <div class="wrap clearfix">
+
+                {% if app.request.attributes.get('_route') != 'users_public_list_user' and app.request.attributes.get('_route') != 'view_user' %}
+
+                    <div class="asideL desktop">
+                        <div class="greybox">
+                            {% if app.user %}
+                                <a href="{{ sidebarHeaderLink }}" style="color: #fff;">
+                                    <h3 class="clearfix">
+
+                                        <div class="notif-counter {{ sidebarHeader == 'new' ? 'usersNew' : 'usersOnline' }}"
+                                             style="float: right;">{# {{ statistics.users_online }} #}</div>
+
+
+                                        {% if  sidebarHeader == 'new' %}
+                                            {% trans %} New users {% endtrans %}
+                                        {% else %}
+                                            {% trans %} Online {% endtrans %}
+                                        {% endif %}
+
+                                    </h3>
+                                </a>
+
+                            {% else %}
+                                <h3 class="clearfix">
+                                    {% if  sidebarHeader == 'new' %}
+                                        {% trans %} New users {% endtrans %}
+                                    {% else %}
+                                        {% trans %} Online {% endtrans %}
+                                    {% endif %}
+                                </h3>
+                            {% endif %}
+
+                            <div class="greyboxmid clearfix">
+
+                                {% for user in sidebarUsers %}
+                                    {% set dataPos = loop.index % 2 == 0 ? 'right center' : 'left center' %}
+
+                                    {% set linkAttribs = app.user ? '' : 'href=' ~ path('sign_up') %}
+
+                                    <div class="rptimgbox boxcont" data-position="top right"
+                                         data-title="{{ user.username }}"
+                                         data-content="{{ user.age }}, {{ user.region.name }}">
+                                        <input type="hidden" class="userId" value="{{ user.id }}">
+                                        <input type="hidden" class="userGenderId" value="{{ user.gender.id }}">
+                                        <a {% if app.user %}class="f1" href="{{ path('view_user', {'id': user.id}) }}"
+                                           {% else %}href="{{ path('sign_up') }}{% endif %}">
+                                            <img src="{{ user.getMainPhoto and app.user != null ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }}"
+                                                 alt="" class="sidebarPhoto" style="height: 128px; width: 154px;">
+                                        </a>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- asideL end -->
+
+                {% endif %}
+                {% block content %}{% endblock %}
+                <!-- asideL end -->
+                {#            {% endif %} #}
+
+                <div class="asideR">
+                    {% if app.user and app.request.attributes.get('_route') != 'view_user' %}
+
+
+                        <div class="greybox2 desktop">
+                            <div class="greybox2-header">
+                                {% trans %}Hello{% endtrans %} <span class="hello-black">{{ app.user.username }} </span>
+                            </div>
+                            <ul class="greybox2-ul">
+                                <li>
+                                    <a href="{{ path('messenger') }}"><i><img src="/images/main/new-messages.png"
+                                                                              alt=""/></i>
+                                        <span class="oline">{% trans %}New Messages{% endtrans %}
+                                        <div class="notif-counter messages hidden">
+                                        </div>
+                                    </span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ path('user_users_photo_request') }}"><i style="margin-top: 10px;"><img
+                                                    src="/images/main/ask-photos.png" alt=""/></i>
+                                        <span class="oline">
+                                        {% trans %}Requests to see private images{% endtrans %}
+                                    </span>
+
+                                        <div class="notif-counter showPhoto hidden">
+                                        </div>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="#" onclick="openPopup()">
+                                        <i><img src="/images/main/arena.png" alt=""/></i>
+                                        <span class="oline">{% trans %}To the Arena{% endtrans %}
+                                    </span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ path('user_users_notifications') }}"><i><img
+                                                    src="/images/main/arena-notif.png" alt=""/></i>
+                                        <span class="oline">{% trans %}Notifications{% endtrans %}
+                                            {# התראות מהזירה #}
+                                              <div class="notif-counter arena hidden">
+                                              </div>
+                                    </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('user_users_online') }} "><i><img src="/images/main/online.png"
+                                                                                       alt=""/></i>
+                                        <span>
+                                        {% trans %}Online
+                                        {% endtrans %}
+                                            <div class="notif-counter usersOnline">
+                                            </div>
+                                    </span>
+                                    </a>
+                                </li>
+
+                                {# <li> #}
+                                {# <a href="{{ path('arena') }} "><i><img src="/images/main/icon3.png" alt="" /></i> #}
+                                {# <span> #}
+                                {# {% trans %} Arena {% endtrans %} #}
+                                {# </span> #}
+                                {# </a> #}
+                                {# </li> #}
+                            </ul>
+                        </div>
+                        <!-- end -->
+
+                        <div class="greybox desktop">
+                            <a href="#" class="tgl">
+                                {% trans %}Lists
+                                {% endtrans %}
+                            </a>
+                            <h3>{% trans %}Lists
+                                {% endtrans %}</h3>
+                            <div class="greyboxmid">
+                                <ul>
+                                    <li>
+                                        <a href="{{ path('user_list_viewed_me') }}">
+                                            <i><img src="/images/main/view-me.png"
+                                                    alt=""/></i>{% trans %}Viewed me{% endtrans %}
+                                            <div class="notif-counter viewedMe"></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_list_viewed') }}">
+                                            <i><img src="/images/main/viewed.png" alt=""/></i>
+                                            {% trans %}
+                                                I Viewed
+                                            {% endtrans %}
+                                            <div class="notif-counter viewed"></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_list_connected') }}">
+                                            <i><img src="/images/main/contacted.png" alt=""/></i>
+                                            {% trans %}
+                                                I Contacted
+                                            {% endtrans %}
+                                            <div class="notif-counter connected"></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_list_connected_me') }}">
+                                            <i><img src="/images/main/contact-me.png" alt=""/></i>
+                                            {% trans %}
+                                                Contacted me
+                                            {% endtrans %}
+                                            <div class="notif-counter connectedMe"></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_list_favorited') }}">
+                                            <i><img src="/images/main/my-favs.png" alt=""/></i>
+                                            {% trans %}
+                                                Added to Favorites
+                                            {% endtrans %}
+                                            <div class="notif-counter favorited"></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_list_favorited_me') }}">
+                                            <i><img src="/images/main/fav-me.png" alt=""/></i>
+                                            {% trans %}Added me to favorites
+                                            {% endtrans %}
+                                            <div class="notif-counter favoritedMe"></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_list_black_listed') }}">
+                                            <i><img src="/images/main/blocked.png" alt=""/></i>
+                                            {% trans %}Blocked
+                                            {% endtrans %}
+                                            <div class="notif-counter blacklisted"></div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- end -->
+
+                        {% set sidebarForm = getQuickSearchSidebarForm() %}
+
+                        <div class="greybox3 desktop">
+                            <h3 class="tgl_qs">
+                                {% trans %}Quick Search
+                                {% endtrans %}
+                                <div class="white-circle"> +</div>
+                            </h3>
+                            <form action="{{ path('user_search_results') }}" method="post"
+                                  id="quick_search_sidebar_form">
+                                <div class="clear ui form"></div>
+                                <div class="field">
+                                    <label>{{ form_label(sidebarForm.username) }}</label>
+                                    <div class="field">
+                                        <div class="ui input small">
+                                            {{ form_widget(sidebarForm.username) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label>{{ form_label(sidebarForm.gender) }}</label>
+                                    <div class="field2 sidebarCheckboxes">
+                                        <div class="half">
+                                            {% for gender in sidebarForm.gender %}
+                                            {% if loop.index == 3 %}
+                                        </div>
+                                        <div class="half">
+                                            {% endif %}
+                                            <span class="chkbox">
+                                            <div class="ui checkbox region">
+                                                {{ form_widget(gender) }}
+                                                {{ form_label(gender) }}
+                                            </div>
+                                        </span>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="half">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <div>Age</div>
+                                    <div class="field" style="width: 47%; display: inline-block">
+                                        <label style="float: left">{{ form_label(sidebarForm.ageFrom) }}</label>
+                                        <div class="select" style="margin: 0; width: 40px;">
+                                            {{ form_widget(sidebarForm.ageFrom) }}
+                                        </div>
+                                    </div>
+                                    <div class="field" style="width: 47%; display: inline-block; float: right;">
+                                        <label>{{ form_label(sidebarForm.ageTo) }}</label>
+                                        <div class="select"
+                                             style="width: 40px;display: inline-block; margin-inline-end: 12px">
+                                            {{ form_widget(sidebarForm.ageTo) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {#                            <div class="field"> #}
+                                {#                                <label>{{ form_label(sidebarForm.region) }}</label> #}
+                                {#                                <div class="field2 sidebarCheckboxes" style="width: 78%;"> #}
+                                {#                                    <div class="half"> #}
+                                {#                                        {% for region in sidebarForm.region %} #}
+                                {#                                        {% if loop.index == 6 %} #}
+                                {#                                    </div> #}
+                                {#                                    <div class="half"> #}
+                                {#                                        {% endif %} #}
+                                {#                                        <span class="chkbox"> #}
+                                {#                                            <div class="ui checkbox region"> #}
+                                {#                                                {{ form_widget(region) }} #}
+                                {#                                                {{ form_label(region) }} #}
+                                {#                                            </div> #}
+                                {#                                        </span> #}
+                                {#                                        {% endfor %} #}
+                                {#                                    </div> #}
+                                {#                                    <div class="half"> #}
+
+                                {#                                    </div> #}
+                                {#                                </div> #}
+                                {#                            </div> #}
+                                <div class="field" style="width: 100%;">
+                                    <label>{{ form_label(sidebarForm.lookingFor) }}</label>
+                                    <div class="field2 sidebarCheckboxes">
+                                        {% for lookingFor in sidebarForm.lookingFor %}
+                                            <span class="chkbox" style="width: 100%;">
+                                            <div class="ui checkbox region">
+                                                {{ form_widget(lookingFor) }}
+                                                {{ form_label(lookingFor) }}
+                                            </div>
+                                        </span>
+                                        {% endfor %}
+                                        <div class="half">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {#                                <div class="field"> #}
+                                {#                                    <div class="field2 cb sidebarCheckboxes"> #}
+                                {#                                    </div> #}
+                                {#                                </div> #}
+                                <div style="text-align: end">
+                                    <input type="submit" value="Search" class="btn"/>
+                                </div>
+                                {{ form_rest(sidebarForm) }}
+                            </form>
+                        </div>
+                        <!-- end -->
+
+                        <div class="greybox desktop">
+                            <a href="#" class="tgl">{% trans %}My Profile{% endtrans %}</a>
+                            <h3>{% trans %}Account Management{% endtrans %}</h3>
+                            <div class="greyboxmid">
+                                <ul>
+                                    <li>
+                                        <a href="{{ path('view_user', {'id': app.user.id}) }}">
+                                            <i class="icon user red" aria-hidden="true"></i>
+                                            {% trans %}My Profile{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_profile') }}">
+                                            <i><img src="/images/main/edit-profile.png"
+                                                    alt=""/></i>
+                                            {% trans %}Edit Profile{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_profile', {'tab': 4}) }}">
+                                            <i><img src="/images/main/edit-photos.png" alt=""/></i>
+                                            {% trans %}Edit Photos{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_settings') }}">
+                                            <i class="cogs icon"></i>
+                                            {% trans %}Settings{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_manage_list_favorited') }}">
+                                            <i><img src="/images/main/fav-me.png" alt=""/></i>
+                                            {% trans %}Manage favorites list{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_change_password') }}">
+                                            <i><img src="/images/main/change-pass.png" alt=""/></i>
+                                            {% trans %}Update Password{% endtrans %}
+                                        </a>
+                                    </li>
+                                    {# <li><a href="#"><i><img src="/images/right-menu-13.png" alt="" /></i> הגדרת הודעות</a></li> #}
+                                    <li>
+                                        <a href="{{ path('user_manage_list_black_listed') }}">
+                                            <i><img src="/images/main/blocked.png" alt=""/></i>
+                                            {% trans %}Manage Blocked Users{% endtrans %}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('user_freeze_account') }}">
+                                            <i><img src="/images/main/freeze-profile.png" alt=""/></i>
+                                            {% trans %}Freeze Account{% endtrans %}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('logout') }}">
+                                            <i class="icon power red"></i>
+                                            {% trans %}Logout{% endtrans %}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- end -->
+                    {% endif %}
+
+                    {% if app.user %}
+                        {# <div class="greybox2 ad">
+                        <a href="#"><img src="/images/ad.jpg" alt="" /></a>
+                    </div> #}
+                    {% else %}
+                        {# <div class="greybox2 ad"> #}
+                        {# <a href="{{ path('sign_up') }}"><img src="/images/free_reg_banner.png" alt="" /></a> #}
+                        {# </div> #}
+                    {% endif %}
+                    <!-- end -->
+                </div>
+
+                <!-- asideR end -->
+            </div>
+        </div>
+        <!-- innercont end -->
+
+        {% if mobile is defined and mobile and app.user %}
+            <div class="clear"></div>
+            <div class="mobile-bottom-menu {% if hideMenu is defined and hideMenu %} hidden {% endif %}">
+                <div class="mobile-menu1">
+                    <ul>
+                        <li>
+                            <a href="{{ path('user_users_online') }}">
+                                <div class="icon" style="margin-right: 7px;">
+                                    <img src="{{ asset('/images/users_online.png') }}" alt="">
+                                </div>
+                            </a>
+                            <span {{ app.request.get('_route') == 'user_users_online' ? 'class="active-mobile"' : '' }}>
+                            {% trans %} Online {% endtrans %}
+                        </span>
+                        </li>
+                        <li onclick="openPopup()">
+                            <div class="icon" style="margin-right: 6px;">
+                                <img src="{{ asset('/images/the-arena.png') }}" alt="">
+                            </div>
+                            <span>{% trans %} Arena {% endtrans %}</span>
+                        </li>
+                        <li class="bottom-near-me {{ app.request.get('filter') == 'distance' ? 'active-mobile' : '' }}">
+                            {# <a href=""> #}
+                            <div class="icon">
+                                <i class="map marker alternate icon" style="margin-right: 9px"></i>
+                            </div>
+                            <span>
+                                {% trans %} Near Me {% endtrans %}
+                            </span>
+                            {# </a> #}
+                        </li>
+                        <li>
+                            <a href="{{ path('messenger') }}">
+                                <div class="icon">
+                                    <i class="messages-icon" style="margin-right: 5px"></i>
+                                </div>
+                                <span {{ app.request.get('_route') == 'messenger' ? 'class="active-mobile"' : '' }}>
+                                {% trans %} Messages {% endtrans %}
+                            </span>
+                                <div class="counter message-counter hidden"></div>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="swiper1">
+                        <i class="ellipsis vertical icon"></i>
+                    </div>
+                </div>
+                <div class="mobile-menu2">
+                    <div class="swiper2">
+                        <i class="ellipsis vertical icon"></i>
+                    </div>
+                    <ul>
+                        <li class="bottom myfav">
+                            <a href="{{ path('user_list_favorited') }}">
+                                <div class="icon" style="margin-right: 14px">
+                                    <img src="{{ asset('images/favorited.png') }}" alt="" style="Width: 100%">
+                                </div>
+                                <div class="text {{ app.request.get('_route') == 'user_list_favorited' ? 'active-mobile' : '' }}">
+                                    {% trans %} Favorites {% endtrans %}
+                                </div>
+                                <div class="counter favorited hidden"></div>
+                            </a>
+                        </li>
+
+                        <li class="bottom add-me">
+                            <a href="{{ path('user_list_favorited_me') }}">
+                                <div class="icon">
+                                    <img src="{{ asset('images/favorited_me.png') }}" alt="" style="width: 100%;">
+                                </div>
+                                <div class="text {{ app.request.get('_route') == 'user_list_favorited_me' ? 'active-mobile' : '' }}">
+                                    {% trans %} Added me to favorites {% endtrans %}
+                                </div>
+                                <div class="counter favoritedMe hidden"></div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ path('user_users_notifications') }}">
+                                <div class="icon" style="margin-right: 11px">
+                                    <img src="{{ asset('images/notifications_ft.png') }}" alt="" style="width: 100%">
+                                </div>
+                                <span {{ app.request.get('_route') == 'user_users_notifications' ? 'class="active-mobile"' : '' }}>
+                                {% trans %} Notifications {% endtrans %}
+                            </span>
+                                <div class="counter arena hidden"></div>
+                            </a>
+                        </li>
+                        {# user_mobile__search #}
+                        <li>
+                            <a href="{{ path('user_search_mobile') }}">
+                                <div class="icon" style="margin-right: 17px">
+                                    <i class="search icon"></i>
+                                </div>
+                                <span style="margin-right: 11px" {{ app.request.get('_route') == 'user_search_mobile' ? 'class="active-mobile"' : '' }}>
+                            {% trans from "excep" %} Search {% endtrans %}
+                        </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </div><!-- Main Container -->
+
+    <input type="hidden" id="no_photo_url_1" value="/images/no_photo_1.jpg">
+    <input type="hidden" id="no_photo_url_2" value="/images/no_photo_2.jpg">
+
+    {% if app.user %}
+
+        <input type="hidden" id="current_user_gender" value="{{ app.user.gender.id }}">
+        <input type="hidden" id="search_filter_by_default" value="lastActivity">
+        <input type="hidden" id="search_url_when_switching_filter" value="{{ app.request.requesturi }}">
+        <input type="hidden" name="" class="isMobile" value="{{ mobile is defined ? mobile : 'false' }}">
+
+
+    {% else %}
+        <input type="hidden" id="search_url_when_switching_filter" value="{{ path('users_public_list', {'page': 1}) }}">
+    {% endif %}
+
+
+{% endblock %}
+

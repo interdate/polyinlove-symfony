@@ -1,0 +1,501 @@
+imports:
+  - { resource: parameters.yml }
+  - { resource: security.yml }
+  - { resource: services.yml }
+#    - { resource: ../../vendor/knplabs/doctrine-behaviors/config/orm-services.yml }
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+  facebook_group_link: 'https://www.facebook.com/Polyamorylove-103278322261988'
+  locale: 'en'
+  base_url: 'www.PolyinLove.com'
+  contact_email: 'info@PolyinLove.com'
+  admin_email: 'admin@PolyinLove.com'
+  do_not_reply: 'do_not_reply@PolyinLove.com'
+  instagram_link: ''
+  site_name: 'PolyinLove'
+  google_play: ''
+  company_email: 'contact@interdate-ltd.co.il'
+  company_site: 'www.interdate-ltd.co.il'
+  telepay_terminal: 'interdate1_ben'
+  invoice:
+    supplier_number: '513453340'
+    supplier_name: 'אינטרדייט בעיימ'
+    supplier_address: 'המלאכה 6'
+    supplier_city: 'לוד'
+    supplier_phone: '08-9214729'
+    supplier_email: '%company_email%'
+
+framework:
+  default_locale: 'en'
+  translator: { fallbacks: [ '%locale%' ] }
+  #esi:             ~
+  secret: "%secret%"
+  router:
+    resource: "%kernel.root_dir%/config/routing.yml"
+    strict_requirements: ~
+  form: ~
+  csrf_protection: ~
+  validation: { enable_annotations: true }
+  #serializer:      { enable_annotations: true }
+  templating:
+    engines: [ 'twig' ]
+    #assets_version: SomeVersionScheme
+  trusted_hosts: ~
+  trusted_proxies: ~
+  session:
+    # handler_id set to null will use default session handler from php.ini
+    handler_id: session.handler.native_file
+    save_path: "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+  fragments: ~
+  http_method_override: true
+  assets: ~
+
+# Twig Configuration
+twig:
+  debug: "%kernel.debug%"
+  strict_variables: "%kernel.debug%"
+  globals:
+    messenger: "@messenger"
+    default_lang: en
+    langs:
+      en: English
+    base_url: '%base_url%'
+    contact_email: '%contact_email%'
+    admin_email: 'info@polyinLove.com'
+    do_not_reply: '%do_not_reply%'
+    site_name: '%site_name%'
+    google_play: '%google_play%'
+    company_email: '%company_email%'
+    facebook_group_link: '%facebook_group_link%'
+    instagram_link: '%instagram_link%'
+
+
+liip_imagine:
+  resolvers:
+    default:
+      web_path:
+        web_root: "%kernel.root_dir%/../public_html/"
+
+  loaders:
+    default:
+      filesystem:
+        data_root: "%kernel.root_dir%/../public_html/"
+
+  filter_sets:
+    cache: ~
+    optimize_original:
+      quality: 100
+      filters:
+        thumbnail: { size: [ 800, 800 ], mode: inset }
+        #auto_rotate: ~
+        #rotate:
+        #    angle: 90
+        #    degree: true
+    face:
+      quality: 100
+
+    optimize_face:
+      quality: 100
+      filters:
+        thumbnail: { size: [ 150, 150 ], mode: inset }
+        #auto_rotate: ~
+
+    circle_article_image:
+      quality: 75
+      filters:
+        thumbnail: { size: [ 202, 202 ], mode: inset }
+
+    rotate_r:
+      quality: 100
+      filters:
+        rotate:
+          angle: 90
+
+    rotate_l:
+      quality: 100
+      filters:
+        rotate:
+          angle: -90
+
+    full_mobile_photo:
+      quality: 100
+      filters:
+        thumbnail: { size: [ 1000, 300 ], mode: inset }
+
+    mobile_arena:
+      quality: 100
+      filters:
+        thumbnail: { size: [ 300, 300 ], mode: inset }
+
+    desktop_arena:
+      quality: 100
+      filters:
+        thumbnail: { size: [ 800,800 ], mode: inset }
+
+
+
+# Assetic Configuration
+assetic:
+  debug: "%kernel.debug%"
+  use_controller: false
+  bundles: [ ]
+  filters:
+    cssrewrite: ~
+
+# DQL Configuration
+doctrine:
+  dbal:
+    default_connection: default
+    connections:
+      default:
+        driver: pdo_mysql
+        host: "%database_host%"
+        port: "%database_port%"
+        dbname: "%database_name%"
+        user: "%database_user%"
+        password: "%database_password%"
+        charset: utf8mb4
+        default_table_options:
+          #                    charset: utf8
+          collate: utf8mb4_bin
+      messages:
+        driver: pdo_mysql
+        host: "%database_host%"
+        port: "%database_port%"
+        dbname: "%database_name%"
+        user: "%database_user%"
+        password: "%database_password%"
+        default_table_options:
+          charset: utf8
+          collate: utf8_unicode_ci
+
+
+  orm:
+    auto_generate_proxy_classes: "%kernel.debug%"
+    default_entity_manager: default
+    entity_managers:
+      default:
+        connection: default
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        mappings:
+          AppBundle: ~
+        dql:
+          numeric_functions:
+            get_distance: AppBundle\DQL\GetDistanceFunction
+          string_functions:
+            IF: AppBundle\DQL\IfFunction
+          datetime_functions:
+            DAYOFYEAR: DoctrineExtensions\Query\Mysql\DayOfYear
+
+      messages:
+        connection: messages
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        mappings:
+          AppBundle: ~
+        dql:
+          numeric_functions:
+            get_distance: AppBundle\DQL\GetDistanceFunction
+
+
+
+
+# Swiftmailer Configuration
+swiftmailer:
+  transport: "%mailer_transport%"
+  host: "%mailer_host%"
+  username: "%mailer_user%"
+  password: "%mailer_password%"
+  spool: { type: memory }
+
+
+sonata_block:
+  default_contexts: [ cms ]
+  blocks:
+    # enable the SonataAdminBundle block
+    sonata.admin.block.admin_list:
+      contexts: [ admin ]
+    sonata.admin.block.search_result:
+      contexts: [ admin ]
+#
+#sonata_translation:
+##    locales: "%app.locales_array%"
+#    default_locale: "%locale%"
+#    # here enable the types you need
+#    gedmo:
+#        enabled: true
+#    knplabs:
+#        enabled: true
+#    #phpcr:
+#    #    enabled: true
+
+sonata_admin:
+  options:
+    html5_validate: true     # enable or disable html5 form validation
+    confirm_exit: true     # enable or disable a confirmation before navigating away
+    use_select2: true     # enable or disable usage of the Select2 jQuery library
+    use_icheck: true     # enable or disable usage of the iCheck library
+    use_bootlint: false    # enable or disable usage of Bootlint
+    use_stickyforms: true     # enable or disable the floating buttons
+    form_type: standard # can also be 'horizontal
+
+  templates:
+    layout: sonata_admin/layout.html.twig
+#        edit:                AppBundle:CRUD:edit.html.twig
+
+
+
+services:
+  SignUpFlow:
+    class: AppBundle\Form\Type\SignUpFlow
+    parent: craue.form.flow
+    scope: request
+
+  SignUpApiFlow:
+    class: AppBundle\Form\Type\SignUpApiFlow
+    #autoconfigure: true
+    parent: craue.form.flow
+    #scope: request
+
+  activity_listener:
+    class: AppBundle\EventListener\ActivityListener
+    arguments: [ '@security.token_storage', '@doctrine.orm.entity_manager' ]
+    tags:
+      - { name: kernel.event_listener, event: kernel.controller, method: onCoreController }
+
+  login_listener:
+    class: AppBundle\EventListener\LoginListener
+    arguments: [ '@security.token_storage', '@doctrine.orm.entity_manager' ]
+    tags:
+      - { name: kernel.event_listener, event: security.interactive_login }
+
+  #    ajax_listener:
+  #        class: AppBundle\EventListener\ApiAuthenticationListener
+  #        tags:
+  #            - { name: kernel.event_listener, event: kernel.exception, method: onCoreException, priority: 1000 }
+
+  app.twig_extension:
+    class: AppBundle\Twig\AppExtension
+    arguments: [ "@request_stack","@doctrine","@service_container","@messenger" ]
+    public: false
+    tags:
+      - { name: twig.extension }
+
+  messenger:
+    class: AppBundle\Services\Messenger\Messenger
+    arguments: [ '@doctrine.orm.messages_entity_manager','%site_name%', '%base_url%', '%fcm_auth_key%' ]
+
+  banners:
+    class: AppBundle\Services\BannerService
+    arguments: [ '@doctrine.orm.entity_manager' ]
+  pushes:
+    class: AppBundle\Services\PushService\pushService
+    arguments: [ '@doctrine.orm.entity_manager' ]
+
+  api_key_user_provider:
+    class: AppBundle\Security\ApiKeyUserProvider
+    arguments: [ '@doctrine' ]
+
+  apikey_authenticator:
+    class: AppBundle\Security\ApiKeyAuthenticator
+    arguments: [ '@api_key_user_provider' ]
+
+  api_user_provider:
+    class: AppBundle\Security\ApiUserProvider
+    arguments: [ '@doctrine' ]
+
+  api_authenticator:
+    class: AppBundle\Security\ApiAuthenticator
+    arguments: [ '@api_user_provider', '@security.password_encoder' ]
+
+  facebook_user_provider:
+    class: AppBundle\Security\FacebookKeyUserProvider
+    arguments: [ '@doctrine' ]
+
+
+  facebookkey_authenticator:
+    class: AppBundle\Security\FacebookKeyAuthenticator
+    arguments: [ '@facebook_user_provider', '@security.password_encoder' ]
+
+  sonata_admin.area:
+    class: AppBundle\SonataAdmin\AreaAdmin
+    arguments: [ ~, AppBundle\Entity\Area, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Area }
+
+  sonata_admin.body:
+    class: AppBundle\SonataAdmin\BodyAdmin
+    arguments: [ ~, AppBundle\Entity\Body, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Body }
+
+  sonata_admin.children:
+    class: AppBundle\SonataAdmin\ChildrenAdmin
+    arguments: [ ~, AppBundle\Entity\Children, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Children }
+
+  sonata_admin.city:
+    class: AppBundle\SonataAdmin\CityAdmin
+    arguments: [ ~, AppBundle\Entity\City, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: City }
+
+  sonata_admin.gender:
+    class: AppBundle\SonataAdmin\GenderAdmin
+    arguments: [ ~, AppBundle\Entity\Gender, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Gender }
+
+  sonata_admin.hair:
+    class: AppBundle\SonataAdmin\HairAdmin
+    arguments: [ ~, AppBundle\Entity\Hair, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Hair }
+
+  sonata_admin.origin:
+    class: AppBundle\SonataAdmin\OriginAdmin
+    arguments: [ ~, AppBundle\Entity\Origin, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Origin }
+
+  sonata_admin.region:
+    class: AppBundle\SonataAdmin\RegionAdmin
+    arguments: [ ~, AppBundle\Entity\Region, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Region }
+
+  sonata_admin.relationshipStatus:
+    class: AppBundle\SonataAdmin\RelationshipStatusAdmin
+    arguments: [ ~, AppBundle\Entity\RelationshipStatus, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: RelationshipStatus }
+
+  sonata_admin.RelationshipType:
+    class: AppBundle\SonataAdmin\RelationshipTypeAdmin
+    arguments: [ ~, AppBundle\Entity\RelationshipType, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: RelationshipType }
+
+  sonata_admin.SexOrientation:
+    class: AppBundle\SonataAdmin\SexOrientationAdmin
+    arguments: [ ~, AppBundle\Entity\SexOrientation, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: SexOrientation }
+
+  sonata_admin.Smoking:
+    class: AppBundle\SonataAdmin\SmokingAdmin
+    arguments: [ ~, AppBundle\Entity\Smoking, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Smoking }
+
+  sonata_admin.Zodiac:
+    class: AppBundle\SonataAdmin\ZodiacAdmin
+    arguments: [ ~, AppBundle\Entity\Zodiac, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Zodiac }
+
+  sonata_admin.LookingFor:
+    class: AppBundle\SonataAdmin\LookingForAdmin
+    arguments: [ ~, AppBundle\Entity\LookingFor, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: LookingFor }
+
+  sonata_admin.WordBlocked:
+    class: AppBundle\SonataAdmin\WordBlockedAdmin
+    arguments: [ ~, AppBundle\Entity\WordBlocked, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: WordBlocked }
+  sonata_admin.email_blocked:
+    class: AppBundle\SonataAdmin\EmailBlockedAdmin
+    arguments: [ ~, AppBundle\Entity\EmailBlocked, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: EmailBlocked }
+
+  sonata_admin.phone_blocked:
+    class: AppBundle\SonataAdmin\PhoneBlockedAdmin
+    arguments: [ ~, AppBundle\Entity\PhoneBlocked, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: PhoneBlocked }
+# Nelmio CORS Configuration
+nelmio_cors:
+  defaults:
+    allow_credentials: false
+    allow_origin: [ '*' ]
+    allow_headers: [ '*' ]
+    allow_methods: [ 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS' ]
+    max_age: 3600
+    hosts: [ ]
+    origin_regex: false
+
+# FOSRest Configuration
+fos_rest:
+  param_fetcher_listener: true
+  body_listener:
+    decoders:
+      json: fos_rest.decoder.json
+  format_listener: true
+
+  #enabled: true
+  #rules:
+  #    - { path: '^/open_api', priorities: ['json'], fallback_format: json, prefer_extension: false }
+
+  #    - { path: '^/api/doc', priorities: ['text/html', '*/*'], fallback_format: html, prefer_extension: true }
+  #    - { path: '^/', priorities: ['text/html', '*/*'], fallback_format: html, prefer_extension: true }
+  #    - { path: '^/api', priorities: ['json'], fallback_format: json, prefer_extension: false }
+  view:
+    view_response_listener: 'force'
+    #body_listener: true
+    #format_listener:
+    #    rules:
+    #        - { path: '^/', priorities: ['json'], fallback_format: json, prefer_extension: false }
+    # param_fetcher_listener: true
+    #view:
+    #    view_response_listener: 'force'
+    #    formats:
+    # json: true
+  routing_loader:
+    default_format: json
+
+nelmio_api_doc: ~
+
+knp_doctrine_behaviors:
+
+  blameable: false
+  geocodable: ~     # Here null is converted to false
+  loggable: ~
+  sluggable: true
+  soft_deletable: true
+  # All others behaviors are disabled
+
+mobile_detect:
+  redirect:
+    full:
+      is_enabled: false            # default false
+      host: https://site.com       # with scheme (http|https), default null, url validate
+      status_code: 301            # default 302
+      action: redirect            # redirect, no_redirect, redirect_without_path
+    mobile:
+      is_enabled: false            # default false
+      host: https://m.site.com     # with scheme (http|https), default null, url validate
+      status_code: 301            # default 302
+      action: redirect            # redirect, no_redirect, redirect_without_path
+    tablet:
+      is_enabled: false            # default false
+      host: https://t.site.com     # with scheme (http|https), default null, url validate
+      status_code: 301            # default 302
+      action: redirect            # redirect, no_redirect, redirect_without_path
+    detect_tablet_as_mobile: true   # default false
+  switch_device_view:
+    save_referer_path: true        # default true
+    # true  redirectUrl = http://site.com/current/path?currentQuery=string
+    # false redirectUrl = http://site.com
+  service:
+    mobile_detector: mobile_detect.mobile_detector.default
+  cookie_key: "device_view"                     # default
+  cookie_expire_datetime_modifier: "+1 month"   # default
+  switch_param: "device_view"                   # default
+  #device_view_class: "SunCat\MobileDetectBundle\Helper\DeviceView"
+  #request_response_listener_class: "SunCat\MobileDetectBundle\EventListener\RequestResponseListener"
+  #twig_extension_class: "SunCat\MobileDetectBundle\Twig\Extension\MobileDetectExtension"

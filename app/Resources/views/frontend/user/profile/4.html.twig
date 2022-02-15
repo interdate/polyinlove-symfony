@@ -1,0 +1,428 @@
+{% if not mobile %}
+    <div class="hmaformsec three edit-photo-form">
+
+        <div class="ui toggle checkbox photo-check-home ">
+            <input class="photo-home-page-checkbox" type="checkbox" name="onHome"
+                   id="onHome" {% if app.user.getIsOnHomepage() %} checked="checked" {% endif %}>
+            <label for="onHome">{% trans %} I allow my photo be displayed on front page {% endtrans %} </label>
+        </div>
+
+        <input type="hidden" id="save_photo_data_url" value="/user/photo/data">
+        <input type="hidden" id="photos_url" value="{{ path('user_profile', {'tab': 4}) }}">
+        <input type="hidden" id="mainPhotoAlreadyExists" value="{% if app.user.photos|length %}1{% else %}0{% endif %}">
+
+        {% if mobile %}
+            <div class="descp">
+                {% trans %}
+                    You may upload up to 4 pictures. Please use jpg format only<br/>
+
+                    If you encountered a problem, you may email the site admins at:
+                {% endtrans %}
+                <br/>
+
+                <a href="mailto:{{ contact_email }}">{{ contact_email }}</a><br/>
+                {% trans %}
+                    Please mention the email address you
+                    used to sign up to the site with.
+                {% endtrans %}
+            </div>
+            <br>
+            <p>
+                Every photo uploaded to the site must be approved by the admins. Our office hours are Sun- Thu, 09:00 -
+                16:00 IST.
+            </p>
+
+
+            <h5>Your Photo must be:</h5>
+
+            <ul>
+                <li>a picture of yourself</li>
+                <li>clear, and of good quality</li>
+                <li>no nudity, partial or full</li>
+                <li>no pictures of children</li>
+            </ul>
+        {% endif %}
+
+        <div class="photos">
+
+            {% for photo in app.user.photos %}
+
+                <div class="harsm5 clearfix photo" id="{{ photo.getWebPath() }}">
+                    <div class="imgbox">
+                        <img src="{{ photo.getWebPath() }}" alt="">
+                    </div>
+                    <div class="rightdesc">
+                        <ul class="ultitle clearfix">
+                            <li class="col1">main image</li>
+                            <li class="col1">private image {# (for subscribers only) #}</li>
+                            <li class="col3">state</li>
+                            <li class="col4"></li>
+                        </ul>
+
+                        <ul class="ulrow clearfix">
+                            <li class="col1">
+                                <div class="ui toggle checkbox mainPhoto">
+                                    <input type="radio" name="radio"
+                                           value="{{ photo.getId() }}" {{ photo.isPrivate or (app.user.getMainPhoto() and app.user.getMainPhoto().getIsValid() and not photo.isValid()) ? 'disabled="disabled"' : '' }} {{ photo.isMain ? 'checked="checked"' : '' }}>
+                                    <label></label>
+                                </div>
+                            </li>
+
+                            <li class="col1">
+                                <div class="ui toggle checkbox">
+
+                                    <input type="checkbox" class="privatePhoto"
+                                           name="private" {{ (photo.isMain or (getSettings().isCharge and not app.user.isPaying)) ? 'disabled="disabled"' : '' }}
+                                           value="{{ photo.getId() }}" {{ photo.isPrivate ? 'checked="checked"' : '' }}>
+                                    <label for="private"></label>
+                                </div>
+                            </li>
+                            <li class="col3"
+                                style="color: {{ photo.isValid ? 'green' : 'red' }}">{{ photo.isValid ? 'approved' : 'waiting approval' }}</li>
+                            <li class="col4"><a href="#" class="removePhoto" id="{{ photo.getId() }}">remove</a></li>
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+
+
+        <div class="ui small basic modal">
+            <div class="ui icon header">
+                <i class="trash icon"></i>
+                remove image?
+            </div>
+            <div class="content"><p></p></div>
+            <div class="ui center aligned grid">
+                <div class="actions">
+                    <div class="ui red basic cancel inverted button">
+                        <i class="remove icon"></i>
+                        no
+                    </div>
+                    <div class="ui green ok inverted button">
+                        <i class="checkmark icon"></i>
+                        yes
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="harsm4 harsm5">
+
+            <div class="browseupload clearfix">
+                <div class="cloudinaryForm hidden">
+                </div>
+
+                <input type="text" id="" class="browseinput" value="">
+                <input type="button" class="browsebutt" onclick="$('.photoInput').click()" value="Browse">
+            </div>
+            <div class="ui progress" style="bottom: 43px">
+                <div class="bar">
+                    <div class="progress"></div>
+                </div>
+            </div>
+
+            <div class="clr"></div>
+            </form>
+            <form method="POST" action="{{ path('user_photo_data') }}" enctype="multipart/form-data" class="hidden">
+                <div class="browser_field">
+                    <div class="filediv">
+                        <div class="hfile">
+                            <label for="photo" class="browsebutt"><strong>{% trans %}Browse{% endtrans %}</strong><span>&nbsp;</span></label>
+                            <input type="file" class="browseinput photoInput registrPhotoInput" name="photo"
+                                   accept="image/x-png,image/gif,image/jpeg">
+                            <input type="submit" class="submitPhoto" id="">
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+
+            {% if not mobile %}
+                <div class="descp">
+                    {% trans %}
+                        If you encountered a problem, you may email the site admins at:
+                    {% endtrans %}
+                    <br/>
+
+                    <a href="mailto:{{ contact_email }}">{{ contact_email }}</a><br/>
+                    {% trans %}
+                        Please mention the email address you used to sign up to the site with.
+                    {% endtrans %}
+                </div>
+
+                <p>{% trans %}
+                        Every photo must be approved by the site admins. Our office hours are Sun- Thu 09:00 - 16:00 IST.
+                    {% endtrans %}
+                </p>
+
+                <h5>
+                    {% trans %}
+                        Your Photo must be:
+                    {% endtrans %}
+                </h5>
+
+                <ul>{% trans %}
+                        <li>a picture of yourself</li>
+                        <li>clear, and of good quality</li>
+                        <li>no nudity, partial or full</li>
+                        <li>no pictures of children</li>
+                    {% endtrans %}
+                </ul>
+            {% endif %}
+
+        </div>
+
+        {% if app.user.isActivated == 0 %}
+            <a href="{{ path('user_activation') }}"
+               class="registrend return"> {% trans %} Complete Registration {% endtrans %}</a>
+            <div class="clear"></div>
+        {% endif %}
+    </div>
+
+    {# </div> #}
+{% endif %}
+
+{% if mobile %}
+
+    <script>
+        function edit(isMain, isValid, id) {
+            closePhotoActions();
+            var ul = $('.photos-action-ul');
+            var photosActionBlock = $('.photos-action');
+            console.log($('.photo-' + id).find('.private'));
+            var isPrivate = $('.photo-' + id).find('.private').hasClass('hidden') ? false : true;
+            photosActionBlock.find('.status').text(isValid ? '{% trans %}approved{% endtrans %}' : '{% trans %}awaiting approval{% endtrans %}');
+            if (!isMain && !isPrivate) {
+                ul.find('.setPrivate').removeClass('hidden');
+                ul.find('.setMain').removeClass('hidden');
+            }
+
+            if (isPrivate && !isMain) {
+                ul.find('.unsetPrivate').removeClass('hidden');
+            }
+
+            if (isValid && !isPrivate && !isMain) {
+                ul.find('.setMain').removeClass('hidden')
+            }
+
+            photosActionBlock.find('.photoId').val(id);
+            photosActionBlock.removeClass('hidden');
+        }
+
+        function closePhotoActions() {
+            var ul = $('.photos-action-ul');
+            ul.find('.setPrivate').addClass('hidden');
+            ul.find('.setMain').addClass('hidden');
+            ul.find('.unsetPrivate').addClass('hidden');
+            ul.find('.setMain').addClass('hidden')
+            $('.photos-action').addClass('hidden');
+        }
+
+        function setMain() {
+            var photoId = $('.photos-action').find('.photoId').val();
+            console.log(photoId);
+            $.ajax({
+                url: '/' + '/user/photo/main/' + photoId,
+                success: function (res) {
+                    location.reload();
+                }
+            });
+        }
+
+        function setPrivate() {
+            var photoId = $('.photos-action').find('.photoId').val();
+            $.ajax({
+                url: '/' + '/user/photo/private/' + photoId,
+                success: function () {
+                    $('.photo-' + photoId).find('.private').toggleClass('hidden');
+                    closePhotoActions();
+                }
+            })
+        }
+
+        function mobileDeletePhoto() {
+            var photoId = $('.photos-action').find('.photoId').val();
+            $.ajax({
+                url: '/' + '/user/photo/delete/' + photoId,
+                success: function () {
+                    $('.photo-' + photoId).remove();
+                    closePhotoActions();
+                }
+            })
+        }
+    </script>
+
+    <div class="container">
+
+        <div class="description" *ngIf="photos?.length == 1 && dataPage?.noPhoto == dataPage?.photos[0].face">
+            {# <div #desk>{{safeHtml(desk)}}</div> #}
+        </div>
+        <div class="photos">
+            {% if app.user.getMainPhoto(true) %}
+                {% set hasMain = true %}
+            {% endif %}
+            {% for photo in app.user.photos %}
+
+
+                {# ############# main photo block ############## #}
+                {% if photo.getIsMain() %}
+                    <div class="main photo photo-{{ photo.id }}"
+                         onclick="edit({{ photo.isMain ? 1 : 0 }}, {{ photo.isValid ? 1 : 0 }}, {{ photo.id }} )">
+                        <div class="wrap">
+                            <div class="photo-img" style="background-image: url({{ photo.getFaceWebPath() }})"></div>
+                            <span class="num">1</span>
+                            <div class="photo-status">{% if photo.isValid %} <span
+                                        class="approved">{% trans %}Approved photo{% endtrans %}
+                                </span> {% else %} <span class="unapproved">{% trans %}awaiting approval{% endtrans %}
+                                </span> {% endif %}
+                            </div>
+                            <div class="remove">
+                                <i class="pencil alternate icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {# ############# end main photo block ############## #}
+
+            {# ############# other photos block ############## #}
+            {% set photos = app.user.photos %}
+            {% for photo in photos | remove_main %}
+
+                {# {% if not photo.getisMain(true) %} #}
+                <div class="photo photo-{{ photo.id }}"
+                     onclick="edit({{ photo.isMain(true) ? 1 : 0 }}, {{ photo.isValid ? 1 : 0 }}, {{ photo.id }} )">
+                    <div class="wrap">
+                        <div class="photo-img" style="background-image: url({{ photo.getFaceWebPath() }})"></div>
+                        <div class="private {% if not photo.getIsPrivate() %} hidden {% endif %}"></div>
+
+                        <span class="num">{{ loop.index + 1 }}</span>
+                        <div class="photo-status">{% if photo.isValid %} <span
+                                    class="approved">
+                                {% trans %}
+                                    approved photo
+                                {% endtrans %}
+                            </span> {% else %} <span class="unapproved">
+                            {% trans %}
+                                awaiting approval
+                            {% endtrans %}
+                            </span> {% endif %}
+                        </div>
+                        <div class="remove">
+                            <i class="pencil alternate icon"></i>
+                        </div>
+                    </div>
+                </div>
+                {# {% endif %} #}
+            {% endfor %}
+            {# ############# end other photos block ############## #}
+
+
+            {# ############# add new photo image ############## #}
+            {% if hasMain is defined %}
+                <div class="photo" onclick="$('.mobile-upload-photo').click()">
+                    <div class="wrap">
+                        <div class="photo-img" style="background-image: url('{{ app.user.getNoPhoto }}')"></div>
+                        {# <span class="num">{{ dataPage?.photos?.length }}</span> #}
+                        <span class="add">
+                        <div class="plus circle addPhoto"></div>
+                    </span>
+                    </div>
+                </div>
+                <input type="file" name="image"
+                       class="mobile-upload-photo hidden browseinput photoInput registrPhotoInput"
+                       accept="image/x-png,image/gif,image/jpeg">
+                <input type="submit" value="" class="mobile-submit-photo hidden submitPhoto">
+            {% endif %}
+            {# ############# end add new photo image ############## #}
+
+            {# #############  add new photo image (if havent photos) ############## #}
+            {% if not app.user.getMainPhoto(true) and not hasMain is defined %}
+                <div *ngIf="dataPage?.noPhoto == dataPage?.photos[0].face" class="main photo"
+                     onclick="$('.mobile-upload-photo').click()">
+                    <div class="wrap">
+                        <div class="photo-img" style="background-image: url({{ app.user.getNoPhoto() }})"></div>
+                        <span class="num">1</span>
+                        <span class="add">
+                         <div class="plus circle addPhoto"></div>
+                    </span>
+                    </div>
+                </div>
+                <input type="file" name="image"
+                       class="mobile-upload-photo hidden browseinput photoInput registrPhotoInput"
+                       accept="image/x-png,image/gif,image/jpeg">
+                <input type="submit" value="" class="mobile-submit-photo hidden submitPhoto">
+
+            {% endif %}
+            {# #############  end add new photo image (if havent photos) ############## #}
+        </div>
+        <div class="description" *ngIf="!(photos?.length == 1 && dataPage?.noPhoto == dataPage?.photos[0].face)">
+            <div class="clr"></div>
+            <div [innerHTML]="description"></div>
+        </div>
+        <!--photos?.length == 1 && dataPage?.noPhoto == dataPage?.photos[0].face-->
+
+        <div class="descp">
+
+            If you encountered a problem please contact us at:
+            <br/>
+
+            <a href="mailto:{{ contact_email }}">{{ contact_email }}</a><br/>Please mention the email with which
+            you
+            created your account
+        </div>
+        <br>
+        <p>
+            All photos must be approved by the site admins. Our office hours are Sun- Thu 09:00 -16:00 IST.
+        </p>
+        <h5>Your Photo must be:</h5>
+
+        <ul>
+            <li>a picture of yourself</li>
+            <li>clear, and of good quality</li>
+            <li>no nudity, partial or full</li>
+            <li>no pictures of children</li>
+        </ul>
+
+
+        <div class="photos-action hidden">
+            <div class="photos-action-title placeholder right">Edit Photo</div>
+            <div class="photos-action-title placeholder left"> State <span class="status"></span></div>
+            <ul class="photos-action-ul">
+                <li class="setMain hidden" onclick="setMain()">
+                    <i class="user outline icon"></i>
+                    <span>make main image</span>
+                </li>
+                <li class="delete" onclick="mobileDeletePhoto()">
+                    <i class="trash alternate outline icon"></i>
+                    <span>remove</span>
+                </li>
+                <li class="setPrivate hidden" onclick="setPrivate()">
+                    <i class="eye slash icon"></i>
+                    <span>Make private</span>
+                </li>
+                <li class="unsetPrivate hidden" onclick="setPrivate()">
+                    <i class="eye icon"></i>
+                    <span>make public</span>
+                </li>
+                <li class="cancel" onclick="closePhotoActions()">
+                    <i class="close icon"></i>
+                    <span>cancel</span>
+                </li>
+            </ul>
+            <input type="hidden" name="" class="photoId" value="">
+        </div>
+        {% if not app.user.getIsActivated %}
+            <a href="{{ path('user_activation') }}">
+                <div class="btn endReg">
+                    Complete registration
+                </div>
+            </a>
+        {% endif %}
+    </div>
+
+
+{% endif %}

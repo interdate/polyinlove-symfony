@@ -1,0 +1,192 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+
+
+
+    <script>
+        $(document).ready(function () {
+            var header = $(".messagesHeader");
+            var sticky = header.offset().top;
+            window.onscroll = function () {
+
+                console.log(header, sticky);
+                if (window.pageYOffset - 20 > sticky) {
+                    header.addClass("sticky");
+                } else {
+                    header.removeClass("sticky");
+                }
+            }
+        });
+
+    </script>
+
+
+    {% if mobile %}
+        <div class="send_message_area">
+            <div class="inlineMess dialog">
+                {% trans %}
+                Quick messaging
+                {% endtrans %}
+            </div>
+            <div class="message_area">
+                <textarea></textarea>
+            </div>
+            <div class="send_button_area">
+                <div class="send" onclick="dialog.sendMessage($('.message_area textarea'));">
+                    <div>
+                        {% if mobile %}
+                            {% trans %}
+                            Send
+                            {% endtrans %}
+                        {% else %}
+                            {% trans %}
+                            Send
+                            {% endtrans %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <script>
+        function sendInstantMessage(contactId, textarea) {
+
+            $('.inlinemessages').fadeOut(200);
+
+            console.log('START SENDING');
+
+            $.ajax({
+                url: '/messenger/message/send/userId:{{ app.user.id }}/contactId:' + contactId,
+                headers: {'apiKey': Messenger.apiKey},
+                timeout: 80000,
+                dataType: 'json',
+                type: 'Post',
+                data: 'message=' + encodeURIComponent(message) + "&tag=" + textarea.prop("tagName") + "&val=" + textarea.val(),
+                context: this,
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                error: function (response) {
+                    console.log(JSON.stringify(response));
+                },
+                success: function (response, status) {
+                    if (response.success) {
+
+                        var message = response.message;
+                        dialog.insertMessage(message);
+                        dialog.setMessageAsRead(message);
+                        message.action = 'new';
+                        helperSend(JSON.stringify(message));
+
+                        dialog.sendPush();
+                    } else {
+
+                        if (response.contactIsFrozen) {
+                            alert('Message could not be sent because user account is frozen.');
+                            return;
+                        }
+
+                        if (response.chatIsForbidden) {
+                            alert(response.errMess);
+                            return;
+                        }
+
+                        if (response.isLimit) {
+                            alert("You have sent the maximum amount of messages allowed.");
+                            return;
+                        }
+
+                        if (response.cantContact) {
+                            alert('This user has requested people with your profile may not address him');
+                            return;
+                        }
+                    }
+                }
+            });
+        }
+
+
+    </script>
+
+
+    <div class="midsec">
+
+        <div class="hotitle clearfix messagesHeader">
+            <a href="{{ path('view_user', {'id': contact.id}) }}" class="f1 clearfix">
+                <div class="thumb">
+                    <img alt=""
+                         src="{{ contact.getMainPhoto ? contact.getMainPhoto.getFaceWebPath : contact.getNoPhoto() }}">
+                </div>
+                {# {% endif %} #}
+                <h3>
+                    {% trans %}
+                    chat with
+                    {% endtrans %}
+                    {{ contact.username }}
+                </h3>
+            </a>
+            <input type="hidden" value="{{ contact.id }}">
+        </div>
+        <!-- end -->
+
+        <div class="hotcont">
+            <div id="dialog">
+                {% for message in history %}
+                    {% set class =  message.from == dialog.user.id ? 'user' : 'contact' %}
+                    {% set status = message.from == dialog.user.id
+                        ? message.isRead
+                        ? 'read'
+                        : 'unread'
+                        : '' %}
+
+                    {% set unreadMessage  = message.from == dialog.user.id
+                        ? message.isRead
+                        ? ''
+                        : '<input type="hidden" class="unreadMessage" value="' ~ message.id ~ '">' %}
+
+                    <div class="chatbox {{ class }} {{ status }} message messageSection"
+                         id="dialogMessageSection_{{ message.id }}">
+                        <h4>{{ message.text|replace({ '%PAYMENT_LINK%': path('user_payment') })|raw }}</h4>
+                        <div class="timerdiv dateTime">{{ message.dateTime }}</div>
+                        <i class="trash icon trash-icon delete-message-link" data-id="{{ message.id }}"></i>
+
+                    </div>
+                    {{ unreadMessage|raw }}
+                {% endfor %}
+            </div>
+
+            <div class="hotbtm clearfix dialogInput">
+                <div class="smileyicon" id="show_emoticons"><a><img src="/images/smiley.png" alt=""></a></div>
+                <textarea cols="5" rows="5" id="dialog_textarea" placeholder=""></textarea>
+                <div class="clearfix">
+                    <input type="button" value="{% trans %}
+                Send{% endtrans %}" class="btn"
+                           onclick="dialog.sendMessage($('.dialogInput textarea'));" >
+                    <input type="button" value="{% trans %}
+                Quick message{% endtrans %}" class="inlineMess" {# onclick="dialog.sendMessage($('.dialogInput ' +
+                     'textarea'));" #}>
+                </div>
+                {# <div class="clearfix"> #}
+                <ul class="inlinemessages dialog">
+                    {% for message in messages %}
+                        <li class="inlineMessItem" data-id="{{ dialog.contact.id }}"
+                            value="{{ message.id }}">{{ message.text }}</li>
+                    {% endfor %}
+                    <button class="sendbtn"> {% trans %}Send
+                        {% endtrans %}</button>
+                    <div class="clear"></div>
+                </ul>
+                {# </div> #}
+            </div>
+
+            <input type="hidden" value="{{ dialog.contact.id }}" id="contactId"/>
+            <input type="hidden" value="{{ dialog.contact.nickName }}" id="contactNickname"/>
+            <input type="hidden" value="{{ dialog.user.nickName }}" id="userNickname"/>
+        </div>
+        <!-- hotcont end -->
+    </div>
+    <!-- midsec end -->
+    <input type="hidden" name="" class="inChat" value="true">
+
+{% endblock %}
+

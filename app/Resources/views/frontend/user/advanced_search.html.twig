@@ -1,0 +1,340 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+
+    <form action="{{ path('user_search_results') }}" method="post">
+        <div class="midsec">
+            <h1>
+                {% trans %}
+                {% endtrans %}
+                Advanced search
+            </h1>
+            <div class="searches">
+                {# {{ dump(app.request.cookies.get('advanceSearch')) }} #}
+                <div class="sercformsec">
+                    {% if (app.request.cookies.get('advanceSearch') and not app.request.cookies.get('advanceSearch') is empty) %}
+                        <a href="{{ path('user_search_advanced', {'remove_cookie': true}) }}">
+                            <button type="button" class="resetSearch">
+                                {% trans %}
+                                    restore defaults
+                                {% endtrans %}
+                            </button>
+                        </a>
+                    {% endif %}
+                    <div class="rptbox">
+                        <div class="labelbox">{{ form_label(form.gender) }}</div>
+
+                        <div class="rightcont flex">
+                            {% for gender in form.gender %}
+                                <div class="chkbox">
+                                    <div class="ui checkbox gender">
+                                        {{ form_widget(gender) }}
+                                        {{ form_label(gender) }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- Row 1 -->
+{#                    <div class="rptbox">#}
+{#                        <div class="labelbox">{{ form_label(form.region) }}</div>#}
+
+{#                        <div class="rightcont flex">#}
+{#                            {% for region in form.region %}#}
+{#                                <div class="chkbox">#}
+{#                                    <div class="ui checkbox region">#}
+{#                                        {{ form_widget(region) }}#}
+{#                                        {{ form_label(region) }}#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            {% endfor %}#}
+{#                        </div>#}
+{#                    </div>#}
+                    <!-- Row 1 -->
+
+                    <div class="rptbox age">
+                        <div class="labelbox">{% trans %}
+                            Age{% endtrans %}</div>
+                        <div class="rightcont flex">
+                            <div class="smallabelbox">{% trans %}
+                                from-{% endtrans %}</div>
+                            <div class="select">
+                                {{ cookieData.ageFrom is defined ? form_widget(form.ageFrom, {value: cookieData.ageFrom}) : form_widget(form.ageFrom) }}
+
+                            </div>
+                            <div class="smallabelbox">{% trans %}
+                                to- {% endtrans %}</div>
+                            <div class="select">
+                                {{ cookieData.ageTo is defined ? form_widget(form.ageTo, {value: cookieData.ageTo}) : form_widget(form.ageTo) }}
+                            </div>
+                        </div>
+                        <div class="clr"></div>
+                    </div>
+                    <!-- end -->
+
+
+                    <div class="rptbox zodiac">
+                        <div class="labelbox">{{ form_label(form.zodiac) }}</div>
+                        <div class="rightcont">
+                            {% for zodiac in form.zodiac %}
+                                <div class="chkbox">
+                                    <div class="ui checkbox">
+                                        {{ form_widget(zodiac) }}
+                                        {{ form_label(zodiac) }}
+                                    </div>
+                                </div>
+{#                                {% if loop.index == 4 %}#}
+{#                                    {% endif %}#}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- end -->
+
+                    <div class="rptbox">
+                        <div class="labelbox">{% trans %}
+                            Height{% endtrans %}</div>
+                        <div class="rightcont flex">
+                            <div class="smallabelbox">from-</div>
+                            <div class="select heightFrom">{{ cookieData.heightFrom is defined ? form_widget(form.heightFrom, {value: cookieData.heightFrom}) : form_widget(form.heightFrom) }}</div>
+                            <div class="smallabelbox">{% trans %}
+                                to-{% endtrans %}</div>
+                            <div class="select heightTo">{{ cookieData.heightTo is defined ? form_widget(form.heightTo, {value: cookieData.heightTo}) : form_widget(form.heightTo) }}</div>
+                        </div>
+                    </div>
+                    <!-- end -->
+
+                    <div class="rptbox">
+                        <div class="labelbox">{{ form_label(form.body) }}</div>
+                        <div class="rightcont">
+                                    <div class="clr"></div>
+                            {% for body in form.body %}
+                                <div class="chkbox body">
+                                    <div class="ui checkbox">
+                                        {{ form_widget(body) }}
+                                        {{ form_label(body) }}
+                                    </div>
+                                </div>
+{#                                {% if loop.index == 4 %}#}
+{#                                {% endif %}#}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- end -->
+
+                    <div class="rptbox">
+                        <div class="labelbox ">{{ form_label(form.relationshipStatus) }}</div>
+                        <div class="rightcont flex">
+                            {% for relationshipStatus in form.relationshipStatus %}
+                                <div class="chkbox relationshipStatus">
+                                    <div class="ui checkbox">
+                                        {{ form_widget(relationshipStatus) }}
+                                        {{ form_label(relationshipStatus) }}
+                                    </div>
+                                </div>
+                                {% if loop.index == 4 %}
+                                    <div class="clr">
+
+                                    </div>{% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="rptbox">
+                        <div class="labelbox">{{ form_label(form.sexOrientation) }}</div>
+                        <div class="rightcont flex">
+                            {% for sexOrientation in form.sexOrientation %}
+                                <div class="chkbox sexOrientation">
+                                    <div class="ui checkbox">
+                                        {{ form_widget(sexOrientation) }}
+                                        {{ form_label(sexOrientation) }}
+                                    </div>
+                                </div>
+                                {% if loop.index == 3 %}
+                                    <div class="clr"></div>{% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- end -->
+
+                    <div class="rptbox">
+                        <div class="labelbox">{{ form_label(form.smoking) }}</div>
+                        <div class="rightcont flex">
+                            {% for smoking in form.smoking %}
+                                <div class="chkbox smoking">
+                                    <div class="ui checkbox">
+                                        {{ form_widget(smoking) }}
+                                        {{ form_label(smoking) }}
+                                    </div>
+                                </div>
+                                {# {% if loop.index == 2 %}<div class="clr"></div>{% endif %} #}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- end -->
+
+{#                    <div class="ui accordion">#}
+{#                        <div class=" title">#}
+{#                            <div class="labelbox title city-search-title">#}
+{#                                {{ form_label(form.city) }}#}
+
+{#                                <div class="small">#}
+{#                                    {% trans %}#}
+{#                                        (click to see city list)#}
+{#                                    {% endtrans %}#}
+{#                                    <i class="arrow down icon"></i>#}
+{#                                </div>#}
+{#                            </div>#}
+
+
+{#                        </div>#}
+{#                        <div class=" content">#}
+{#                            <div class="rightcont flex content">#}
+{#                                {% for city in form.city %}#}
+{#                                    <div class="chkbox smoking">#}
+{#                                        <div class="ui checkbox">#}
+{#                                            {{ form_widget(city) }}#}
+{#                                            {{ form_label(city) }}#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                    {% if loop.index == 2 %}#}
+{#                                        <div class="clr"></div>{% endif %}#}
+{#                                {% endfor %}#}
+{#                            </div>#}
+{#                        </div>#}
+
+{#                    </div>#}
+
+                    <div class="clear"></div>
+
+                    <!-- end -->
+
+                    <div class="rptbox">
+                        <div class="labelbox">{{ form_label(form.religion) }}</div>
+                        <div class="rightcont flex">
+                            {% for religion in form.religion %}
+                                <div class="chkbox smoking">
+                                    <div class="ui checkbox">
+                                        {{ form_widget(religion) }}
+                                        {{ form_label(religion) }}
+                                    </div>
+                                </div>
+                                {# {% if loop.index == 2 %}<div class="clr"></div>{% endif %} #}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- end -->
+
+                    <div class="rptbox">
+                        <div class="labelbox">{{ form_label(form.children) }}</div>
+                        <div class="rightcont flex">
+                            {% for children in form.children %}
+                                <div class="chkbox smoking">
+                                    <div class="ui checkbox">
+                                        {{ form_widget(children) }}
+                                        {{ form_label(children) }}
+                                    </div>
+                                </div>
+                                {# {% if loop.index == 2 %}<div class="clr"></div>{% endif %} #}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- end -->
+
+                    <div class="rptbox">
+                        <div class="labelbox">{{ form_label(form.nutrition) }}</div>
+                        <div class="rightcont flex">
+                            {% for nutrition in form.nutrition %}
+                                <div class="chkbox smoking">
+                                    <div class="ui checkbox">
+                                        {{ form_widget(nutrition) }}
+                                        {{ form_label(nutrition) }}
+                                    </div>
+                                </div>
+                                {# {% if loop.index == 2 %}<div class="clr"></div>{% endif %} #}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- end -->
+
+
+                    <div class="rptbox">
+                        <div class="labelbox relationship-type">{{ form_label(form.relationshipType) }}</div>
+                        <div class="rightcont flex">
+                            {% for relationshipType in form.relationshipType %}
+                                <div class="chkbox relationshipType">
+                                    <div class="ui checkbox">
+                                        {{ form_widget(relationshipType) }}
+                                        {{ form_label(relationshipType) }}
+                                    </div>
+                                </div>
+                                {% if loop.index == 4 %}
+                                    <div class="clr"></div>{% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- end -->
+
+                    <div class="rptbox">
+                        <div class="labelbox">{{ form_label(form.origin) }}</div>
+                        <div class="rightcont flex">
+                            {% for origin in form.origin %}
+                                <div class="chkbox origin">
+                                    <div class="ui checkbox">
+                                        {{ form_widget(origin) }}
+                                        {{ form_label(origin) }}
+                                    </div>
+                                </div>
+                                {# {% if loop.index == 2 %}<div class="clr"></div>{% endif %} #}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- end -->
+
+                    <div class="field" style="text-align: right">
+                        <div class="ui checkbox withPhoto">
+
+                            {{ cookieData.withPhoto is defined ? form_widget(form.withPhoto, { 'attr': {'checked': 'checked'} }) : form_widget(form.withPhoto) }}
+
+                            {{ form_label(form.withPhoto) }}
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        {{ form_widget(form.filter) }}
+                        <input type="button" value="{% trans %}
+                search{% endtrans %}" class="free"
+                               onclick="$(this).siblings('input[type=submit]').click();">
+                        <input type="submit" class="hidden">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- midsec end -->
+        {% if cookieData is defined and cookieData %}
+
+            <script>
+
+                {% for fieldName, field in cookieData %}
+                {% if (field is iterable) %}
+                {% for value in field %}
+                console.log($('.{{ fieldName }} input[value="{{ value }}"]').click());
+                {% endfor %}
+                {% else %}
+                {% if (fieldName == 'withPhoto') %}
+                $('#advanced_search_withPhoto').click();
+                r {% endif %}
+                {% endif %}
+                {% endfor %}
+
+
+                if ({{ app.user.gender.id == 1 or app.user.gender.id == 4 }}) { // if gender is male
+                    $('#advanced_search_sexOrientation_3').parents('.chkbox').remove(); // remove lesbians from search
+                }
+
+            </script>
+        {% endif %}
+    </form>
+
+{% endblock %}
+
+

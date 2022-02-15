@@ -1,0 +1,201 @@
+{% extends "backend/layout.html.twig" %}
+
+{% block content %}
+
+    {{ include('backend/header.html.twig', { 'header': 'content', 'icon': 'text file' }) }}
+
+    <div class="page_content">
+
+         <div class="ui segment page">
+
+            <h2 class="ui header right">
+                <i class="write icon"></i>
+                <div class="content">
+                    {{ title }}
+                </div>
+            </h2>
+             <br><br><br><br>
+            <div class="clear"></div>
+
+            <form class="ui form" action="{{ path('admin_add_banner') }}" enctype="multipart/form-data" id="banner_form" method="post">
+
+                <div class="ui big ribbon label">{{ form_label(form.name) }}</div>
+                <div class="field">
+                    {{ form_widget(form.name) }}
+                </div>
+
+                <div class="ui big ribbon label">{{ form_label(form.img) }}</div>
+                {% if banner.img %}
+                    <img class="banner-image" src="{{ banner.img }}" alt="">
+                {% endif %}
+                <div class="field">
+                    {{ form_widget(form.img) }}
+                </div>
+
+                <div class="ui big ribbon label">{{ form_label(form.href) }}</div>
+                <div class="field">
+                    {{ form_widget(form.href) }}
+                </div>
+                {% if banner.id is defined %}
+                <input type="hidden" name="banner_id" value="{{ banner.id }}">
+                {% endif %}
+                <br><br>
+
+                <div class="ui big ribbon label" style="display: block;width:10%;">shown to</div>
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.mans) }}
+                    {{ form_label(form.mans) }}
+                </div>
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.womans) }}
+                    {{ form_label(form.womans) }}
+                </div>
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.abinary) }}
+                    {{ form_label(form.abinary) }}
+                </div>
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.pay) }}
+                    {{ form_label(form.pay) }}
+                </div>
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.notPay) }}
+                    {{ form_label(form.notPay) }}
+                </div>
+ 
+                <div class="clear"></div>
+
+                <div class="ui big ribbon label" style="display: block;width:10%;">displayed on pages:</div>
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.beforeLogin) }}
+                    {{ form_label(form.beforeLogin) }}
+                </div>
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.afterLogin) }}
+                    {{ form_label(form.afterLogin) }}
+                </div>
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.subscriptionPage) }}
+                    {{ form_label(form.subscriptionPage) }}
+                </div>
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.profileTop) }}
+                    {{ form_label(form.profileTop) }}
+                </div>
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.profileBottom) }}
+                    {{ form_label(form.profileBottom) }}
+                </div>
+
+                <div class="ui checkbox chkbox p010">
+                    {{ form_widget(form.mobile) }}
+                    {{ form_label(form.mobile) }}
+                </div>
+                <div class="clear"></div>
+
+                <div class="ui big ribbon label">{{ form_label(form.isActive) }}</div>
+                <div class="ui compact segment">
+                    <div class="ui slider fitted checkbox">
+                        {{ form_widget(form.isActive) }}
+                        <label></label>
+                    </div>
+                </div>
+
+                <div class="ui one column centered grid">
+                    <button class="ui labeled icon orange approve big button right">
+                        <i class="save icon"></i>
+                        save
+                    </button>
+                </div>
+                {{ form_rest(form) }}
+            </form>
+
+            <br>
+            <br>
+
+            <div class="clear"></div>
+
+        </div>
+
+    </div>
+
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" type="text/javascript"></script>
+    <script>
+
+        tinymce.init({
+
+            selector:'#page_content',
+
+            theme: "modern",
+
+            menubar : false,
+
+            plugins: [
+
+                "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+
+                "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+
+                "save table contextmenu directionality emoticons template paste textcolor"
+
+            ],
+
+            //content_css: "css/content.css",
+
+            toolbar: "insertfile undo redo | bold italic underline | styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | preview media fullpage | forecolor backcolor emoticons | link image | code ",
+
+            style_formats: [
+
+                {title: "Headers", items: [
+
+                    {title: "Header 3", format: "h3"},
+
+                    {title: "Header 4", format: "h4"},
+
+                    {title: "Header 5", format: "h5"},
+
+                    {title: "Header 6", format: "h6"}
+
+                ]},
+
+                {title: "Inline", items: [
+
+                    {title: "Bold", icon: "bold", format: "bold"},
+
+                    {title: "Italic", icon: "italic", format: "italic"},
+
+                    {title: "Underline", icon: "underline", format: "underline"},
+
+                    {title: "Strikethrough", icon: "strikethrough", format: "strikethrough"},
+
+                    {title: "Superscript", icon: "superscript", format: "superscript"},
+
+                    {title: "Subscript", icon: "subscript", format: "subscript"},
+
+                ]},
+
+                {title: "Alignment", items: [
+
+                    {title: "Left", icon: "alignleft", format: "alignleft"},
+
+                    {title: "Center", icon: "aligncenter", format: "aligncenter"},
+
+                    {title: "Right", icon: "alignright", format: "alignright"},
+
+                    {title: "Justify", icon: "alignjustify", format: "alignjustify"}
+
+                ]}
+
+            ],
+
+            cleanup : false,
+
+            verify_html : false,
+
+        });
+
+
+    </script>
+
+
+{% endblock %}

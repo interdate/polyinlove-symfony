@@ -1,0 +1,114 @@
+{% if errors %}
+    <div class="errors">
+        <div class="ui orange message">
+            <div class="content">
+                <div class="header">
+                    {% trans %} Complete these fields {% endtrans %}
+                </div>
+                <p>
+                    {{ agree_error }}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}
+<div class="hmaformsec three">
+
+    <h3>{% trans %} A little about me / us {% endtrans %}</h3>
+
+    <div class="field {% if form.about.vars.errors|length or errors_text['about'] is defined %}error{% endif %}">
+        <div class="label">
+            {{ form_label(form.about) }}
+            <div class="instr">{% trans %} (Must be at least 10 letters long) {% endtrans %}
+            </div>
+        </div>
+        <div class="textarea">{{ form_widget(form.about) }}</div>
+    </div>
+
+    <div class="field {% if form.looking.vars.errors|length or errors_text['looking'] is defined %}error{% endif %}">
+        <div class="label">
+            {{ form_label(form.looking) }}
+            <div class="instr">
+                {% trans %} (Must be at least 10 letters long) {% endtrans %}
+            </div>
+        </div>
+        <div class="textarea">{{ form_widget(form.looking) }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">{{ form_label(form.religion) }}</div>
+        <div class="select">{{ form_widget(form.religion) }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">{{ form_label(form.children) }}</div>
+        <div class="select">{{ form_widget(form.children) }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">{{ form_label(form.nutrition) }}</div>
+        <div class="select">{{ form_widget(form.nutrition) }}</div>
+    </div>
+
+
+{#    <h5 style="margin-bottom: 20px"> {% trans %}Who may message me..{% endtrans %} </h5>#}
+
+    <div class="field">
+        <div class="label {% if form.contactGender.vars.errors|length %}error{% endif %}"
+             style="margin-top: -2px; {% if not mobile %}  width: 17%; {% endif %}">{{ form_label(form.contactGender) }}</div>
+
+        <div class="chkright">
+            <div class="checkboxes clearfix">
+                {% for contactGender in form.contactGender %}
+                    <div class="ui checkbox chkbox">
+                        {{ form_widget(contactGender) }}
+                        {{ form_label(contactGender) }}
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <h5 style="margin-bottom: 20px">{% trans %} Age range that may message me.. {% endtrans %}</h5>
+
+    {% if not mobile %}
+        <div class="field">
+            <div class="label" style="width: 104px; margin-top: 5px;">{{ form_label(form.ageFrom) }}</div>
+            <div class="select" style="width:80px;">{{ form_widget(form.ageFrom) }}</div>
+
+            <div class="label" style="width: 29px;margin-top: 6px;">{{ form_label(form.ageTo) }}</div>
+            <div class="select" style="width:80px;">{{ form_widget(form.ageTo) }}</div>
+        </div>
+    {% else %}
+        <div class="field">
+            <div class="label" style="width: 97px; margin-top: 5px; ">{{ form_label(form.ageFrom) }}</div>
+            <div class="select" style="width: 56px;">{{ form_widget(form.ageFrom) }}</div>
+
+            <div class="label"
+                 style="width: 29px;margin-top: 6px; margin-right: 11px;">{{ form_label(form.ageTo) }}</div>
+            <div class="select" style="width: 56px;">{{ form_widget(form.ageTo) }}</div>
+        </div>
+    {% endif %}
+    <div class="field padd">
+        <div class="ui checkbox">
+            {{ form_widget(form.agree) }}
+            <label for="sign_up_three_agree">{% trans %} I agree to the {% endtrans %} <a target="_blank"
+                                                                                         href="/pages/terms_of_use">{% trans %} terms and conditions {% endtrans %}</a> {% trans %} of the site {% endtrans %}
+            </label>
+        </div>
+    </div>
+
+
+    <div class="clr padd"></div>
+
+    <div class="field padd">
+        <input type="button" class="nextstage" value="{% trans %} Next stage {% endtrans %}">
+        <input type="button" class="return" value="{% trans %} back {% endtrans %}" onclick="$('#prev_stage').click();">
+        <input type="submit" id="next_stage" class="hidden">
+        <input type="submit" id="prev_stage" class="hidden" name="flow_signUp_transition"
+               value="{% trans %} back {% endtrans %}" formnovalidate="formnovalidate">
+    </div>
+
+
+</div>

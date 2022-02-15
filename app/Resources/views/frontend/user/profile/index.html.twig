@@ -1,0 +1,53 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+
+
+    <div class="midsec">
+        <h1>
+            {% trans %}
+            Edit profile
+            {% endtrans %}
+        </h1>
+        <div class="harsama-midsec">
+
+            <ul class="stepssec clearfix">
+                <li {% if tab == 1 %}class="completed"{% endif %}><a href="{{ path('user_profile', {'tab': 1}) }}"><span class="nos">1</span><span class="label">Details</span></a></li>
+                <li {% if tab == 2 %}class="completed"{% endif %}><a href="{{ path('user_profile', {'tab': 2}) }}"><span class="nos">2</span><span class="label">Profile</span></a></li>
+                <li {% if tab == 3 %}class="completed"{% endif %}><a href="{{ path('user_profile', {'tab': 3}) }}"><span class="nos">3</span><span class="label">About Me</span></a></li>
+                <li {% if tab == 4 %}class="completed"{% endif %}><a href="{{ path('user_profile', {'tab': 4}) }}"><span class="nos">4</span><span class="label">Photos</span></a></li>
+            </ul>
+
+            <form action="{{ path('user_profile', {'tab': tab}) }}" method="post" id="profile_form">
+                {% for message in app.session.flashBag.get('success') %}
+
+                    <div class="ui positive message text-center">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                {% if form is defined %}
+                    {{ include ('frontend/user/profile/' ~ tab ~ '.html.twig', {'form': form}) }}
+                    {{ form_rest(form) }}
+                {% else %}
+                    {{ include ('frontend/user/profile/' ~ tab ~ '.html.twig') }}
+                {% endif %}
+
+                <input type="submit" id="save_data" class="hidden">
+            </form>
+
+        </div>
+
+
+
+        {% if tab != 4 %}
+            <br>
+            <div class="clearfix"><input type="button" value="save" class="free" onclick="$('#save_data').click();" {% if mobile %}style="margin: -34px 0 32px;" {% else %} style="margin: -63px 14px 32px;" {% endif %}></div>
+        {% endif %}
+    </div>
+    <!-- midsec end -->
+
+    {# sercformsec #}
+
+{% endblock %}
+
+

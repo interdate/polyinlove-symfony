@@ -1,0 +1,72 @@
+AppBundle\Entity\User:
+    properties:
+        email:
+            - Email:
+                message: Invalid email address
+                checkMX: true
+                groups: [sign_up_one, profile_one]
+
+
+        password:
+            - Length:
+                min: 7
+                minMessage: Password must be 7- 15 characters long
+                max: 15
+                maxMessage: Password must be 7- 15 characters long
+                groups: [sign_up_one, change_password]
+
+
+
+        phone:
+            - Regex:
+                pattern: '/^(055967|97255967|05555|9725555|05556|9725556)/'
+                match: false
+                message: This type of phone number is not allowed
+                groups: [sign_up_one, profile_one]
+
+#            - Length:
+#                  min: 10
+#                  max: 12
+#                  minMessage: 'to short'
+#                  maxMessage: 'to long'
+
+
+#        about:
+#            - Length:
+#                min: 10
+##                minMessage: שדה "על עצמי" חייב להכיל לפחות 10 תווים
+#                groups: [sign_up_three, profile_three]
+#            - NotNull: ~
+
+        looking:
+            - Length:
+                min: 10
+                minMessage: \"Looking for\" must at least 10 letters long
+                groups: [sign_up_three, profile_three]
+#
+#        veggieReasons:
+#            - Count:
+#                min: 1
+#                minMessage: יש למלא את שדה "אני צמחוני/טבעוני"
+#                groups: [sign_up_three, profile_three]
+#
+#        interests:
+#            - Count:
+#                min: 1
+#                minMessage: עליך לבחור לפחות תחום עניין אחד
+#                groups: [sign_up_three, profile_three]
+
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [username]
+            message: Username already exists
+            groups: [sign_up_one, profile_one]
+
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [email]
+            message: Email already exists
+            groups: [sign_up_one, profile_one]
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [phone]
+            message: Phone number is already registered
+            groups: [sign_up_one, profile_one]

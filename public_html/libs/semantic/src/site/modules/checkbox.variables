@@ -1,0 +1,32 @@
+/*******************************
+    User Variable Overrides
+*******************************/
+
+@checkboxActiveBorderColor: #7f7f82;
+@checkboxActiveFocusBorderColor: #7f7f82;
+
+
+
+
+@toggleFocusColor: @veryStrongTransparentBlack;
+@toggleHoverColor: @toggleFocusColor;
+
+@toggleOffLabelColor: @checkboxColor;
+
+@toggleOnLabelColor: @selectedTextColor;
+@toggleOnLaneColor: #8acd16;
+
+@toggleOnFocusLaneColor: #8acd16;
+@toggleOnFocusLabelColor: @toggleOnLabelColor;
+
+
+
+
+@radioFocusBackground: @checkboxFocusBackground;
+@radioFocusBulletColor: @checkboxFocusCheckColor;
+
+@radioActiveBackground: @checkboxActiveBackground;
+@radioActiveBulletColor: @checkboxActiveCheckColor;
+
+@radioActiveFocusBackground: @checkboxActiveFocusBackground;
+@radioActiveFocusBulletColor: @checkboxActiveFocusCheckColor;

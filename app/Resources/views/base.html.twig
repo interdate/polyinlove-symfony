@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block stylesheets %}{% endblock %}
+    {# TODO- correct google analytics #}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+{#    <script src="https://www.googletagmanager.com/gtag/js?id=G-DQ69H7T8L7"></script>#}
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-DQ69H7T8L7');
+    </script>
+    <meta charset="UTF-8"/>
+    {% block meta %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
+    <meta name="apple-mobile-web-app-title" content="=> 'ryLove">
+    <meta name="application-name" content="{{ site_name }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/icon.png') }}">
+    <link rel="icon" href="{{ asset('images/icon.png') }}">
+    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+</head>
+<body>
+<script>
+    {% if not(app.user == null) %}
+    var isPay = "{{ app.user.isPaying }}";
+    {% endif %}
+    {% if mobile is defined %}
+    var MOBILE = "{{ mobile }}";
+    {% endif %}
+
+</script>
+{% block js %}{% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+{% block body %}{% endblock %}
+
+{% block javascripts %}{% endblock %}
+<style>
+    body .userway.userway_p7 {
+        top: 79px !important;
+
+    }
+</style>
+<script type="text/javascript">
+    var _userway_config = {
+        // position below will override position set via widget
+        // position: 7,
+        // uncomment the following line to override color set via widget
+        //color: '#053e67',
+        account: 'Ucgiiw876R',
+        language: 'en',
+    };
+
+</script>
+<script type="text/javascript" src="https://cdn.userway.org/widget.js"></script>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+        apiKey: "AIzaSyC6iqEObkg39vMKTla8CmnEblwn1HEu43I",
+        authDomain: "polyamory-32638.firebaseapp.com",
+        projectId: "polyamory-32638",
+        storageBucket: "polyamory-32638.appspot.com",
+        messagingSenderId: "865580994516",
+        appId: "1:865580994516:web:6f7115666d65a90d639041",
+        measurementId: "G-2YJTCHX87H"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+</script>
+<script>
+    {#    TODO fix firebase messaging #}
+
+    //$(document).ready(function () {
+    messaging = firebase.messaging();
+    //BDI1kzY-7iL9NeQE0ofjV1s68_CPeCWsbvkY6E1IxnNuk1ZSTqW89GpdCm0loAS5MQIW8UJR3MS8HJzKNZrVTfY
+    //BEM_SOAC6SjHhZcroNqy15UnlSiTt7E3SLY9f_IyIx8wto_TWq4KNDgI3VB6gC7j0xPtEbfDTISI0tKLi0nSBYw
+    messaging.usePublicVapidKey("BDFeEmUxtGZxJw707j43ieaU9v_HKHG_AsucSQfoe5xcVquESojUaJl3ohPHVbnoz5P46xnZnxC_0Gq77UrO5SQ");
+
+    getToken();
+
+    //});
+    function getPermition() {
+        messaging.requestPermission().then(function () {
+            // TODO(developer): Retrieve an Instance ID token for use with FCM.
+            getToken();
+
+        }).catch(function (err) {
+        });
+    }
+
+    function getToken() {
+        messaging.getToken().then(function (currentToken) {
+            if (currentToken) {
+                {% if app.user %}
+                sendToServer(currentToken);
+                {% endif %}
+            } else {
+                getPermition();
+            }
+        }).catch(function (err) {
+            console.log('An error occurred while retrieving token. ', err);
+        });
+    }
+
+    messaging.onTokenRefresh(function () {
+        getToken();
+    });
+
+    function sendToServer(token) {
+        $.ajax({
+            type: "POST",
+            url: '/' + '/save/browser/token',
+            dataType: 'json',
+            data: {"id": "{{ (app.user) ? app.user.id : 0 }}", "token": token},
+            success: function (res) {
+            }
+        });
+    }
+</script>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('{{ asset('firebase-messaging-sw.js') }}').then(() => {
+        }).catch((err) => {
+            console.error('Error', err)
+        });
+    }
+</script>
+<script src="{{ asset('js/chatHelper.js?t=676') }}"></script>
+</body>
+</html>
+
+{% if savePageCookie is not defined or not savePageCookie %}
+    <script>
+        delete_cookie('page')
+        delete_cookie('searchPage')
+        delete_cookie('userId')
+        delete_cookie('searchUserId')
+    </script>
+{% endif %}

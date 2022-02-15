@@ -1,0 +1,634 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" xmlns="http://www.w3.org/1999/xhtml">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  	<title>הכרויות לעשירים | שוגר דדי | ריצ'דייט</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.3.0/dist/peerjs.min.js"></script>
+    <link href="https://m.richdate.co.il/n/build/main.css"></link>
+    <style>
+    	body{
+    		margin:0;
+    		padding:0;
+    		overflow:hidden;
+    		font-family: arial;
+    	}
+        #live, #recording{
+            /* width: calc(100% - 2px);
+            height: 300px;
+            border: 1px #000 solid; */
+        }
+        .my-video{
+        	position: absolute;
+		    height: auto;
+		    width: 100px;
+		    top: 10px;
+		    left: 10px;
+		    border: 0;
+		    border-radius: 5px;
+		    z-index: 50;
+        }
+        .full-screen{
+        	border: 0;
+		    width: auto;
+		    height: calc(100vh - 6px);
+        }
+        header{
+            text-align: center;
+    		background-color: transparent;
+    		/* position: relative; */
+    		position: absolute;
+		    top: 0px;
+		    right: 0px;
+		    width: 100%;
+    	}
+    	header img{
+    		/* padding: 2px 5px; */
+    		height: 40px;
+    		background-color: #fff;
+		    border-radius: 10px;
+		    border: 1px grey solid;
+    	}
+    	/* header .back-btn{
+    		position: absolute;
+    		background-image: url('/images/back-b.png');
+    		right: 10px;
+    		top: 10px;
+    		width: 31px;
+    		height: 30px;
+    		border-radius: 50%;
+    	} */
+    	
+    	.buttons {
+            height: 0px;            
+            overflow-y: hidden;
+         /*    -webkit-transition: height 0.66s ease-in-out;
+            -moz-transition: height 0.66s ease-in-out;
+            -o-transition: height 0.66s ease-in-out;
+            transition: height 0.66s ease-in-out; */
+            -webkit-transition-property: height padding-bottom;
+		    -webkit-transition-duration:.66s;
+		    -webkit-transition-delay:0.1s;
+		    -webkit-transition-timing-function: ease-in-out;
+		    transition-property: height padding-bottom;
+		    transition-duration:.66s;
+		    transition-delay:0.1s;
+		    transition-timing-function: ease-in-out;
+            background: url(assets/img/video/bg_bottom.png) repeat;
+            text-align: center;
+            position: absolute;
+            width: 100%;
+            z-index:60;
+            
+            bottom:0px;
+        }
+        .buttons.show {            
+            height: 64px ;    
+            padding-bottom:55px;           
+        }
+        .buttons div{
+        	height: 0px;
+        }
+        .buttons.show div{
+        	display: inline-block;
+        	margin: 10px;
+        	width: 40px;
+        	height: 40px;
+        	overflow: hidden;
+        }  
+        .buttons div.microfon{
+        	background-image: url(assets/img/video/microfon_b.png);
+        	background-repeat: no-repeat;
+        	background-size: 19px auto;
+        	background-position: center 8px;
+        }
+        .buttons div.camera{
+        	background-image: url(assets/img/video/camera.png);
+        	background-repeat: no-repeat;
+        	background-size: 26px auto;
+    		background-position: center 14px;
+        }
+        .buttons.show div.switch{
+        	background-image: url(assets/img/video/switch_b.png);
+        	background-repeat: no-repeat;
+        	background-size: 50% auto;
+        	background-position: center;
+        	display: none;
+        }
+        .buttons div.microfon.un, .buttons div.camera.un{
+        	background-position: center -24px;
+        }
+        .buttons div.camera.un{
+        	background-position: center -15px;
+        }
+        #connect{
+        	position: absolute;
+		    width: 200px;
+		    text-align: center;
+		    right: calc(50% - 100px);
+		    top: 60px;
+		    /*display: none;*/
+		    /* border-bottom-left-radius: 50% 25%;
+		  	border-bottom-right-radius: 50% 25%;
+		  	border-top-left-radius: 50% 25%;
+		  	border-top-right-radius: 50% 25%; */
+		    	/*zoom:1;*/
+		    
+        }
+        #connect.effect{
+        	/* background-color: rgba(0,0,0,0.4); */
+        	/* width: 240px;
+        	right: calc(50% - 120px); */
+        }
+        #connect .status.effect{
+        	font-size: 16px;
+        	
+        }
+        #connect .status.effect span{
+        	margin: 0 2px;
+        	font-size: 16px;
+        }
+        
+        #connect .photo.effect{
+        	width: 80px;
+		    height: 80px;
+        }
+        #connect .photo{
+        	margin: 0 auto;
+        	width: 100px;
+		    height: 100px;
+		    border-radius: 50%;
+		    overflow: hidden;
+		    background-size: cover;
+		    background-position: center;
+    		background-repeat: no-repeat;
+    		-webkit-transition-property: width height;
+		    -webkit-transition-duration:.5s;
+		    -webkit-transition-delay:0.5s;
+		    -webkit-transition-timing-function: linear;
+		    transition-property: width height;
+		    transition-duration:.5s;
+		    transition-delay:0.5s;
+		    transition-timing-function: linear;
+        }
+        #connect .name{
+        	margin: 10px auto;
+        	font-size: 18px;
+        	text-align: center;
+        	text-shadow: 0px 0px 3px #000;
+		    color: #fff;
+		    direction: rtl;
+        }
+        #connect .status{
+        	font-size: 16px;
+        	-webkit-transition-property: font-size;
+		    -webkit-transition-duration:.5s;
+		    -webkit-transition-delay:0.5s;
+		    -webkit-transition-timing-function: linear;
+		    transition-property: font-size;
+		    transition-duration:.5s;
+		    transition-delay:0.5s;
+		    transition-timing-function: linear;
+		    text-shadow: 0px 0px 3px #000;
+		    color: #fff;
+		    direction: rtl;
+        }
+        #connect .status span{
+        	margin: 0 0.5px;
+        	-webkit-transition-property: margin font-size;
+		    -webkit-transition-duration:.5s;
+		    -webkit-transition-delay:0.5s;
+		    -webkit-transition-timing-function: linear;
+		    transition-property: margin font-size;
+		    transition-duration:.5s;
+		    transition-delay:0.5s;
+		    transition-timing-function: linear;
+        }
+        #audio-phone{
+        	display:none;
+        }
+        
+    </style>
+
+</head>
+<body>
+<!-- <div>My ID: <span id="idCon"></span></div> -->
+<!-- <a href="javascript:history.back();"> -->
+	<header>
+		<img alt="sugardaddy" src="assets/img/icons/logo.png">
+		<!-- <div class="back-btn"> </div> -->
+	</header>
+<!-- </a> -->
+<video class="full-screen" id="live" autoplay playsinline muted></video>
+<!-- <div class="box">
+        <span style="font-weight: bold">ID: </span>
+        <input type="text" id="receiver-id" title="Input the ID from receive.html">
+        <button id="connect-button">Connect</button>
+</div> -->
+<video class="my-video" id="recording" autoplay playsinline></video>
+<div id="connect">
+	<div class="wrap">
+		<div class='photo'></div>
+		<div class='name'></div>
+		<div class='status'>מצלצל<span>.</span><span>.</span><span>.</span></div>
+	</div>
+	<!-- <audio id="audio" src="phone_ringing.mp3" autoplay="true" loop controls /> -->
+	<!-- <embed id="audio-phone" src="https://m.richdate.co.il/phone_ringing.mp3" type="audio/mp3" autostart="true" hidden="true"> -->
+        <audio id="audio-phone" loop autoplay controls><source src="https://m.richdate.co.il/phone_ringing.mp3" type="audio/mp3"></audio>
+  
+</div>
+<div class="buttons show">
+	<div class="microfon"></div>
+	<div class="camera"></div>
+	<div class="switch"></div>
+</div>
+<div id="errorMsg"></div>
+<script type="text/javascript">
+    'use strict';
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    var user_id = urlParams.get('id');
+    var user_to = urlParams.get('to');
+    let localStream,call,audioTrack,videoTrack;
+    
+    const localVideo = document.getElementById('live');
+    const remoteVideo = document.getElementById('recording');
+    var constraints = {audio: true, video: true};
+    var cameraDevices = [];
+    var peer;
+    var doSwitch = false;
+    window.addEventListener('DOMContentLoaded', (event) => {
+    	init();
+    });
+    
+    var audio = document.getElementById('audio-phone');
+   	  
+    
+    function playAud() {
+    	if (localStream){
+        	audio.play();
+    	}else{
+    		// playAud();
+    	}
+    }
+    
+    function waitPeer(){
+    	if(typeof peer == 'object'){
+    		if(typeof peer.on == 'undefined'){
+    			//peer = new Peer(user_id, {key: 'eb82f21a595c6d7da169e79daee5da000737036a'});
+    			peer = new Peer(user_id, {
+    				host: "peerjs.wee.co.il",
+    	    		port: 9000,
+    	    		path: '/peerjs',
+                    //secure: false
+                    debug: 3
+    	    	});
+    			waitPeer();
+    			callF();
+    		}else{
+	    		peer.on('open', function(id) {
+	                console.log('My peer ID is: ' + id);
+	                //$('#idCon').html(id);
+	    			
+	            });
+	            peer.on('call', function(callObj) {
+	                // Answer the call, providing our mediaStream
+	                call = callObj;
+	                call.answer(localStream);
+	                call.on('stream', function(stream) {
+	                    // `stream` is the MediaStream of the remote peer.
+	                    // Here you'd add it to an HTML video/canvas element.
+	                    console.log('stream');
+	                    if(doSwitch == false){
+	                    	swich();
+	                    	doSwitch = true;
+	                    }
+	                    $('#connect').hide();
+	                    stopAudio();
+	                    remoteVideo.srcObject = stream;
+	                });
+	            });
+	            peer.on('disconnected', function (e) {
+	            	console.log(e);
+	            	$('#connect').show();
+	            	playAud();
+	                callF();
+	            });
+	            peer.on('error', function(err) {
+	            	console.log(err);
+	            	console.log(err.message);
+	            	if(err.message.indexOf('Could not connect to peer') != '-1'){
+	            		/* peer = new Peer(user_id, {key: 'dd9c8d57a06ffb77ced554d5f6f03755e53a7aff'});
+	                	waitPeer(); */
+	                	$('#connect').show();
+	                	playAud();
+	                	callF();
+	            	}
+	            	if(err.message.indexOf('Cannot connect to new Peer after disconnecting from server') != '-1'){
+	            		closechat();
+	            	}
+	            	//init();
+	            });
+	            peer.on('connection', function(dataConnection) { 
+ 					$('#connect').hide();
+ 					stopAudio();
+	            });
+    		}
+    	}else{
+    		waitPeer();
+    	}
+    }
+    
+    function stopAudio(){
+    	audio.pause();
+    	audio.currentTime = 0;
+    }
+    
+    function init(){
+    	//peer = new Peer(user_id, {key: 'eb82f21a595c6d7da169e79daee5da000737036a'});
+    	peer = new Peer(user_id, {
+    		host: "peerjs.wee.co.il",
+    		port: 9000,
+    		path: '/peerjs',
+            //secure: false
+            debug: 3
+    	});
+    	waitPeer();
+    	setTimeout(function (){
+    		start();
+    	},1000);
+    }
+
+    
+    function swich(){
+    	$('#live,#recording').toggleClass('full-screen').toggleClass('my-video');
+    	//$('#recording').toggleClass('my-video').toggleClass('full-screen');
+    	/* $('#live,#recording').click(function(){
+        	if($(this).hasClass('.my-video')){
+        		swich();
+        	}
+        	if($(this).hasClass('.full-screen')){
+        		$('.buttons').toggleClass('show');
+        	}
+        }); */
+    }
+    
+    
+    function callWait(){
+    	if(typeof call == 'object' && typeof call.on == 'undefined'){
+    		callWait();
+    	}else{
+            call.on('stream', function(stream) {
+                // `stream` is the MediaStream of the remote peer.
+                // Here you'd add it to an HTML video/canvas element.
+                console.log(typeof remoteVideo.srcObject);
+                console.log('wait');
+            	/* if(typeof remoteVideo.srcObject != 'object'){
+                	// swich();
+                	$('.my-video').click();
+                	
+                } */
+            	if(doSwitch == false){
+                	swich();
+                	doSwitch = true;
+                }
+                remoteVideo.srcObject = stream;
+                $('#connect').hide();
+                stopAudio();
+            });
+            call.on('close', function() {
+                // `stream` is the MediaStream of the remote peer.
+                // Here you'd add it to an HTML video/canvas element.
+                console.log('close');
+                //$('#connect').show();
+                closechat();
+            });
+            call.on('error', function(err) {
+                // `stream` is the MediaStream of the remote peer.
+                // Here you'd add it to an HTML video/canvas element.
+                console.log(err);
+                $('#connect').show();
+                playAud();
+                callF();
+            });
+    	}
+    }
+
+
+    function callF() {
+        if(localStream){
+        	console.log(user_to);
+            call = peer.call(user_to,localStream);
+            callWait();
+            
+        } else {
+        	callF();
+        }
+    }
+    
+    async function start() {
+        console.log('Requesting local stream');
+        if (localStream) {
+        	localStream.getTracks().forEach(track => {
+              track.stop();
+            });
+        	localStream = null;
+          }
+        try {
+        	const devs = await navigator.mediaDevices.enumerateDevices();
+            gotDevices(devs);
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            console.log('Received local stream');
+            localVideo.srcObject = stream;
+            localStream = stream;
+            //console.log(URL.createObjectURL(stream));
+            //setTimeout(function () {
+            console.log('call');
+                //if(localStream && init) {
+				
+            callF();
+            playAud();
+                //}
+            //},2000);
+            //startTime = window.performance.now();
+            
+
+        } catch (e) {
+            // alert(`getUserMedia() error: ${e.name}`);
+            closechat();
+            playAud();
+            /* navigator.mediaDevices.getUserMedia(constraints)
+            .then(function(stream) {
+              
+            	localVideo.srcObject = stream;
+                localStream = stream;
+                console.log('call');
+                callF();
+            })
+            .catch(function(err) {
+              alert(err.name);
+            	closechat();
+            }); */
+            
+        }
+        
+    }
+    
+    function gotDevices(devices){
+    	console.log(devices);
+    	for (let i = 0; i !== devices.length; ++i) {
+    		if (devices[i].kind === 'videoinput') {
+    			cameraDevices.push(devices[i].deviceId);
+    		}
+    	}
+    	if(cameraDevices.length == 2){
+    		$('.buttons .switch').css({'display':'inline-block'});
+    	}
+    }
+    
+    async function changeCameraDevice() {
+    	 if (localStream) {
+        	localStream.getTracks().forEach(track => {
+              track.stop();
+            });
+        	//localStream = null;
+          } 
+    	try {
+    		console.log('cwitch');
+	  		const stream = await navigator.mediaDevices.getUserMedia(constraints);
+	  		localStream = stream;
+	  		localVideo.srcObject = stream;
+	  		callF();
+       	} catch (e) {
+           alert(`getUserMedia() error: ${e.name}`);
+       	}
+    }
+    
+    function updateTransaction(){
+    	$('#connect .status, #connect .photo').toggleClass('effect');
+    	setTimeout(function(){ updateTransaction(); },2000);
+    }
+    
+    function closechat(){
+    	if(user_id != null && user_to != null){
+	    	$.ajax({
+	        	url:'', //'https://m.richdate.co.il/api/v9/user/call/close/' + user_id + '/' + user_to,
+	        	method: 'POST',
+	        	contentType: 'json',
+	        	success: function(data){
+	        		console.log(JSON.parse(data));
+	        	}
+	        });
+    	}
+    }
+    
+    $(document).ready(function () {
+    	//$(window).load(function(){
+        	setTimeout(function(){
+        		/* audio = document.createElement('iframe');
+        		audio.setAttribute('id', 'audio-phone');
+        		audio.setAttribute('src','https://m.richdate.co.il/phone_ringing.mp3');
+        		audio.setAttribute('allow','autoplay');
+        		audio.setAttribute('autoplay','true');
+        		audio.setAttribute('loop','autoplay');
+        		$('#connect').append(audio); */
+        		/*<iframe src="silence.mp3" allow="autoplay" id="audio"></iframe>*/
+        		/* <audio id="audio" src="phone_ringing.mp3" autoplay="true" loop controls /> */
+            	// playAud();
+            	// alert(1);
+        		// playAud();
+            },4500);
+        //});
+        if(user_to != null) {
+	        $.ajax({
+	        	url:'', // 'https://m.richdate.co.il/api/v9/user/call/user/data/' + user_to,
+	        	method: 'GET',
+	        	contentType: 'json',
+	        	success: function(data){
+	        		console.log(JSON.parse(data));
+	        		var user = JSON.parse(data);
+	        		if(user.userNick != 'null'){
+	        			$('#connect .name').html(user.data.userNick);
+	        			$('#connect .photo').css({'background-image': 'url(' + user.data.img.url + ')'});
+	        			updateTransaction();
+	        		}
+	        	}
+	        });
+        }else{
+        	updateTransaction();
+        }
+        /* $(window).load(function(){
+        	updateTransaction();
+        }); */
+        $('.buttons .switch').click(function(){
+        	if(typeof constraints.video != 'object'){
+        		constraints.video = {deviceId: {exact: cameraDevices[1]}}
+        	}else{
+        		constraints.video.deviceId.exact = (constraints.video.deviceId.exact == cameraDevices[1]) ? cameraDevices[0] : cameraDevices[1]
+        	}
+        	// var track = localStream.getVideoTracks()[0];
+        	// track.applyConstraints({deviceId: constraints.video.deviceId.exact});
+        	changeCameraDevice();
+        	
+        	// init();
+        	// start();
+        });
+        $('.buttons .microfon').click(function(){
+        	$(this).toggleClass('un');
+        	constraints.audio = (!$(this).hasClass('un'));
+        	//localStream.getAudioTracks().foreach(t => t.enabled = constraints.audio);
+        	//localVideo.srcObject = localStream;
+            var track = localStream.getAudioTracks()[0];
+        	track.enabled = constraints.audio;
+        	//init();
+        	//start();
+        });
+        $('.buttons .camera').click(function(){
+        	$(this).toggleClass('un');
+        	constraints.video = (!$(this).hasClass('un'));
+        	//localStream.getVideoTracks().foreach(t => t.enabled = constraints.video);
+        	var track = localStream.getVideoTracks()[0];
+        	track.enabled = constraints.video;
+        	//init();
+        	//start();
+        });
+        $('#live, #recording').click(function(){
+        	console.log($(this).attr('class'));
+        	if($(this).hasClass('my-video')){
+        		swich();
+        	}
+        	if($(this).hasClass('full-screen')){
+        		$('.buttons').toggleClass('show');
+        	}
+        });
+        
+    });
+    
+    /* function setMediaTrack(track){
+    	if(track == 'a'){
+    		if(audioTrack){
+    			localStream.addTrack(audioTrack);
+    			audioTrack = false;
+    		}else{
+    			var track = localStream.getAudioTracks()[0]
+    			audioTrack = track.clone();
+    			localStream.removeTrack(track);
+    		}
+    	}
+    	if(track == 'v'){
+    		if(videoTrack){
+    			localStream.addTrack(videoTrack);
+    			videoTrack = false;
+    		}else{
+    			var track = localStream.getVideoTracks()[0]
+    			videoTrack = track.clone();
+    			localStream.removeTrack(track);
+    		}
+    	}
+    } */
+</script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+
+</body>
+</html>

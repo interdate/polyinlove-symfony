@@ -1,0 +1,82 @@
+
+
+{% if errors %}
+    <div class="errors">
+        <div class="ui orange message">
+            <div class="content">
+                <div class="header">
+{% trans %} Complete fields: {% endtrans %}
+                </div>
+                <p>
+                    {{ form_errors(form.username) }}
+                    {{ form_errors(form.password.first) }}
+                    {{ form_errors(form.email) }}
+                    {{ form_errors(form.phone) }}
+                    {% if errors_text | length > 0 %}
+                        <ul>
+                            {% for error in errors_text %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+
+<div class="hmaformsec">
+    <h3>{% trans %} Create Account {% endtrans %}</h3>
+    <p></p>
+    {% if not app.request.get('facebook_id') %}
+{#        <div class="facebook-registr">#}
+{#            <div class="facebook-mobile-login-btn" onclick="checkLoginState(true)">Enter using  <div class="ficon"><i class="facebook f icon"></i></div></div>#}
+{#            <span>{% trans %}We will not post anything in your name {% endtrans %}</span>#}
+{#        </div>#}
+    {% endif %}
+    <div class="clear"></div>
+
+    <div class="field {% if form.gender.vars.errors|length or errors_text['gender'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.gender) }}</div>
+        <div class="select" >{{ form_widget(form.gender, {'help': 'foobar'}) }}</div>
+    </div>
+
+    <div class="field {% if form.username.vars.errors|length or errors_text['username'] is defined %}error{% endif %}" style="position:relative;">
+        <div class="label">{{ form_label(form.username) }}</div>
+        <div class="username-error">{% trans %} This username is taken {% endtrans %}</div>
+        <div class="username-error username-free">{% trans %} This username is available {% endtrans %}</div>
+        <div class="inputdiv">{{ form_widget(form.username) }}</div>
+    </div>
+
+    <div class="field {% if form.password.first.vars.errors|length or errors_text['password'] is defined %}error{% endif %}">
+        <div class="label">
+            {{ form_label(form.password.first) }} <span class="instr">({% trans %} min 7 chars {% endtrans %})</span>
+
+        </div>
+        <div class="inputdiv">{{ form_widget(form.password.first, {'value' : passwords.first}) }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">{{ form_label(form.password.second) }}</div>
+        <div class="inputdiv">{{ form_widget(form.password.second, {'value' : passwords.second}) }}</div>
+    </div>
+
+    <div class="field {% if form.email.vars.errors|length or errors_text['email'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.email) }}</div>
+        <div class="inputdiv">{{ form_widget(form.email) }}</div>
+    </div>
+
+    <div class="field {% if form.phone.vars.errors|length or errors_text['phone'] is defined%}error{% endif %}">
+        <div class="label">{{ form_label(form.phone) }}</div>
+        <div class="inputdiv">{{ form_widget(form.phone) }}</div>
+    </div>
+
+    <span class="private-text-reg">{% trans %}*your phone number will not be visible to other viewers*{% endtrans %}</span>
+
+    <div class="field padd">
+        <input type="button" class="nextstage" value="Next" >
+        <input type="submit" id="next_stage" class="hidden">
+    </div>
+</div>
+

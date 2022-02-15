@@ -1,0 +1,175 @@
+{% extends "backend/layout.html.twig" %}
+
+{% block content %}
+
+    {{ include('backend/header.html.twig', { 'header': 'Content', 'icon': 'text file' }) }}
+
+    <div class="page_content">
+
+        {% if page.id > 0 %}
+
+        <a href="{{ path('admin_content') }}" class="link" style="margin-right: 30px;">
+            Content
+        </a>
+        / page -
+        {{ page.name }}
+
+        {% endif %}
+
+         <div class="ui segment page">
+
+            <h2 class="ui header right">
+                <i class="write icon"></i>
+                <div class="content">
+                    {% set title = page.id > 0 ? 'Edit page' : 'Add page' %}
+                    {{ title }}
+                </div>
+            </h2>
+
+            <div class="clear"></div>
+
+            <form class="ui form" id="page_form" method="post">
+
+                <div class="ui big ribbon label">{{ form_label(form.name) }}</div>
+                <div class="field">
+                    {{ form_widget(form.name) }}
+                </div>
+
+                <div class="ui big ribbon label">{{ form_label(form.headerType) }}</div>
+                <div class="field">
+                    {{ form_widget(form.headerType) }}
+                </div>
+
+                <div class="ui big ribbon label">{{ form_label(form.content) }}</div>
+                <div class="field">
+                    {{ form_widget(form.content) }}
+                </div>
+
+                <br><br>
+
+                <h3 class="ui horizontal divider header">
+                    <i class="line chart orange icon"></i>
+                    SEO
+                </h3>
+
+
+                <div class="ui big ribbon label">{{ form_label(form.uri) }}</div>
+                <div class="field">
+                    {{ form_widget(form.uri) }}
+                </div>
+
+                <div class="ui big ribbon label">{{ form_label(form.title) }}</div>
+                <div class="field">
+                    {{ form_widget(form.title) }}
+                </div>
+
+                <div class="ui big ribbon label">{{ form_label(form.description) }}</div>
+                <div class="field">
+                    {{ form_widget(form.description) }}
+                </div>
+
+                <br>
+
+                <h3 class="ui horizontal divider header">
+                    <i class="settings orange icon"></i>
+                    Settings
+                </h3>
+
+                <div class="field">
+                    <div class="ui big ribbon label">
+                        {{ form_label(form.isActive) }}
+                    </div>
+                    <div class="ui compact segment">
+                        <div class="ui slider fitted checkbox">
+                            {{ form_widget(form.isActive) }}
+                            <label></label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="ui big ribbon label">{{ form_label(form.footerHeader) }}</div>
+                <div class="field">
+                    {{ form_widget(form.footerHeader) }}
+                </div>
+
+
+
+                <br>
+                <br>
+
+                <div class="ui one column centered grid">
+                    <button class="ui labeled icon orange approve big button right">
+                        <i class="save icon"></i>
+                        save
+                    </button>
+                </div>
+
+                {{ form_rest(form) }}
+
+            </form>
+
+
+
+
+
+            <br>
+            <br>
+
+
+            <div class="clear"></div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"></script>
+    <script>
+
+        tinymce.init({
+            selector:'#page_content',
+            directionality: "ltr",
+            menubar : false,
+            plugins: [
+                "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                "save table contextmenu directionality emoticons template paste textcolor"
+            ],
+
+            toolbar: "insertfile undo redo | bold italic underline | styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | preview media fullpage | forecolor backcolor emoticons | link image | code | ltr rtl",
+            style_formats: [
+                {title: "Headers", items: [
+                        {title: "Header 3", format: "h3"},
+                        {title: "Header 4", format: "h4"},
+                        {title: "Header 5", format: "h5"},
+                        {title: "Header 6", format: "h6"}
+                    ]},
+
+                {title: "Inline", items: [
+                        {title: "Bold", icon: "bold", format: "bold"},
+                        {title: "Italic", icon: "italic", format: "italic"},
+                        {title: "Underline", icon: "underline", format: "underline"},
+                        {title: "Strikethrough", icon: "strikethrough", format: "strikethrough"},
+                        {title: "Superscript", icon: "superscript", format: "superscript"},
+                        {title: "Subscript", icon: "subscript", format: "subscript"},
+                    ]},
+
+                {title: "Alignment", items: [
+                        {title: "Left", icon: "alignleft", format: "alignleft"},
+                        {title: "Center", icon: "aligncenter", format: "aligncenter"},
+                        {title: "Right", icon: "alignright", format: "alignright"},
+                        {title: "Justify", icon: "alignjustify", format: "alignjustify"}
+                    ]}
+            ],
+            cleanup : false,
+            verify_html : false,
+        });
+
+
+    </script>
+
+
+{% endblock %}

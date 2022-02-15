@@ -1,0 +1,97 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
+security:
+
+    encoders:
+        AppBundle\Entity\User:
+            algorithm: bcrypt
+            cost: 12
+
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    #providers:
+    #    in_memory:
+    #        memory: ~
+
+    role_hierarchy:
+        ROLE_ADMIN:       [ROLE_USER, ROLE_ALLOWED_TO_SWITCH]
+
+    providers:
+        users_from_db:
+            entity: { class: AppBundle:User }
+
+        api_key_user_provider:
+            id: api_key_user_provider
+
+        api_user_provider:
+            id: api_user_provider
+
+
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        messenger_area:
+            pattern:   ^/messenger
+            stateless: true
+            simple_preauth:
+                authenticator: apikey_authenticator
+
+        api_area:
+            pattern:   ^/api
+            anonymous: ~
+            stateless: true
+            form_login: false
+            #http_basic: ~
+            simple_preauth:
+                authenticator: api_authenticator
+
+        secured_area:
+            pattern: ^/
+            anonymous: true
+#            provider: users_from_db
+            provider: api_user_provider
+            form_login:
+                check_path: login_check
+                login_path: homepage
+#            simple_preauth:
+#                authenticator: facebookkey_authenticator
+
+
+            logout:
+                path: /logout
+                target: /
+
+
+
+
+
+    access_control:
+        - { path: /admin, roles: ROLE_ADMIN }
+        - { path: /sonata-admin, roles: ROLE_ADMIN }
+        - { path: /user, roles: ROLE_USER }
+        - { path: /sign_up/photo, roles: ROLE_USER }
+        - { path: /sign_up/photos, roles: ROLE_USER }
+        - { path: /api, roles: ROLE_USER }
+        - { path: /open_api, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /sign_up, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+
+
+
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        #dev:
+        #    pattern: ^/(_(profiler|wdt)|css|images|js)/
+        #    security: false
+
+        #main:
+        #    anonymous: ~
+            # activate different ways to authenticate
+
+            # http_basic: ~
+            # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
+
+            # form_login: ~
+            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html

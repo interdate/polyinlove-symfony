@@ -1,0 +1,88 @@
+{% extends "frontend/layout.html.twig" %}
+
+
+
+{% block content %}
+    <div class="midsec">
+        <h1><a href="#">{% trans %} Arena Notifications {% endtrans %}</a></h1>
+        <div class="cont">
+            <div class="hotdesc">
+                <div class="ui pointing secondary demo menu p-relative">
+                    <a class="active red item" data-tab="notifications">{% trans %} Notifications {% endtrans %}</a>
+                    <a class="blue item" data-tab="bingo">{% trans %} Bingo {% endtrans %}</a>
+                    <button class="readAll">Read all</button>
+                </div>
+            </div>
+
+
+
+            <!-- hotdesc end -->
+            {% if users|length > 0 %}
+                <div class="ui active tab segment notifications notifications-segments " data-tab="notifications" >
+                    <div class="hotlist">
+                        {% for user in users %}
+                            {% if (not user.bingo) %}
+                                {#//<a href="{{ path('messenger_dialog_open', {'userId': app.user.id, contactId: user.user_id}) }}">#}
+                                <div class="boxrpt clearfix notification {{ user.isRead ? 'readNotif' : '' }}" notification-id="{{ user.id }}" data-id="{{ user.user_id }}" onclick="openPopup({{ user.user_id }})">
+                                    <div class="userimg">
+                                        <div class="notif-user-image" style="background-image: url({{ user.photo }})"></div>
+{#                                        <img src="{{ user.photo }}">#}
+                                    </div>
+                                    <div class="descbox">
+                                        <div class="titlesec clearfix">
+                                            <div class="datediv">{{ user.date }}</div>
+                                        </div>
+                                        <div class="desctext">
+                                            <span class="linkToArenaLike">
+                                                {{ user.text }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {#</a>#}
+                            {% endif %}
+                            <!-- end -->
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+
+                <div  class="ui tab segmen bingo notifications-segments" data-tab="bingo" >
+                    <div class="hotlist">
+                        {% for user in users %}
+                            {% if (user.bingo) %}
+                                <div class="boxrpt clearfix  bingo {{ user.isRead ? 'readNotif' : '' }}" notification-id="{{ user.id }}" data-id="{{ user.user_id }}">
+                                    <div class="userimg">
+                                        <div class="notif-user-image" style="background-image: url({{ user.photo }})"></div>
+{#                                        <img src="{{ user.photo }}">#}
+                                    </div>
+                                    <div class="descbox">
+                                        <div class="titlesec clearfix">
+                                            <div class="datediv">{{ user.date }}</div>
+                                            <div class="username">{{ user.username }}</div>
+                                        </div>
+                                        <div class="desctext">
+                                          {{ user.text }}
+                                        </div>
+                                        <img class="bingoImg" src="https://www.nyrichdate.com/images/bingo/bingo.png" style="width: 19%;float: left;">
+                                    </div>
+                                    <input type="hidden" name="" class="bingo-href" value="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.user_id}) }}">
+                                </div>
+                            {% endif %}
+                            <!-- end -->
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+
+            {% else %}
+                <p> {{ texts.no_results }} </p>
+            {% endif %}
+                </div>
+                <!-- hotlist -->
+
+            </div>
+
+{% endblock %}

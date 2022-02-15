@@ -1,0 +1,201 @@
+{% trans_default_domain 'user_profile' %}
+<div class="popright">
+	{% if not mobile %}
+		<div class="popbox clearfix">
+			{% if app.user  and app.user.id != user.id%}
+{#					<textarea id="instant_message" cols="2" rows="2" placeholder="{% trans %} Send quick message {% endtrans %}"></textarea>#}
+{#					<input type="submit" value="{% trans %} Send {% endtrans %}" class="btn" onclick="sendInstantMessage({{ user.id }}, $('#instant_message'))">#}
+				<button class="inlineMess">{% trans %} Sending an understandable message {% endtrans %}</button>
+				<div>
+					<ul class="inlinemessages">
+						{% for message in messages %}
+							<li class="inlineMessItem" data-id="{{ user.id }}" value="{{ message.id }}">{{ message.text }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+		</div>
+	{% endif %}
+    <!-- end -->
+
+
+
+    <div class="popbox clearfix">
+{#        <h3 class="ttl tog_click"> {% trans %} I am brief {% endtrans %}</h3>#}{#אני בקצרה#}
+		<div>
+	        {#<ul class="infobox bdr">#}
+	            {#<li><span class="spnttl">מצב משפחתי:</span> {{ user.relationshipStatus.name }}</li>#}
+	            {#<li><span class="spnttl">סוג מערכת היחסים שאני נמצא/ת בה:</span> {{ user.relationshipType.name }}</li>#}
+	            {#<li><span class="spnttl">מזל:</span> {{ getZodiac(user.birthday|date('U')) }}</li>#}
+	            {#<li><span class="spnttl">הרגלי עישון:</span> {{ user.smoking.name }}</li>#}
+	            {#<li><span class="spnttl"> מוצא:</span> {{ user.origin.name }}</li>#}
+	            {#<li>#}
+	                {#<span class="spnttl right"> מה אני מחפש/ת</span>#}
+	                {#<span class="det right">#}
+
+	                 {#{{ user.lookingFor.name }}#}
+
+	                {#</span>#}
+	{##}
+	            {#</li>#}
+	            {#<li><span class="spnttl">נטיה מינית:</span> {{ user.sexOrientation.name }}</li>#}
+	        {#</ul>#}
+
+	        <ul class="infobox">
+
+	        </ul>
+		</div>
+        <div class="clr"></div>
+
+{#        <h3 class="ttl tog_click">{% trans %} I am extensively {% endtrans %}</h3>#}{#אני בהרחבה#}
+
+		<div>
+	        <ul class="infobox bdr">
+	            {#<li><span class="spnttl">אני:</span> {{ user.relationshipStatus.name }}</li>#}
+
+	            <li>
+
+	                <span class="det right">
+	                {#{% for reason in user.veggieReasons %}#}
+	                    {#{{ reason.name }}{% if not loop.last %},{% endif %}#}
+	                {#{% endfor %}#}
+	                </span>
+	            </li>
+	            {#<li><span class="spnttl">הרגלי שתיה:</span> {{ user.drinking.name }}</li>#}
+	            {#<li><span class="spnttl">הרגלי ספורט</span> {{ user.sport.name }}</li>#}
+	        </ul>
+
+	        <ul class="infobox">
+	            <li>
+	                {#<span class="spnttl right">כמה ירוק אני:</span>#}
+	                <span class="det right">
+	                    {#{{ user.green.name }}#}
+	                </span>
+	            </li>
+	            {#<li><span class="spnttl">בע״ח:</span> {{ user.animals.name }}</li>#}
+	            <li>
+	                <span class="spnttl right">תחומי עניין:</span>
+	                <span class="det right">
+	                {#{% for interest in user.interests %}#}
+	                    {#{{ interest.name }}{% if not loop.last %},{% endif %}#}
+	                {#{% endfor %}#}
+	                </span>
+	            </li>
+	            {#<li><span class="spnttl">השקפה פוליטית:</span> {{ user.politicalAffiliation.name }}</li>#}
+	        </ul>
+		</div>
+
+        <div class="clr"></div>
+
+{#        <h3 class="ttl tog_click"> {% trans %} How I look {% endtrans %} </h3>#}{#איך אני נראה/ית#}
+
+		<div>
+	        <ul class="infobox bdr">
+	            <li><span class="spnttl">{% trans %} Height: {% endtrans %}</span> {{ user.height }}</li>{#גובה#}
+	            <li><span class="spnttl"></span>  {% trans %} Body: {% endtrans %} {{ user.body.name }}</li>{#מבנה גוף:#}
+	        </ul>
+
+	        <ul class="infobox">
+	            {#<li><span class="spnttl">צבע עיניים:</span> {{ user.eyes.name }}</li>#}
+	            {#<li><span class="spnttl">תסרוקת:</span> {{ user.hair.name }}</li>#}
+	        </ul>
+		</div>
+
+        <div class="clr"></div>
+
+    </div>
+    <!-- end -->
+</div>
+<!-- popright -->
+
+<div class="clr"></div>
+
+<div class="popright">
+    <div class="popbox clearfix">
+{#        <h3 class="ttl tog_click">{% trans %} A little about me / us {% endtrans %}</h3>#}{#מעט עליי/עלינ#}
+        <div class="descption">{{ user.about }}</div>
+
+{#        #}{#<h3 class="ttl tog_click">עוד קצת עליי</h3>#}
+		{##}
+		{#<div>#}
+	        {#<div class="descption">#}
+	            {#הדייט המושלם עבורי הוא...:#}
+	            {#<br>#}
+	            {#{{ user.perfectDate }}#}
+	        {#</div>#}
+	{##}
+	        {#<div class="descption">#}
+	            {#מנה צמחונית אהובה:#}
+	            {#<br>#}
+	            {#{{ user.favoriteDish }}#}
+	        {#</div>#}
+	{##}
+	        {#<div class="descption">#}
+	            {#מסעדה ידידותית לצמחונים שאני אוהב/ת...#}
+	            {#<br>#}
+	            {#{{ user.favoriteRestaurant }}#}
+	        {#</div>#}
+	{##}
+	        {#<div class="descption">#}
+	            {#איזו אישיות הייתי מזמין לארוחת ערב?#}
+	            {#<br>#}
+	            {#{{ user.dinnerWith }}#}
+	        {#</div>#}
+	        {##}
+	        {#<div class="descption">#}
+	            {#הספרים האהובים עליי:#}
+	            {#<br>#}
+	            {#{{ user.favoriteBooks }}#}
+	        {#</div>#}
+	{##}
+	        {#<div class="descption">#}
+	            {#המוזיקה שאני שומע...#}
+	            {#<br>#}
+	            {#{{ user.music }}#}
+	        {#</div>#}
+		{#</div>#}
+		        {##}
+    </div>
+    <!-- end -->
+</div>
+<!-- popright -->
+
+<div class="popleft">
+    <div class="popbox clearfix">
+{#        <h3 class="ttl tog_click">{% trans %}What for I / we looking? {% endtrans %}</h3>#}{#מה אני/אנחנו מחפש/ים?#}
+        <div class="descption">{{ user.looking }}</div>
+
+        {#<div class="spacer"></div>
+
+        <div class="descption">
+            הספרים האהובים עליי:
+            <br>
+            {{ user.favoriteBooks }}
+        </div>
+
+        <div class="descption">
+            המוזיקה שאני שומע...
+            <br>
+            {{ user.music }}
+        </div>
+        #}
+
+
+    </div>
+    <!-- end -->
+
+    {% if app.user and app.user.id != user.id %}
+        <div class="popbox clearfix">
+{#            <h3 class="ttl tog_click">{% trans %} My notes {% endtrans %}</h3>#}{#הערות שלי#}
+            <div>
+	            {% set note = user.getNotesAboutMe(app.user) %}
+	            <textarea cols="2" rows="2" class="txtarea2" maxlength="255">{% if note %}{{ note.text }}{% endif %}</textarea>
+	            <div class="textlimit">{% trans %} You have 255 characters left {% endtrans %}</div>{#נותרו לך 255 תווים#}
+	            <input type="submit" value="{% trans %} Save notes {% endtrans %}" class="btn red" id="save_note" />{#שמור  הערות#}
+	            <input type="hidden" value="{{ user.id }}" class="memberId">
+            </div>
+        </div>
+        <!-- Comment box -->
+    {% endif %}
+</div>
+<!-- popleft -->

@@ -1,0 +1,161 @@
+{% trans_default_domain 'user_profile' %}
+
+<script>
+	function reportAbuse(){
+		var userId = $('.abuse-form .userId').val();
+		text = $('.abuse-form textarea').val();
+		console.log(text)
+		if(text.length == ''){
+			return;
+		}
+
+		$.ajax({
+			url: '/user/report/abuse/' + userId,
+			type: 'Post',
+			data: 'text=' + text,
+			error: function(response){
+				console.log("Error:" + JSON.stringify(response));
+			},
+			success: function(response){
+				console.log("Success:" + JSON.stringify(response));
+				$('.abuse-form').slideUp('slow');
+				reportAbuseClose();
+				alert(" Thank you, your report was sent to {{ site_name }}'s team")
+			}
+		});
+	}
+
+	function openAbuse() {
+		// $('.pmtitle.bottom').addClass('hidden');
+		$('.abuse-form').slideDown('slow');
+		$('html, body').animate({scrollTop:$(document).height()}, 'slow');
+		$('.pmtitle.bottom').css({'margin-bottom': '0px'})
+	}
+
+	function reportAbuseClose () {
+		$('.abuse-form').slideUp('slow');
+		$('.pmtitle.bottom').css({'margin-bottom': '24px'})
+	}
+</script>
+
+<div class="container2">
+
+
+
+	<div class="content">
+
+
+		<div class="pmdetail cf">
+			<ul class="pmbotul ">
+					<ul>
+						<li>
+							<b>{% trans %} Gender {% endtrans %}: </b>
+							<span>{{ user.gender.name }}</span>
+						</li>
+
+						<li>
+							<b>{% trans %} Region {% endtrans %}: </b>
+							<span>{{ user.region.name }}</span>
+						</li>
+						<li>
+							<b>{% trans %} City {% endtrans %}: </b>
+							<span>{{ user.city.name }}</span>
+						</li>
+						<li>
+							<b>{% trans %} Relationship status {% endtrans %}: </b>
+							<span>{{ user.relationshipStatus.name }}</span>
+						</li>
+						<li>
+							<b>{% trans %} Relationship type {% endtrans %}: </b>
+							<span>{{ user.relationshipType.name }}</span>
+						</li>
+						<li>
+							<b>{% trans %} Relationship type details {% endtrans %}: </b>
+							<span class="details-field">{{ user.relationshipTypeDetails }} </span>
+						</li>
+						<li>
+							<b>{% trans %} Sex orientation {% endtrans %}: </b>
+							<span>{{ user.sexOrientation.name }}</span>
+						</li>
+						<li>
+							<b>{% trans %} Sex orientation details {% endtrans %}: </b>
+							<span class="details-field">{{ user.sexOrientationDetails }}
+				</span>
+						</li>
+						<li>
+							<b>{% trans %} Smoking {% endtrans %}: </b>
+							<span>{{ user.smoking.name }}</span>
+						</li>
+						<li>
+							<b>{% trans %} Body {% endtrans %}: </b>
+							<span>{{ user.body.name }}</span>
+						</li>
+						<li>
+							<b>{% trans %} Height {% endtrans %}: </b>
+							<span>{{ user.height }}</span>
+						</li>
+						<li>
+							<b>{% trans %} Looking for {% endtrans %}: </b>
+							<span>
+							</span>
+						</li>
+						{% if (user.origin) %}
+							<li>
+								<b>{% trans %} Origin {% endtrans %}: </b>
+								<span>{{ user.origin.name }}</span>
+							</li>
+						{% endif %}
+						<li>
+							<b>{% trans %} Zodiac {% endtrans %}: </b>
+							<span>{{ user.zodiac }}</span>
+						</li>
+
+						<li>
+							<b>{% trans %} About {% endtrans %}: </b>
+							<span>{{ user.about }}</span>
+						</li>
+
+						<li>
+							<b>{% trans %} Looking {% endtrans %}: </b>
+							<span>{{ user.looking }}</span>
+						</li>
+			</ul>
+
+		</div>
+
+		{% if user.id != app.user.id %}
+			<div class="pmtitle bottom">
+				<button class="report-abuse report" onclick="openAbuse()">
+					<i class="volume up icon"></i>
+					{% trans %} Report {% endtrans %}
+				</button>
+				{% if not app.user.isAddBlackListed(user.id) %}
+					<button class="report-abuse block add_to_back_list" data-id="{{ user.id }}">
+						<i class="lock icon"></i>
+						<span>{% trans %} Block {% endtrans %}</span>
+					</button>
+				{% else %}
+				<button color="dark" class="report-abuse delete_from_black_list" data-id="{{ user.id }}">
+					<i class="unlock icon"></i>
+					<span>{% trans %} Unblock {% endtrans %}</span>
+				</button>
+				{% endif %}
+			</div>
+
+
+			<div class="abuse-form hidden">
+				<div>
+					<textarea rows="3"></textarea>
+				</div>
+				<div class='btn-opt'>
+					<button class="cancel" color="danger" onclick="reportAbuseClose()">
+						{% trans %} Cancel {% endtrans %}
+					</button>
+					<button  onclick="reportAbuse()">{% trans %} Submit {% endtrans %}
+					</button>
+				</div>
+				<input type="hidden" class="userId" value="{{ user.id }}">
+			</div>
+		{% endif %}
+	</div>
+</div>

@@ -1,0 +1,137 @@
+{% extends "backend/layout.html.twig" %}
+
+{% block content %}
+
+    {{ include('backend/header.html.twig', { 'header': 'Push', 'icon': '' }) }}
+
+    <div class="page_content messages_content">
+
+        <div class="ui segment">
+            <form class="ui form" id="sendMessageToUsersGroupe" method="post" >
+                <h2 class="ui header left">
+                    {# <i class="{{ icon }} icon"></i> #}
+                    <div class="content">
+                        {# {{ title }} #}
+                    </div>
+                </h2>
+
+
+                {# <div class="right" style="clear: none;margin-right: 5px;"> #}
+                {# <label class="left" style="line-height: 40px;">דוחות</label> #}
+                {# </div> #}
+
+
+                <div class="clear"></div>
+
+                {% if send %}
+                    <div class="ui success visible message" style="max-width: 300px;margin: 0 auto;">
+                        <i class="close icon"></i>
+                        <p style="text-align: center;">Massage was successfully sent!</p>
+                    </div>
+                {% endif %}
+
+                <br>link to site/app field-
+                <br> this is a link to an existing page within the app/site.
+                <br>link to a page in the site such as magazine (the linked page should not be restricted to logged in
+                users)
+                <br>
+                <br> - web link field
+                <br>link to site/ app is the page that wil be opened by the push notification
+                <br> web link -Whoever received the push in the browser will be redirected to here (can be login
+                restricted)
+                <br>
+                <br>
+
+                <div class="ui big ribbon label" style="margin-bottom: 10px;margin-top: 15px;">send to</div>
+                <div class="field" style="clear: none;margin-right: 15px;margin-top: 2px;min-width: 100px;">
+
+                    <select name="reportId" id="reportId" class="ui search dropdown">
+                        <option value="">choose report</option>
+                        {% for report in reports %}
+                            <option value="{{ report.id }}">{{ report.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="ui big ribbon label" style="margin-bottom: 10px;margin-top: 15px;">Title Push</div>
+                <div class="field">
+                    <input type="text" name="titleMess" id="titleMess">
+                </div>
+
+
+                <div class="ui big ribbon label" style="margin-bottom: 10px;margin-top: 15px;">Text Push</div>
+                <div class="field">
+                    <textarea name="message" id="textMessage"></textarea>
+                </div>
+
+
+                <div class="ui big ribbon label" style="margin-bottom: 10px;margin-top: 15px;">
+                    link to site/ application
+                </div>
+                <div class="field">
+                    <input type="radio" name="type" value="linkOut" id="" checked> site
+                    <input type="radio" name="type" value="app" id="">application
+                </div>
+
+
+                <div class="site-link">
+                    <div class="ui big ribbon label" style="margin-bottom: 10px;margin-top: 15px;">
+                        link to site (link to application should be to non restricted page)
+                    </div>
+                    <div class="field">
+                        <input type="text" name="url" id="">
+                    </div>
+                </div>
+
+                <div class="app-link hidden">
+                    <div class="ui big ribbon label" style="margin-bottom: 10px;margin-top: 15px;">
+                        page within application
+                    </div>
+                    <div class="field">
+                        <input type="text" name="app_url" id="" style="direction: ltr">
+                    </div>
+                    <smal>
+                        <ul>
+                            <li>/home</li>
+                            <li>/notifications (arena notifications)</li>
+                            <li>/arena (arena)</li>
+                            <li>/show-photo (incoming requests to see private photos)</li>
+                            <li>/new-users</li>
+                            <li>/nearme-users</li>
+                            <li>/online-users</li>
+                        </ul>
+                    </smal>
+                </div>
+
+
+                <div class="field">
+
+                    <div class="ui big ribbon label" style="margin-bottom: 10px;margin-top: 15px;">
+                        web link
+                    </div>
+                    <div class="field">
+                        <input type="text" name="web_url" id="">
+                    </div>
+                </div>
+
+
+                <div class="">
+                    <button class="ui labeled icon violet approve large button" type="submit">
+                        <i class="send outline icon"></i>
+                        send push to users from the report
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+
+    </div>
+    <script>
+        $('input[name="type"]').change(function () {
+            $('.app-link, .site-link').toggleClass('hidden')
+        })
+    </script>
+
+{% endblock %}

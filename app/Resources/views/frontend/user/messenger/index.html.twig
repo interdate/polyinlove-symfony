@@ -1,0 +1,112 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+
+    <div class="midsec">
+        <h1><a href="#">Messages</a></h1>
+        <div class="cont">
+            <div class="hotdesc">
+
+            </div>
+            <!-- hotdesc end -->
+
+            <div id="dialogs">
+
+                {# <div class="hotlist"> #}
+                {% if dialogs|length > 0 %}
+{#                    {% dump dialogs %}#}
+                    {% for dialog in dialogs %}
+
+                        {% set url = path('messenger_dialog_open',{'userId': app.user.id, 'contactId': dialog.uid}) %}
+
+                        {% if not mobile %}
+                            <div class="boxrpt clearfix" onclick="window.location.href='{{ url }}'">
+                                <div class="userimg" style="background-image: url( {{ dialog.photo }})">
+
+                                    {% if dialog.photo != '' %}
+                                        <a href="{{ url }}">
+                                        </a>
+                                        <input type="hidden" value="{{ dialog.photo }}">
+                                    {% else %}
+                                        <a href="{{ url }}">
+                                            <img src="{{ dialog.noPhoto }}">
+                                        </a>
+                                    {% endif %}
+                                    {% if dialog.online %}
+                                        <div class="onlineCircle"></div>
+                                    {% endif %}
+{#                                    {% if dialog.contactIsPaying %}#}
+{#                                        #}{# [PAYING] #}
+{#                                    {% endif %}#}
+                                </div>
+                                <div class="descbox">
+                                    <div class="titlesec clearfix">
+                                        <h3>
+                                            <a href="{{ url }}">
+                                                {{ dialog.username }}
+                                            </a>
+                                        </h3>
+                                        <div class="datediv">{{ dialog.date|date("d/m/Y H:i") }}</div>
+                                    </div>
+                                    <div class="desctext">
+                                        <a href="{{ url }}">
+                                            {% if dialog.message|striptags|length > 60 %}
+                                                {{ dialog.message|striptags|slice(0,59)|raw ~ '...' }}
+                                            {% else %}
+                                                {{ dialog.message|striptags|raw }}
+                                            {% endif %}
+                                        </a>
+                                    </div>
+                                    {% if dialog.newMessagesNumber > 0 %}
+                                        <div class="newMessages">{{ dialog.newMessagesNumber }}+</div>
+                                    {% endif %}
+                                </div>
+                                <i class="trash alternate outline icon delete-message-icon"></i>
+                                <input type="hidden" name="" class="userId" value="{{ dialog.fromUser }}">
+                            </div>
+                        {% else %}
+
+                            <div class="ion-cart">
+                                <a href="{{ url }}">
+                                    <div class="ion-card-content">
+                                        <div class="inbox-user-image"
+                                             style="background-image: url('{{ dialog.photo }}')"></div>
+                                        <div class="ion-card-title">
+                                            <div class="name">{{ dialog.username }}</div>
+                                            <div class="date">{{ dialog.date }}</div>
+                                        </div>
+                                        <div class="message">
+                                            <p>
+                                                {{ dialog.message|replace({ '%PAYMENT_LINK%': path('user_payment') })|raw }}
+                                            </p>
+                                            {% if dialog.newMessagesNumber > 0 %}
+                                                <div class="counter">{{ dialog.newMessagesNumber }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </a>
+                                <i class="trash alternate outline icon delete-message-icon"></i>
+                                <input type="hidden" name="" class="userId" value="{{ dialog.uid }}">
+                            </div>
+
+                        {% endif %}
+
+                        <!-- end -->
+
+                    {% endfor %}
+                {% else %}
+                    <div class="no-results">{% trans %} No messages {% endtrans %}</div>
+                {% endif %}
+
+                <!-- hotlist -->
+
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="" class="inChat" value="true">
+    <!-- midsec end -->
+
+
+{% endblock %}
+
+

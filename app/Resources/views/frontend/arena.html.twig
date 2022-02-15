@@ -1,0 +1,14 @@
+{% extends "frontend/layout.html.twig" %}
+
+
+
+{% block content %}
+
+   {% for user in users %}
+       {#{{ user.id }}#}
+        <div>
+            <img src="{{ user.image }}" alt="">
+        </div>
+    {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,121 @@
+<div class="popup-head clearfix">
+    {% if app.user.id != user.id %}
+
+        <div class="popuplogo"><a href="index.html"><img src="/images/logo2.png" alt=""></a></div>
+        <div class="popupmenu boxcont">
+            <input type="hidden" class="userId" value="{{ user.id }}">
+            <ul>
+                <li>
+                    <a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}"><span><img
+                                    src="/images/popup-menu-icon7.png" alt=""></span>Send me a message</a></li>
+                <li><a href="#"><span><img src="/images/popup-menu-icon6.png" alt=""></span>chat</a></li>
+                <li><a href="#"><span><img src="/images/popup-menu-icon5.png" alt=""></span>Like</a></li>
+            </ul>
+        </div>
+
+        <!-- end -->
+
+    {% endif %}
+</div>
+
+<div class="report-cont hidden">
+    <textarea placeholder="..."></textarea>
+    <input type="hidden" value="{{ user.id }}" class="memberId">
+    <div class="btn-wrapper">
+        <button class="btn" id="report">Send</button>
+    </div>
+</div>
+
+
+<div class="report-success hidden">{% trans %} Thank you! A message was sent to{% endtrans%} {{ site_name }}{% trans%} team. {% endtrans %}</div>
+<div class="popbox clearfix title_profile">
+    <h3 class="ttl clearfix">
+        <span>{{ user.username }}</span>
+        {% if user.isNew %}<img src="/images/main-pg-subtitle-icon.png" alt="" class="smimg"/>{% endif %}
+        {% if user.isPaying %}<img src="/images/main-pg-queen-icon.png" alt=""/>{% endif %}
+        {{ user.isVerify ? 1 : 0 }}
+    </h3>
+    <div class="desp">{{ user.age }}, {{ user.city.name }}</div>
+</div>
+<div class="popup-midsec clearfix">
+
+    <div class="popleft">
+        <div class="sgallery">
+            <div class="galcont">
+                <div class="galpic {% if user.gender.id == 1 %}male{% else %}female{% endif %}">
+
+                    <div class="ui active disabled dimmer inverted" id="main_photo_dimmer">
+                        <div class="ui text large loader disabled">
+                            {% trans %}Loading
+                            {% endtrans %}
+                        </div>
+                    </div>
+
+                    <div><img src="" style="display: none;"></div>
+                </div>
+            </div>
+            <div class="galpreview">
+
+                {% set mainIsExists = false %}
+
+                {% set mainPhoto = user.getMainPhoto %}
+
+                {% set isActive = false %}
+
+                {% if mainPhoto is not null %}
+
+                    {% set mainIsExists = true %}
+
+                    <div data-pic="" class="active">
+                        <img src="">
+                        <input type="hidden" value="{{ mainPhoto.name }}">
+                    </div>
+                {% endif %}
+
+                {% for photo in user.photos %}
+                    {% if photo.isValid and not photo.isMain %}
+                        <div data-pic=""
+                             {% if not mainIsExists and not isActive %}{% set isActive = true %}class="active"{% endif %}>
+                            <img src="">
+                            <input type="hidden" value="{{ photo.name }}">
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </a>
+        </div>
+        <!-- end -->
+
+    </div>
+    <!-- popleft -->
+
+
+    {{ user.isVerify ? 1 : 0 }}
+    {{ include ('frontend/user/user_data.html.twig') }}
+
+
+</div>
+<!-- end -->
+
+{% if app.user.id != user.id %}
+    <!-- BTM -->
+    <div class="popupbtm clearfix">
+        <div class="popupmenu clearfix boxcont">
+            <input type="hidden" class="userId" value="{{ user.id }}">
+            <ul>
+                <li>
+                    <a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}"><span><img
+                                    src="/images/popup-menu-icon7.png" alt=""></span>
+                        {% trans %}
+                            Send me a message
+                        {% endtrans %}
+                    </a></li>
+                <li><a href="#" class="add_to_fav"><span><img src="/images/popup-menu-icon3.png" alt=""></span>
+                        {% trans %}
+                            Add to favorites
+                        {% endtrans %}</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- BTM -->
+{% endif %}

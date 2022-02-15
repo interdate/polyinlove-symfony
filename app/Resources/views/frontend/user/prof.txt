@@ -1,0 +1,530 @@
+{#{% extends 'frontend/main_layout.html.twig' %}#}
+{% extends 'frontend/layout.html.twig' %}
+{% block content %}
+    {% trans_default_domain 'user_profile' %}
+
+
+    <script>
+
+        $(document).ready(function(){
+
+            $('#responsive').lightSlider({
+                item:4,
+                loop:false,
+                slideMove:2,
+                easing: 'cubic-bezier(0.25, 0, 0.25, 1)',
+                speed:600,
+                responsive : [
+                    {
+                        breakpoint:800,
+                        settings: {
+                            item:3,
+                            slideMove:1,
+                            slideMargin:6,
+                        }
+                    },
+                    {
+                        breakpoint:480,
+                        settings: {
+                            item:2,
+                            slideMove:1
+                        }
+                    }
+                ]
+            });
+
+//        width = $('.galpreview div').width();
+//        height = $('.galpreview div').height();
+//
+//        mainWidth = $('.galpic').width();
+//        mainHeight = $('.galpic').height();
+//        $('.galpreview div[data-pic]:last-child').addClass('lastdiv');
+//
+//        $('.galpreview input[type="hidden"]').each(function(){
+//            //photosName.push($(this).val());
+//            var previewPhotoUrl = $.cloudinary.url($(this).val(), { width: width, height: height, crop: 'fill' })
+//            var bigPhotoUrl = $.cloudinary.url($(this).val(), { width: mainWidth, height: mainHeight, crop: 'fill' });
+//            $(this).siblings('img').attr('src', previewPhotoUrl).parent().attr('data-pic', bigPhotoUrl);
+//        });
+
+            //$('.galpreview div').eq(0).addClass('active');
+//        if($('.galpreview div.active').size()){
+//            $('.galpic img').show().attr('src', $('.galpreview div.active').attr('data-pic'));
+//        }
+
+//        $('.galpreview div').on({
+//            'click':function(){
+//
+//
+//                var curElem = $(this);
+//                var curElemAttr = curElem.attr('data-pic');
+//                $('.galpreview div').removeClass('active');
+//                curElem.addClass('active');
+//                $('.galpic img').attr('src', curElemAttr);
+//
+//
+//            }
+//        });
+
+
+            $('#save_note').click(function(){
+                var memberId = $(this).siblings('.memberId').val()
+                var text = $(this).siblings('textarea').val();
+                saveNote(memberId, text);
+            });
+
+            $('.report_abuse').click(function(e){
+                $('#user_data').animate({scrollTop: 100 }, 800);
+                e.preventDefault();
+                $('.report-success').hide();
+                $('.report-cont').slideDown('slow');
+
+                if($(this).hasClass('bottom')){
+                    //$('#user_data').scrollTo(0, $('.popuplogo').offset().top + 100);
+                    // $('#user_data').animate({scrollTop: $('.popuplogo').offset().top + 100 }, 800);
+                }
+
+            });
+
+            $('#report').click(function(){
+                var memberId = $(this).parents('.report-cont').find('.memberId').val()
+                var text = $(this).parents('.report-cont').find('textarea').val();
+                reportAbuse(memberId, text);
+            });
+
+
+
+
+            favAndBlackListActionsInit();
+
+            if($(window).width() <= 640){
+                $('.popbox .ttl.tog_click').click(function(){
+                    if($(this).hasClass('open')){
+                        $(this).next().hide();
+                    }else{
+                        $(this).next().show();
+                    }
+                    $(this).toggleClass('open');
+                    /*$(this).next().slideToggle( "slow", function() {
+                     $(this).prev().toggleClass('open');
+                     });
+                     */
+                });
+            }
+
+            var photoCount = {{ user.photos|length }};
+            var photoArray = [];
+            var clickedImage;
+            {% for photo in user.photos %}
+            photoArray.push('{{ photo.getFaceWebPath() }}');
+            {% endfor %}
+
+            $('.sgallery .galpreview div').click(function () {
+                clickedImage = $(this).attr('data-pic') - 1;
+                console.log(photoArray);
+                console.log($(this).attr('data-pic'));
+                $(this).attr('data-pic') != 'main' ?
+                    $('.ui.modal.user-images').css({'background-image': 'url(' + photoArray[clickedImage] +')'})
+                    : $('.ui.modal.user-images').css({'background-image': 'url(' + $(this).find('img').attr('src') +')'})
+
+                $('.ui.modal.user-images').addClass('active');
+                $('.fullscreen-container').css({'display': 'block'});
+
+
+            })
+
+            $('.user-images .right').click(function () {
+                clickedImage = photoCount - 1 >= clickedImage + 1 ? clickedImage + 1 : 0;
+                $('.ui.modal.user-images').css({'background-image': 'url(' + photoArray[clickedImage] +')'})
+            });
+
+            $('.user-images .left').click(function () {
+                clickedImage = clickedImage - 1 >= 0 ? clickedImage - 1 : photoCount - 1;
+                console.log(photoCount);
+                console.log(clickedImage);
+                // console.log(photoCount);
+
+                $('.ui.modal.user-images').css({'background-image': 'url(' + photoArray[clickedImage] +')'})
+            });
+
+        });
+
+
+        function reportAbuse(memberId, text){
+
+            if(text.length == ''){
+                return;
+            }
+
+            $.ajax({
+                url: '/' + '/user/report/abuse/' + memberId,
+                type: 'Post',
+                data: 'text=' + text,
+                error: function(response){
+                    console.log("Error:" + JSON.stringify(response));
+                },
+                success: function(response){
+                    console.log("Success:" + JSON.stringify(response));
+                    $('.report-cont').slideUp('slow');
+                    $('.report-success').slideDown('slow');
+                    //alert('תודה! הודעה נשלחה לצוות גרינדייט.');
+                }
+            });
+        }
+
+
+
+        function saveNote(memberId, text){
+            $.ajax({
+                url: '/' + '/user/notes/' + memberId,
+                type: 'Post',
+                data: 'text=' + text,
+                error: function(response){
+                    console.log("Error:" + JSON.stringify(response));
+                },
+                success: function(response){
+                    console.log("Success:" + JSON.stringify(response));
+                    alert('הערות נשמרו');
+                }
+            });
+        }
+
+        function sendInstantMessage(contactId, textarea){
+            //console.log(contactId, textarea,inline );
+
+            // alert('in');
+
+            console.log(textarea.prop("tagName"));
+
+
+            console.log('START SENDING');
+
+            $.ajax({
+                url: '/' + LOCALE +'/messenger/message/send/userId:{{ app.user.id }}/contactId:' + contactId,
+                headers: { 'apiKey': Messenger.apiKey },
+                timeout:80000,
+                dataType: 'json',
+                type: 'Post',
+                data: 'message='+encodeURIComponent(message)+"&tag="+textarea.prop("tagName"),
+                context: this,
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                error: function(response){
+                    console.log(JSON.stringify(response));
+                },
+                success: function(response, status){
+                    if(response.success){
+                        console.log('MESSAGE:' + JSON.stringify(response.message));
+                        console.log('END SENDING');
+                        alert("{% trans %} Message sent successfully {% endtrans %}");
+                    }
+                    else{
+                        console.log(JSON.stringify(response));
+
+                        if(response.contactIsFrozen){
+                            alert({% trans %} 'This message not sent because the user freeze his account.' {% endtrans %});//הודעה זו לא נשלחה כיוון שמשתמש זה הקפיא את חשבונו.
+                            return;
+                        }
+
+                        if(response.chatIsForbidden){
+                            alert({% trans %}'This message was not sent because this user is in your blocked list or you in their blocked list.'{% endtrans %});
+//הודעה זו לא נשלחה כיוון שמשתמש זה נמצא ברשימת החסומים שלך או שאת/ה נמצא ברשימת החסומים שלו. אם את/ה מעוניין להסיר משתמש זה מרשימת החסומים שלך יש לגשת לניהול חשבון ולבחור בניהול רשימת חסומים.
+                            return;
+                        }
+
+                        if(response.isLimit){
+                            alert('{% trans %} You have reached the maximum amount of sending messages {% endtrans %}'); //הגעת לכמות המקסימלית של שליחת הודעות
+                            return;
+                        }
+
+                        if(response.cantContact) {
+                            alert('{% trans %} User settings do not allow you to write to them {% endtrans %}');//הגדרות המשתמש לא מאפשרות לך לכתוב לו
+                            return;
+                        }
+
+                    }
+                }
+            });
+        }
+
+
+    </script>
+
+
+    {% if app.user.id != user.id %}
+        {% if not mobile %}
+            {#    <div class="popup-head clearfix">#}
+            {#    #}
+            {#        <div class="popuplogo"><a href="/{{ app.request.locale }}"><img src="/images/logo.png" alt=""></a></div>#}
+
+            {#        <div class="popupmenu boxcont">#}
+            {#            <input type="hidden" class="userId" value="{{ user.id }}">#}
+            {#            <ul>#}
+            {#                <li><a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}"><span><img src="/images/popup-menu-icon7.png" alt=""></span> {% trans %}Send me message {% endtrans %}</a></li>#}{# שלח לי הודעה#}
+            {#                #}{#<li><a href="#"><span><img src="/images/popup-menu-icon6.png" alt=""></span>צ’אט</a></li>#}
+            {#                #}{#<li><a href="#"><span><img src="/images/popup-menu-icon5.png" alt=""></span>Like</a></li>#}
+            {#                #}{#<li><a href="#"><span><img src="/images/popup-menu-icon4.png" alt=""></span>שלח קריצה</a></li>#}
+
+            {#        {% if not app.user.isAddFavorite(user.id) %}#}
+            {#        <li><a href="#" class="add_to_fav"><span><img src="/images/popup-menu-icon3.png" alt=""></span>  {% trans %} Add to Favorite {% endtrans %}</a></li>#}{#הוספה למועדפים#}
+            {#    {% else %}#}
+            {#        <li><a href="#" class="delete_from_fav"><span><img src="/images/popup-menu-icon3.png" alt=""></span>  {% trans %} Remove from Favorite {% endtrans %}</a></li>#}{#הוספה למועדפים#}
+            {#    {% endif %}#}
+
+            {#                {{ user.isAddBlackListed(app.user.id) }}#}
+            {#                {% if  (app.user.isAddBlackListed(user.id)) %}#}
+            {#                <li><a href="#" class="delete_from_black_list"><span><img src="/images/popup-menu-icon2.png" alt=""></span> {% trans %} Unblock {% endtrans %} </a></li>#}{#חסימה#}
+            {#                {% else %}#}
+            {#                <li><a href="#" class="add_to_back_list"><span><img src="/images/popup-menu-icon2.png" alt=""></span> {% trans %} Block {% endtrans %} </a></li>#}{#חסימה#}
+            {#                {% endif %}#}
+            {#                <li><a href="#" class="report_abuse"><span><img src="/images/popup-menu-icon1.png" alt=""></span> {% trans %} Report an incorrect {% endtrans %} <br> {% trans %} card to the system {% endtrans %} </a></li>#}
+            {#                Report an incorrect card to the system#}
+            {#                דווח למערכת על#}
+            {#                כרטיס לא תקין#}
+
+            {#                <li><a href="#" class="ask_photo {% if  status != 'notSent'  %}  a-disabled {% endif %} "><span><img src="/images/popup-menu-icon1.png" alt=""></span> {{ text[status]|raw }} </a></li>#}
+            {#                <li><a href="#" class="addLike {% if(app.user.isAddLike(user))  %} a-disabled {% endif %}" data-id="{{ user.id }}"><span><img src="/images/popup-menu-icon1.png" alt=""></span> {% trans %} Like {% endtrans %} </a></li>#}{#לייק#}
+            {#                {% if not user.isVerify %}#}
+            {#                <li><a href="#" class="addVerify {% if(user.isAddVerify(app.user)) %} a-disabled {% endif %}" data-id="{{ user.id }}"><span><img src="/images/popup-menu-icon1.png" alt=""></span> {% trans %} Verify {% endtrans %} </a></li>#}
+            {#                {% endif %}#}
+
+            {#            </ul>#}
+            {#        </div>#}
+            {#    </div>#}
+        {% endif %}
+        <!-- end -->
+
+    {% endif %}
+
+    {% if not mobile %}
+        {#<div class="report-cont hidden">#}
+        {#    <textarea placeholder="{% trans %} Notes {% endtrans %}"></textarea>#}{# הערות#}
+        {#    <input type="hidden" value="{{ user.id }}" class="memberId">#}
+        {#    <div class="btn-wrapper">#}
+        {#        <button class="btn" id="report">{% trans %} Send {% endtrans %}</button>#}{#שלח/י#}
+        {#    </div>#}
+        {#</div>#}
+
+
+        <div class="report-success hidden">{% trans %} Thank you! A message sent to Polydate's team. {% endtrans %}</div>{#תודה! הודעה נשלחה לצוות גרינדייט.#}
+
+
+    {% endif %}
+    <div class="popup-midsec clearfix">
+
+        <div class="poprgt">
+            {#<a href="https://www.greendate.co.il/%D7%A2%D7%9E%D7%95%D7%93%D7%99%D7%9D/%D7%A1%D7%A4%D7%99%D7%93%D7%99%D7%99%D7%98">#}
+            {#		<img class="banner" src="/images/spedate2.gif" style="width:100%;margin: 0 auto;" />#}
+            {#	</a>#}
+            {% if(banners) %}
+                {% if banners.profile_top is defined %}
+                    {% set i = random(banners.profile_top|length -1) %}
+                    <a href="{{ banners.profile_top[i].href }}">
+                        <img class="banner" src="{{ asset(banners.profile_top[i].img) }}" style="width:100%;margin: 0 auto;" />
+                    </a>
+                {% endif %}
+            {% endif %}
+
+
+            <div class="profile-top-container">
+                <div class="image">
+                    <div class="img" style="background-image: url({{ user.getMainPhoto().getWebPath() }})">
+                    </div>
+                    <div class="info">
+                        <div class="popbox clearfix title_profile">
+                            <h3 class="clearfix">
+                                <span>{{ user.username }}</span>
+                                {% if user.isNew %}<img src="/images/main-pg-subtitle-icon.png" alt="" class="smimg"/>{% endif %}
+                                {% if user.isPaying %}<img src="/images/main-pg-queen-icon.png" alt="" />{% endif %}
+                                {#            {% if user.isVerify %}<img src="https://www.zigzug.co.il/images/listing/approve_w.gif" alt="" />{% endif %}#}
+                            </h3>
+                            <div class="desp">{{ user.age }}, {{ user.city.name }}</div>
+                        </div>
+                    </div>
+                    <div class="btns">
+                        <button class="btn-send-msg">
+                            <a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}">
+                                {% trans %}Send me message {% endtrans %}
+                            </a>
+                        </button>
+
+                        <button class="btn-like addLike">
+                            <a href="#" class="addLike {% if(app.user.isAddLike(user))  %} a-disabled {% endif %}" data-id="{{ user.id }}">
+                                {% trans %} Like {% endtrans %}
+                            </a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+                {#            <div class="userQuickInfo">#}
+                {#                <span><b>{{ user.username }}, {{ user.age }}</b></span>#}
+                {#                <div><span>{{ user.city.name }}</span></div>#}
+                {#            </div>#}
+                {#            <div class="galpreview">#}
+
+                {#                {% set mainIsExists = false %}#}
+
+                {#                {% set mainPhoto = user.getMainPhoto %}#}
+
+
+                {#                {% set isActive = false %}#}
+
+                {#                {% if mainPhoto is not null %}#}
+
+                {#                    {% set mainIsExists = true %}#}
+
+                {#                    <div data-pic="main" class="active">#}
+
+                {#                        <img src="{{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }}">#}
+                {#                        <input type="hidden" value="{{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }}">#}
+                {#                    </div>#}
+                {#                {% endif %}#}
+                {#                {% set i = 0 %}#}
+                {#                {% for photo in user.photos %}#}
+
+                {#                     {% if photo.getIsValid and not photo.getIsMain %}#}
+                {#                {% set i = i + 1 %}#}
+                {#                {% if (i + 1) % 5 == 0 %} #}{## close galpreview and open new row if mre than 4 photos ( + 1 - main ) #}
+
+                {#            </div>#}
+                {#            <div class="galpreview">#}
+
+                {#                {% endif %}#}
+                {#                        <div data-pic="{{ loop.index }}" {% if not mainIsExists and not isActive %}#}
+                {#                                {% set isActive = true %} class="active" {% endif %}>#}
+                {#                            <img src="{{ photo.getFaceWebPath() }}">#}
+
+                {#                            <input type="hidden" value="{{ photo.isPrivate and  status != 'allow' ? 'https://greendate.co.il//images/no_photo_2.jpg' : photo.getFaceWebPath }}">#}
+                {#                        </div>#}
+
+                {#                    {% endif %}#}
+                {#                {% endfor %}#}
+
+                {#                #}{##}
+                {#                <div data-pic="/images/hp-article-img3.jpg">#}
+                {#                    <img src="/images/hp-article-img3.jpg">#}
+                {#                </div>#}
+                {#                <div data-pic="/images/hp-article-img1.jpg">#}
+                {#                    <img src="/images/hp-article-img1.jpg">#}
+                {#                </div>#}
+                {#                <div data-pic="/images/hp-article-img2.jpg">#}
+                {#                    <img src="/images/hp-article-img2.jpg">#}
+                {#                </div>#}
+                {#                <div data-pic="/images/hodaot-girl-img.jpg" class="lastdiv">#}
+                {#                    <img src="/images/hodaot-girl-img.jpg">#}
+                {#                </div>#}
+                {#                #}
+
+                {#            </div>#}
+                {#<a href="https://www.greendate.co.il/%D7%A2%D7%9E%D7%95%D7%93%D7%99%D7%9D/%D7%A1%D7%A4%D7%99%D7%93%D7%99%D7%99%D7%98">#}
+                {#<img class="banner" src="/images/spedate2.gif" style="width:100%;margin: 0 auto;" />#}
+                {#</a>#}
+                {#                <a href="https://www.greendate.co.il/עמודים/גרינדייט_באנסטסיה">#}
+                {#                    <img class="banner" src="/images/banner2.gif" style="width:100%;margin: 0 auto;" />#}
+                {#                </a>#}
+                {% if(banners) %}
+                    {% if banners.profile_bottom is defined %}
+                        {% set i = random(banners.profile_bottom|length -1) %}
+                        <a href="{{ banners.profile_bottom[i].href }}">
+                            <img class="banner" src="{{ asset(banners.profile_bottom[i].img) }}" style="width:100%;margin: 0 auto;" />
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+            <!-- end -->
+
+        </div>
+
+
+
+
+
+        {% if mobile %}
+            <div class="popbox clearfix title_profile">
+                <h3 class="ttl clearfix">
+                    <span>{{ user.username }}</span>
+                    {% if user.isNew %}<img src="/images/main-pg-subtitle-icon.png" alt="" class="smimg"/>{% endif %}
+                    {% if user.isPaying %}<img src="/images/main-pg-queen-icon.png" alt="" />{% endif %}
+                    {% if user.isVerify %}<img src="https://www.zigzug.co.il/images/listing/approve_w.gif" alt="" />{% endif %}
+                </h3>
+                <div class="desp">{{ user.age }}, {{ user.city.name }}</div>
+            </div>
+        {% endif %}
+
+        <!-- popleft -->
+
+
+
+        {% if not mobile %}
+            {{ include ('frontend/user/user_data.html.twig') }}
+        {% else %}
+            {{ include ('frontend/user/mobile_user_data.html.twig') }}
+        {% endif %}
+
+    </div>
+    <!-- end -->
+
+
+
+    {#        {% if app.user.id != user.id %}#}
+    {#            <!-- BTM -->#}
+    {#            {% if not mobile %}#}
+    {#            <div class="popupbtm clearfix">#}
+    {#                <div class="popupmenu clearfix boxcont">#}
+    {#                    <input type="hidden" class="userId" value="{{ user.id }}">#}
+    {#                    <ul>#}
+    {#                        <li><a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}"><span><img src="/images/popup-menu-icon7.png" alt=""></span> {% trans %}Send me message {% endtrans %}</a></li>#}{# שלח לי הודעה#}
+    {#                        #}{#<li><a href="#"><span><img src="/images/popup-menu-icon6.png" alt=""></span>צ’אט</a></li>#}
+    {#                        #}{#<li><a href="#"><span><img src="/images/popup-menu-icon5.png" alt=""></span>Like</a></li>#}
+    {#                        #}{#<li><a href="#"><span><img src="/images/popup-menu-icon4.png" alt=""></span>שלח קריצה</a></li>#}
+    {#                        <li><a href="#" class="add_to_fav"><span><img src="/images/popup-menu-icon3.png" alt=""></span>  {% trans %} Add to Favorite {% endtrans %}</a></li>#}{#הוספה למועדפים#}
+
+    {#                        <li><a href="#" class="add_to_back_list"><span><img src="/images/popup-menu-icon2.png" alt=""></span> {% trans %} Block {% endtrans %} </a></li>#}{#חסימה#}
+    {#                        <li><a href="#" class="report_abuse"><span><img src="/images/popup-menu-icon1.png" alt=""></span> {% trans %} Report an incorrect {% endtrans %} <br> {% trans %} card to the system {% endtrans %} </a></li>#}
+    {#                        #}{#                Report an incorrect card to the system#}
+    {#                        #}{#                דווח למערכת על#}
+    {#                        #}{#                כרטיס לא תקין#}
+    {#                        <li><a href="#" class="ask_photo"><span><img src="/images/popup-menu-icon1.png" {% if not status == 'notSent'  %} disabled="disabled" {% endif %} alt=""></span> {{ text[status]|raw }} </a></li>#}
+    {#                        <li><a href="#" class="addLike {% if(app.user.isAddLike(user))  %} a-disabled {% endif %}" data-id="{{ user.id }}"><span><img src="/images/popup-menu-icon1.png" alt=""></span> {% trans %} Like {% endtrans %} </a></li>#}{#לייק#}
+    {#                        {% if not user.isVerify %}#}
+    {#                            <li><a href="#" class="addVerify {% if(user.isAddVerify(app.user)) %} a-disabled {% endif %}" data-id="{{ user.id }}"><span><img src="/images/popup-menu-icon1.png" alt=""></span> {% trans %} Verify {% endtrans %} </a></li>#}
+    {#                        {% endif %}#}
+    {#                    </ul>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        {% endif %}#}
+
+    <!-- end -->
+    {##}
+    {#    {% endif %}#}
+    {#<div class="ui modal profile-pop-modal">#}
+    {#    <div class="profile-pop">#}
+    {#        <div class="close">#}
+    {#        </div>#}
+    {#        <div class="big-user-image">#}
+
+    {#        </div>#}
+    {#        <div class="left"></div>#}
+    {#        <div class="right"></div>#}
+    {#    </div>#}
+    {#</div>#}
+
+    <div class="ui modal tiny user-images">
+        {#        <i class="close icon"></i>#}
+        <div class="image content">
+
+            <div class="description">
+                {% if user.photos|length > 1 %}
+                    <div class="left"></div>
+                    <div class="right"></div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+

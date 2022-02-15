@@ -1,0 +1,41 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+
+
+    <div class="midsec">
+        <h1>Profile settings</h1>
+        <div class="harsama-midsec">
+
+
+            {% for message in app.session.flashBag.get('success') %}
+
+                <div class="ui positive message text-center">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            <form action="{{ path('user_settings') }}" method="post" id="profile_form">
+
+                <div class="field" style="padding: 25px 20px 25px;">
+	                <div class="ui checkbox chkbox">
+	                    {{ form_widget(form.isSentEmail) }}
+	                    {{ form_label(form.isSentEmail) }}
+	                </div>     
+	            </div>
+
+				{{ form_rest(form) }}
+                <input type="submit" id="save_data" class="hidden">
+            </form>
+
+        </div>
+            <br>
+            <div class="clearfix"><input type="button" value="save" class="free" onclick="$('#save_data').click();"></div>
+    </div>
+    <!-- midsec end -->
+
+
+    {# sercformsec #}
+
+{% endblock %}
+
+

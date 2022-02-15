@@ -1,0 +1,42 @@
+{% if errors %}
+    <div class="errors">
+        <div class="ui orange message">
+            <div class="content">
+                <div class="header">{% trans %}
+Please complete the following fields
+                    {% endtrans %}
+                </div>
+                <p>
+                    {{ form_errors(form.username) }}
+                    {#{{ form_errors(form.email) }}#}
+                    {% if errors_text | length > 0 %}
+                        <ul>
+                            {% for error in errors_text %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </p>
+
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<div class="hmaformsec">
+
+    <div class="field {% if form.username.vars.errors|length or errors_text['username'] is defined %}error{% endif %}">
+        <div class="label">{{ form_label(form.username) }}</div>
+        <div class="inputdiv">{{ form_widget(form.username) }}</div>
+    </div>
+
+    <div class="field {% if form.email.vars.errors|length %}error{% endif %}">
+        <div class="label">{{ form_label(form.email) }}</div>
+        <div class="inputdiv">{{ form_widget(form.email) }}</div>
+    </div>
+
+</div>
+
+
+
+

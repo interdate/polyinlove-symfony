@@ -1,0 +1,130 @@
+<div class="hmaformsec five">
+    <h3>{% trans %}Add Photos{% endtrans %}</h3>
+    <input type="hidden" id="save_photo_data_url" value="{{ path('user_photo_data') }}">
+    <input type="hidden" id="photos_url" value="{{ path('sign_up_photos') }}">
+    <input type="hidden" id="mainPhotoAlreadyExists" value="1">
+    {% for photo in app.user.photos %}
+        <input type="hidden" class="photoName"
+               value="{{ photo.name }}__{{ photo.id }}__{{ photo.isMain }}__{{ photo.isValid }}">
+    {% endfor %}
+    <div class="photos"></div>
+
+
+    <div class="ui small basic modal">
+        <div class="ui icon header">
+            <i class="trash icon"></i>
+            {% trans %}remove image?{% endtrans %}        </div>
+        <div class="content"><p></p></div>
+        <div class="ui center aligned grid">
+            <div class="actions">
+                <div class="ui red basic cancel inverted button">
+                    <i class="remove icon"></i>
+                    {% trans %}no{% endtrans %}
+                </div>
+                <div class="ui green ok inverted button">
+                    <i class="checkmark icon"></i>
+                    {% trans %}yes{% endtrans %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="harsm4 harsm5">
+        <form action="/en/user/photo/data" method="POST">
+            <div class="browser_field">
+                <div class="filediv">
+                    <div class="hfile">
+                        <label for="photo"><strong>{% trans %}Browse{% endtrans %}</strong><span>&nbsp;</span></label>
+                        <input type="file" name="photo" id="photo" accept="image/x-png,image/gif,image/jpeg">
+                        <input type="hidden" id="mainPhotoAlreadyExists" name="mainPhotoAlreadyExists"
+                               value="{{ app.user.hasPhotos ? 1 : 0 }}">
+                        <input type="submit" class="hidden">
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="clr"></div>
+
+        <div class="ui indicating progress uploadPhotoProgress">
+            <div class="bar" id="upload_photo_progress"></div>
+            <div class="label" id="upload_photo_label">{% trans %}
+                    upload:{% endtrans %} <span>0</span>%
+            </div>
+        </div>
+
+
+        <div class="descp">
+            {% trans %}
+                You may upload up to 4 pictures. Please use jpg format only<br/>
+
+                If you encountered a problem, you may email the site admins at:
+            {% endtrans %}
+            <br/>
+            <a href="mailto:{{ contact_email }}">{{ contact_email }}</a><br/>
+            {% trans %}
+                Please mention the email address you
+                used to sign up to the site with.
+            {% endtrans %}
+        </div>
+
+        <p>
+            {% trans %}
+                Every photo uploaded to the site must be approved by the admins. Our office hours are Sun- Thu, 09:00 -
+                16:00 IST.
+            {% endtrans %}
+        </p>
+
+        <h5>
+            {% trans %}
+            Your Photo must be:</h5>
+        {% endtrans %}
+
+        <ul>
+            {% trans %}
+                <li>a picture of yourself</li>
+                <li>clear, and of good quality</li>
+                <li>no nudity, partial or full</li>
+                <li>no pictures of children</li>
+            {% endtrans %}
+        </ul>
+    </div>
+
+    <div class="field padd">
+        <input type="button" class="nextstage skipstep" value=
+        "{% trans %}My Account
+            {% endtrans %}"
+               onclick="window.location.href='{{ path('homepage') }}'">
+    </div>
+
+</div>
+<!-- hmaformsec end -->
+
+
+<div id="photo_template" class="hidden">
+    <div class="harsm5 clearfix photo" id="[PHOTO_NAME]">
+        <div class="imgbox"></div>
+        <div class="rightdesc">
+            <ul class="ultitle clearfix">
+                <li class="col1">Main Image</li>
+                <li class="col3">State</li>
+                <li class="col4"></li>
+            </ul>
+
+            <ul class="ulrow clearfix">
+                <li class="col1">
+                    <div class="ui toggle checkbox mainPhoto">
+                        <input type="radio" name="radio" value="[PHOTO_ID]" [MAIN]>
+                        <label></label>
+                    </div>
+                </li>
+                <li class="col3">[STATUS]</li>
+                <li class="col4"><a href="#" class="removePhoto" id="[PHOTO_ID]">
+                        {% trans %}
+                            remove
+                        {% endtrans %}
+                    </a></li>
+            </ul>
+        </div>
+    </div>
+</div>

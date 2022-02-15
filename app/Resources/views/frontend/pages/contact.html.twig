@@ -1,0 +1,73 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block title %} {% trans %}Contact Us{% endtrans %}{% endblock %}
+{% block meta_description %}{% endblock %}
+
+{% block content %}
+    <div class="midsec magazine">
+        <h2>Contact</h2>
+        <div class="magcont">
+            <div class="box dtl">
+                <div class="harsama-midsec">
+
+                    {% if sent %}
+                        <br>
+                        <div class="contact-success">{% trans %}The message was sent successfully to the site administrators{% endtrans %}</div>
+                    {% endif %}
+
+                    <form method="post" novalidate>
+
+                        <div class="errors hidden empty_fields">
+                            <div class="ui orange message">
+                                <div class="content">
+                                    <div class="header">
+                                        {% trans %}Complete the marked fields{% endtrans %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="hmaformsec three">
+                            <div class="field_2">
+                                <div class="label">{{ form_label(form.email) }}</div>
+                                <div class="inputdiv">{{ form_widget(form.email, {'value': app.user.email ?? ''}) }}</div>
+                                <div class="clear"></div>
+                            </div>
+                            <br>
+
+                            <div class="field_2">
+                                <div class="label">{{ form_label(form.subject) }}</div>
+                                <div class="inputdiv">{{ form_widget(form.subject) }}</div>
+                                <div class="clear"></div>
+                            </div>
+                            <br>
+
+                            <div class="field_2">
+                                <div class="label">{{ form_label(form.text) }}</div>
+                                <div class="textarea">{{ form_widget(form.text) }}</div>
+                                <div class="clear"></div>
+                            </div>
+                        </div>
+                        <input type="submit" class="hidden" id="send">
+
+                        {{ form_rest(form) }}
+
+                    </form>
+
+                </div>
+
+                <br>
+
+                <div class="clearfix">
+                    {% if mobile %}
+                        <input type="button" value="Send" class="free contact_submit">
+                    {% else %}
+                        <input type="button" value="Send" class="free contact_submit">
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

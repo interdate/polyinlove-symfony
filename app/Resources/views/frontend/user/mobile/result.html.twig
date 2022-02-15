@@ -1,0 +1,205 @@
+{% trans_default_domain 'user_profile' %}
+{% set settings = getSettings() %}
+{% set minutesNumberConsideredAsOnline = settings.userConsideredAsOnlineAfterLastActivityMinutesNumber %}
+{% set daysNumberConsideredAsNew = settings.getUserConsideredAsNewAfterDaysNumber %}
+
+
+{% set add_to_fav = true %}
+{% set delete_from_fav = false %}
+{% set add_to_black_list = true %}
+{% set delete_from_black_list = false %}
+
+
+
+{% if app.request.attributes.get('_route') == 'user_manage_list_favorited' %}
+    {% set add_to_fav = false %}
+    {% set delete_from_fav = true %}
+{% else %}
+    {% if app.request.attributes.get('_route') == 'user_list_favorited' %}
+        {% set add_to_fav = false %}
+    {% else %}
+        {% if app.request.attributes.get('_route') == 'user_manage_list_black_listed' %}
+            {% set delete_from_black_list = true %}
+            {% set add_to_black_list = false %}
+        {% else %}
+            {% if app.request.attributes.get('_route') == 'user_list_black_listed' %}
+                {% set add_to_black_list = false %}
+            {% endif %}
+        {% endif %}
+
+    {% endif %}
+{% endif %}
+
+<input type="hidden" name="" class="requestUrl" value="{{ app.request.uri }}">
+<input type="hidden" name="" class="currentUserId" value="{{ app.user.id }}">
+<input type="hidden" name="" class="searchData" value="{% if data is defined %}{{ data|json_encode }}  {%
+    endif %}">
+<div class="users">
+    {% for user in users %}
+        <div class="boxcont">
+            <input type="hidden" class="userId" value="{{ user.id }}">
+            <input type="hidden" class="userGenderId" value="{{ user.gender.id }}">
+            <div class="greyboxcont clearfix">
+                <div class="userimg" data-href="{{ path('view_user', {'id': user.id}) }}">
+                    <a class="f1" href="{{ path('view_user', {'id': user.id}) }}" data-href="{{ path('view_user', {'id': user.id}) }}">
+                        <img src="{{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }}" alt="" class="resultsPhoto" style="width:184px; height:218;">
+                    </a>
+                    {% if user.isPaying %}<div class="queen-icon"></div>{% endif %}
+                    {% if user.isVerify %}<div class="verify-icon"></div>{% endif %}
+                </div>
+
+                <div class="lftcontbox clearfix">
+                    <div class="subtitle clearfix">
+                        <div class="subtitletext"><a class="f1" href="{{ path('view_user', {'id': user.id}) }}" data-href="{{ path('view_user', {'id': user.id}) }}">{{ user.username }}</a></div>
+                        {% if user.isNew(daysNumberConsideredAsNew) %} <div class="imgicon"><img src="/images/main-pg-subtitle-icon.png" alt=""></div>{% endif %}
+                    </div>
+
+                    <div class="midcontdes">
+                        {{ user.age }}, {{ user.city.name }}
+                        <br>{{ user.relationshipStatus.name }}
+                    </div>
+
+                    {% if user.lookingFor %}
+                        <div class="midcontdes">
+                            <b>{% trans %} There for {% endtrans %}</b>
+                            {% for lookingFor in user.lookingFor  %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+
+                    <div class="midcontdes">
+                        <strong> {% trans %} A little about me {% endtrans %}</strong>{#קצת עליי#}
+                        {{ user.about|length > 50 ? user.about|slice(0, 50) ~ '...' : user.about  }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="lightgrey clearfix">
+                <ul class="smlinks clearfix">
+                    {% if app.user.id != user.id %}
+                        <li><a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}"><span>{% trans %} Send message {% endtrans %}</span></a></li>{#שלח הודעה#}
+                        <li><a class="f1" href="{{ path('view_user', {'id': user.id}) }}">{% trans %} View full profile {% endtrans %}</a></li>{#לפרופיל המלא#}
+
+                        {% if not app.user.isAddFavorite(user.id) %}
+                            <li><a class="add_to_fav" href="#">{% trans %} Add to Favorites {% endtrans %}</a></li>
+                        {% endif %}
+
+                        {% if app.user.isAddFavorite(user.id) %}
+                            <li><a class="delete_from_fav" href="#">{% trans %} Remove from Favorites {% endtrans %}</a></li>
+                        {% endif %}
+
+                        {% if not app.user.isAddBlackListed(user.id) %}
+                            <li><a class="add_to_back_list" href="#">{% trans %} Block {% endtrans %}</a></li>{#חסימה#}
+                        {% endif %}
+
+
+                        {% if app.user.isAddBlackListed(user.id) %}
+                            <li><a class="delete_from_black_list" href="#"> {% trans %} Remove from black list {% endtrans %} </a></li>{#הסרה מרשימת החסומים#}
+                        {% endif %}
+
+                        {% if app.user.mainPhoto and user.mainPhoto %}
+                            <li><a class="addLike {% if app.user.isAddLike(user) %} a-disabled {% endif %}" data-id="{{ user.id }}" href="">{% trans %} Like in Arena {% endtrans %}</a></li>{#לייק בזירה#}
+                        {% endif %}
+
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+
+<ion-content (ionScroll)="onScroll($event)" (ionScrollEnd)="endscroll($event)" class="has-header container page-hello-ionic">
+    <div class="container">
+
+        <div class="member cf sorting" *ngIf="options.filter" >
+            <div class="mem-left">sort by:</div>
+            <div class="mem-right">
+                <div class="sortby">
+                    <ion-select tappable (click)="ClickSortInput()" (ionChange)="sortBy()"  [(ngModel)]="filter" okText="Okay" cancelText="Dismiss" interface="popover">
+                        <ion-select-option value="{{ f_filter.value }}"   *ngFor="let f_filter of form_filter ">
+                            {{ f_filter.label }}
+                        </ion-select-option>
+                    </ion-select>
+                </div>
+            </div>
+            <ion-icon tappable *ngIf="options.filter" (click)="filterStatus()" class="close" name="close"></ion-icon>
+        </div>
+        <!--<div *ngIf="!options.filter" class="open-div sorting">-->
+        <ion-icon tappable *ngIf="!options.filter" class="open" (click)="filterStatus()" name="ios-arrow-down"></ion-icon>
+        <!--</div>-->
+
+
+
+        <div class="no_results" *ngIf="users && users.length == 0">{{ texts?.no_results }}</div>
+        <div class="ion-list">
+            <ion-card class="usr_profile"   *ngFor="let user of users">
+                <div class="user-section">
+{#                    <div *ngIf="user?.isPaying" class="paying"></div>#}
+                    <div *ngIf="user.isOnline == true" class="online"></div>
+                    <div *ngIf="user.isNew" class="new-user"></div>
+                    <div tappable="tappable" *ngIf="user.photo == '/images/no_photo_2.jpg' || user.photo == '/images/no_photo_1.jpg'" (click)="itemTapped(user)" [ngStyle]="{ 'background-image': 'url('+ api.url + user.photo + ')'}"
+                         class="avatar"></div>
+
+                    <div tappable="tappable" *ngIf="user.photo != '/images/no_photo_2.jpg' && user.photo != '/images/no_photo_1.jpg'" (click)="itemTapped(user)" [ngStyle]="{ 'background-image': 'url(' + user.photo + '.jpg)'}"
+                         class="avatar"></div>
+                    <div class="wrap">
+                        <ion-card-title tappable="tappable" #tappable (click)="itemTapped(user)">
+                            <div class="row">
+                                <span class="name" [ngClass]="{'long-name': user.username?.length >= 12 }">{{user.username + ', '}}</span>
+                                <span class="age">{{user.age}}</span>
+                            </div>
+                            <div class="row">
+                                <span class="location">{{user.region_name}}</span>
+                                <span class="distance">{{user.distance}}</span>
+                                <div class="clear-both"></div>
+                            </div>
+                        </ion-card-title>
+                        <ul class="profile-btn">
+                            <div tappable class="btn" (click)=toDialog(user)>
+                                <li id="mobmsg"></li>
+                                <div>{{texts.message}}</div>
+                            </div>
+                            <div  tappable class="btn" [ngClass]="{'disabled': user.isAddLike }" (click)="addLike(user)">
+                                <!--Message-->
+                                <li id="like-red"></li>
+                                <div>{{texts.like}}</div>
+                                <!--Like-->
+                            </div>
+                            <div tappable *ngIf="!blocked_img" class="btn" (click)=addFavorites(user)>
+                                <li id="{{user.isAddFavorite ? 'remove-green' :'add-green'}}"></li>
+                                <div>{{user.isAddFavorite ? texts.remove :texts.add}}</div>
+                            </div>
+
+                            <div tappable *ngIf="params.list == 'favorited'" class="btn blocked disabled" (click)=addFavorites(user,true)>
+                                <li id="remove-green"></li>
+                                <div>{{texts.remove}}</div>
+                            </div>
+
+                            <div tappable *ngIf="params.list == 'black'" class="btn blocked"
+                                 [ngClass]="{'disabled': !user.isAddBlackListed }" (click)=block(user,false)>
+                                <li id="unblock"></li>
+                                <div>{{texts.unblock}}</div>
+                            </div>
+
+                            <!--Add-->
+                        </ul>
+                        <div class="clr"></div>
+
+                    </div>
+
+                </div>
+
+            </ion-card>
+
+        </div>
+        <div class="clr"></div>
+        <div *ngIf="loader && users != []" class="loader"><img src="../../assets/img/loader.gif"></div>
+        <ion-infinite-scroll #scroll  threshold="90%" (ionInfinite)="moreUsers($event)" disabled="false">
+            <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+    </div>
+    <div class="clear-both"></div>
+
+</ion-content>

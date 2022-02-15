@@ -1,0 +1,78 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+    <input type="hidden" name="" class="currentUserId" value="{{ app.user.id }}">
+
+    <div class="midsec">
+        <h1><a href="#">{% trans %}
+                    Requests{% endtrans %}</a></h1>
+        <div class="cont">
+            <div class="hotdesc">
+            </div>
+            <!-- hotdesc end -->
+
+            <div id="photo-requests">
+
+                <div class="hotlist">
+                    {% if requests|length > 0 %}
+                        {% for request in requests %}
+
+                            <div class="boxrpt clearfix" {# style="background-color: {% if request.getIsAllow() %} #aff42e {% elseif request.getIsCancel %} #AAAAAE {% endif %};" #}>
+                                <a href="{{ path('view_user', {'id': request.owner.id}) }}">
+                                    <div class="userimg"
+                                         style="background-image: url('{{ request.getOwner().getMainPhoto() ? request.getOwner().getMainPhoto().getFaceWebPath() : request.getOwner().getNoPhoto() }}')"></div>
+                                </a>
+                                <div class="descbox">
+                                    <div class="titlesec clearfix">
+                                        <a href="{{ path('view_user', {'id': request.owner.id}) }}">
+                                            <h3>
+                                                {{ request.owner.username }}
+                                            </h3>
+                                        </a>
+                                        <div class="datediv">{{ request.date|date("d/m/Y H:i") }}</div>
+                                    </div>
+                                    <div class="desctext">
+                                        {% trans %}
+                                            This user requested to view your private pics
+                                        {% endtrans %}
+                                        <br>
+                                        <br>
+                                        {% if not request.getIsAllow() and not request.getIsCancel() %}
+                                            <button class="photo-request-btn allow"
+                                                    data-id="{{ request.getOwner().getId() }}">
+                                                {% trans %}Approve
+                                                {% endtrans %}
+                                            </button>
+                                            <button class="photo-request-btn cancel"><a
+                                                        href="{{ path('user_photo_requests', {id: request.getOwner().getId(), action: 'cancel' }) }}">לסרב</a>
+                                            </button>
+                                        {% elseif request.getIsAllow() %}
+                                            <span class="success">{% trans %}
+                This request was approved{% endtrans %}</span>
+                                            <button class="photo-request-btn cancel"><a
+                                                        href="{{ path('user_photo_requests', {id: request.getOwner().getId(), action: 'cancel' }) }}">לסרב</a>
+                                            </button>
+                                        {% else %}
+                                            <span class="danger">{% trans %}
+                This request was rejected{% endtrans %}</span>
+                                            <button class="photo-request-btn allow"
+                                                    data-id="{{ request.getOwner().getId() }}">Approve
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end -->
+
+                        {% endfor %}
+                    {% else %}
+                        <p> {{ text }} </p>
+                    {% endif %}
+                </div>
+                <!-- hotlist -->
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

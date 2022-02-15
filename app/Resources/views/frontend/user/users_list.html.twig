@@ -1,0 +1,380 @@
+{% set settings = getSettings() %}
+{% set minutesNumberConsideredAsOnline = settings.userConsideredAsOnlineAfterLastActivityMinutesNumber %}
+{% set daysNumberConsideredAsNew = settings.getUserConsideredAsNewAfterDaysNumber %}
+
+
+{% set add_to_fav = true %}
+{% set delete_from_fav = false %}
+{% set add_to_black_list = true %}
+{% set delete_from_black_list = false %}
+
+
+
+{% if app.request.attributes.get('_route') == 'user_manage_list_favorited' %}
+    {% set add_to_fav = false %}
+    {% set delete_from_fav = true %}
+{% else %}
+    {% if app.request.attributes.get('_route') == 'user_list_favorited' %}
+        {% set add_to_fav = false %}
+    {% else %}
+        {% if app.request.attributes.get('_route') == 'user_manage_list_black_listed' %}
+            {% set delete_from_black_list = true %}
+            {% set add_to_black_list = false %}
+        {% else %}
+            {% if app.request.attributes.get('_route') == 'user_list_black_listed' %}
+                {% set add_to_black_list = false %}
+            {% endif %}
+        {% endif %}
+
+    {% endif %}
+{% endif %}
+
+
+<input type="hidden" name="" class="requestUrl" value="{{ path(app.request.attributes.get('_route')) }}">
+<input type="hidden" name="" class="currentUserId" value="{{ app.user.id }}">
+<input type="hidden" name="" class="searchData" value="{% if data is defined %}{{ data|json_encode }}  {% endif %}">
+
+<div class="users">
+
+    {% if  mobile and app.user %}
+        {% if filter is not defined %}
+            {% set filter = data is not defined ? 'lastActivity' : data.filter %}
+        {% endif %}
+        <div class="member cf sorting">
+            <div class="mem-left">
+                {% trans %}Sort by:
+                {% endtrans %}
+            </div>
+            <div class="mem-right">
+                <div class="sortby">
+                    <select id="searchFilter">
+                        <option value="new"{% if filter == 'new' %} selected="selected"{% endif %}>
+                            {% trans %}
+                                New members
+                            {% endtrans %}
+                        </option>
+                        {% if data.withPhoto is not defined or not data.withPhoto %}
+                            <option value="photo" {% if filter == 'photo' %} selected="selected"{% endif %}>
+                                {% trans %}
+                                    With photo
+                                {% endtrans %}
+                            </option>
+                        {% endif %}
+                        <option value="lastActivity"{% if filter == 'lastActivity' %} selected="selected"{% endif %}>
+                            {% trans %}
+                                Last activity
+                            {% endtrans %}
+                        </option>
+                        <option value="popularity"{% if filter == 'popularity' %} selected="selected"{% endif %}>
+                            {% trans %}
+                                Popularity
+                            {% endtrans %}
+                        </option>
+                        <option value="verifiedUser"{% if filter == 'verifiedUser' %} selected="selected"{% endif %}>
+                            {% trans %}
+                                Verified users
+                            {% endtrans %}
+                        </option>
+                        <option value="distance"{% if filter == 'distance' %} selected="selected"{% endif %}>
+                            {% trans %}
+                                Distance
+                            {% endtrans %}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <i class="close icon"></i>
+
+        </div>
+        <i class="angle down icon"></i>
+
+
+        <div class="whatsap-link">
+            <a href="whatsapp://send?text=I signed up to https://{{ base_url }} -the dating site for the non monogamous community. Come join me!">
+                Excited about {{ site_name }} as much as we are? Help us spread the word!</a>
+        </div>
+
+
+        {% if search is defined and search and mobile %}
+            <a href="{{ path('user_search_advanced') }}">
+                <div class="back-to-search">
+                    <i class="icon search"></i>
+                    {#                    {% trans %} #}
+                    {#                        Return to search results #}
+                    {#                    {% endtrans %} #}
+                </div>
+            </a>
+        {% endif %}
+        <form action="{{ path(app.request.attributes.get('_route')) }}" method="post" id="search_filter_form">
+
+            {% if data is defined %}
+                {% for key,value in data %}
+                    {% if data[key] is iterable %}
+                        {% for key2,value2 in data[key] %}
+                            <input type="hidden" name="advancedSearch[{{ key }}][{{ key2 }}]" value="{{ value2 }}"/>
+                        {% endfor %}
+                    {% else %}
+                        <input type="hidden" name="advancedSearch[{{ key }}]" value="{{ value }}"
+                               id="advancedSearch_{{ key }}"/>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <input type="hidden" name="advancedSearch[filter]" value="{{ filter }}" id="advancedSearch_filter"/>
+            {% endif %}
+
+            <input type="submit" class="hidden">
+
+        </form>
+    {% endif %}
+
+    {% if users|length > 0 %}
+        {% for user in users %}
+
+            {% if mobile is defined and not (mobile) %}
+                {# {{ get_distance(app.user, user) }} #}
+
+
+                <div class="boxcont {{ search is defined and search ? 'search' : '' }}"
+                     data-page="{{ not page is defined ?: page }}" id="{{ user.id }}">
+                    <input type="hidden" class="userId" value="{{ user.id }}">
+                    <input type="hidden" class="userGenderId" value="{{ user.gender.id }}">
+                    <div class="greyboxcont clearfix">
+                        <div class="userimg" data-href="{{ path('view_user', {'id': user.id}) }}">
+                            <a class="f1" href="{{ path('view_user', {'id': user.id}) }}"
+                               data-href="{{ path('view_user', {'id': user.id}) }}">
+                                {% if user.isOnline(minutesNumberConsideredAsOnline) %}
+                                    <div class="online"></div>  {% endif %}
+                                {# <div src="{{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }}" alt="" class="resultsPhoto" style="width:184px; height:218;"> #}
+                                <div class="user-image"
+                                     style="background-image: url({{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }})"
+                                     data-href="{{ path('view_user', {'id': user.id}) }}"></div>
+                                {# <input type="hidden" value="{% if user.getMainPhoto is not null %}{{ user.getMainPhoto.name }}{% endif %}"> #}
+                            </a>
+                            {% if user.isPaying %}
+                                <div class="queen-icon"></div>{% endif %}
+
+                        </div>
+                        <div class="user-section-btns">
+
+                            <button class="btn-send-msg users-list">
+                                <a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}">
+                                    {% trans %}
+                                        Send me a message
+                                    {% endtrans %}
+                                </a>
+                            </button>
+
+                            {% if user.isNew(daysNumberConsideredAsNew) %}
+                                <div class="imgicon"><img src="/images/main/new.png" title="New user" alt="">
+                                </div>{% endif %}
+                            {% if user.isVerify %}
+                                <div class="verify-icon" title="Verified user"></div>{% endif %}
+                        </div>
+                        <div class="clear"></div>
+                        <div class="lftcontbox clearfix">
+                            <div class="subtitle clearfix">
+                                <div class="subtitletext" data-href="{{ path('view_user', {'id': user.id}) }}">
+                                    <a class="f1" href="{{ path('view_user', {'id': user.id}) }}"
+                                       data-href="{{ path('view_user', {'id': user.id}) }}">{{ user.username }}</a>
+                                </div>
+                            </div>
+
+                            <div class="midcontdes">
+                                {{ user.gender.name }}, {{ user.age }} <br> {{ user.city.name }}
+                                <br>{{ user.relationshipStatus.name }},
+                                {% if (user.lookingFor | length > 0) %}
+                                    For :
+                                    {% for lookingFor in user.lookingFor %}
+                                        {# {{ dump(lookingFor.name) }} #}
+                                        {% if loop.index  ==  user.lookingFor | length %}
+                                            {{ lookingFor.name }}
+                                        {% else %}
+                                            {{ lookingFor.name }},
+                                        {% endif %}
+
+                                    {% endfor %}
+                                {% endif %}
+                                <br>
+                                <br>
+                                {{ user.about|length > 50 ? user.about|slice(0, 50) ~ '...' : user.about }}
+                            </div>
+                            <div class="midcontdes">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lightgrey clearfix">
+                        <ul class="smlinks clearfix">
+                            {% if app.user.id != user.id %}
+                                <li><a class="f1" href="{{ path('view_user', {'id': user.id}) }}"
+                                       data-href="{{ path('view_user', {'id': user.id}) }}">
+                                    {% trans %}
+                                        View full profile
+                                    {% endtrans %}
+                                </a>
+                                </li>{# לפרופיל המלא #}
+
+                                <li>
+                                <a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}">
+                                    Send message </a></li>{# שלח הודעה #}
+
+                                {% if not app.user.isAddFavorite(user.id) %}
+                                    <li><a class="add_to_fav" href="#">
+                                            {% trans %}
+                                                Add to Favorites
+                                            {% endtrans %}
+                                        </a></li>
+                                {% endif %}
+
+                                {% if app.user.isAddFavorite(user.id) %}
+                                    <li><a class="delete_from_fav" href="#">
+                                            {% trans %}
+                                                Remove from Favorites
+                                            {% endtrans %}
+                                        </a></li>
+                                {% endif %}
+
+                                {% if not app.user.isAddBlackListed(user.id) %}
+                                    <li><a class="add_to_back_list" href="#"> Block </a></li>
+                                {% endif %}
+
+
+                                {% if app.user.isAddBlackListed(user.id) %}
+                                    <li><a class="delete_from_black_list" href="#">
+                                            {% trans %}
+                                                Remove from black list
+                                            {% endtrans %}
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% if app.user.mainPhoto and user.mainPhoto and not app.user.isAddLike(user) %}
+                                    <li><a class="addLike" data-id="{{ user.id }}" href=""
+                                           data-username="{{ user.username }}">
+                                            {% trans %}
+                                                Like in Arena
+                                            {% endtrans %}
+                                        </a></li>
+                                {% endif %}
+
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            {% else %}
+                <div class="user-section {{ search is defined and search ? 'search' : '' }}" id="{{ user.id }}"
+                     data-page="{{ page is defined and page ? page : '' }}">
+
+                    {% if user.isOnline(minutesNumberConsideredAsOnline) %}
+                        <div class="online"></div>  {% endif %}
+                    {% if user.isNew(daysNumberConsideredAsNew) %}
+                        <div class="new-user"></div> {% endif %}
+                    {% if user.isVerify %}
+                        <div class="verify-icon"></div>{% endif %}
+
+
+                    <a href="{{ path('view_user', {'id': user.id}) }}"
+                       data-href="{{ path('view_user', {'id': user.id}) }}">
+
+                        <div class="avatar"
+                             style="background-image: url({{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }});"
+                             data-href="{{ path('view_user', {'id': user.id}) }}">
+
+                        </div>
+                    </a>
+
+                    <div class="username-section" (click)="itemTapped(user)">
+                        <div class="row">
+                            <span class="name {{ user.username|length >= 12 ? 'long-name' : '' }}">{{ user.username }}, </span>
+                            <span class="age">{{ user.age }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="location">{{ user.region.name }}</span>
+                            {% if not getDistance(user,app.user) is same as (null) %}
+                                <span class="distance">{{ getDistance(user,app.user) }}  km </span>
+                            {% endif %}
+                            <div class="clear-both"></div>
+                        </div>
+                    </div>
+
+                    <ul class="profile-btn">
+                        <div class="btn profile-div-li">
+                            <a class="mobmsg"
+                               href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}"></a>
+                            <div class="mobile-profile-btns">
+                                {% trans %}
+                                    Send
+                                {% endtrans %}
+                            </div>
+                        </div>
+                        {# </a> #}
+                        <div class="btn profile-div-li addLike {{ app.user.isAddLike(user) or not (app.user.mainPhoto and user.mainPhoto) ? 'a-disabled' : '' }}"
+                             data-id="{{ user.id }}" data-name="{{ user.username }}">
+                            <!--Message-->
+                            <li class="like-red"></li>
+                            <div class="mobile-profile-btns">
+                                {% trans %}
+                                    Like
+                                {% endtrans %}
+                            </div>
+                            <!--Like-->
+                        </div>
+
+                        {% if app.user.username == 'tester1' %}
+                            <div class="btn" onclick="toVideoChat({{ user.id }})">
+                                <li id="video-chat"></li>
+                                <div>{% trans %}Video
+                                    {% endtrans %}</div>
+                            </div>
+                        {% else %}
+
+                            {% if not (header is defined and header == 'blocked') %}
+                                {% if not app.user.isAddFavorite(user.id) %}
+                                    <div class="btn profile-div-li add_to_fav">
+                                        <li class="add-green" data-profile="true"></li>
+                                        <div class="mobile-profile-btns">
+                                            {% trans %}
+                                                Add to Favorites
+                                            {% endtrans %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="btn profile-div-li delete_from_fav">
+                                        <li class="remove-green"></li>
+                                        <div class="mobile-profile-btns">
+                                            {% trans %}
+                                                Remove from Favorites
+                                            {% endtrans %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="btn profile-div-li delete_from_black_list" style="margin-top: 4px;">
+                                    <li class="unblock"></li>
+                                    <div class="mobile-profile-btns">
+                                        {% trans %}
+                                            Unblock
+                                        {% endtrans %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                        {% endif %}
+                    </ul>
+
+                </div>
+
+            {% endif %}
+        {% endfor %}
+
+    {% else %}
+        <p class="noResults">
+            {% trans %}No results
+            {% endtrans %}
+        </p>
+    {% endif %}
+</div>
+<div class="clear"></div>
+
+
+

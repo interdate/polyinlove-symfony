@@ -1,0 +1,188 @@
+{% trans_default_domain 'user_profile' %}
+
+<div class="profile-details-container">
+	<div class="popleft">
+    	{% if user.photos|length >= 1 %}
+			<div class="images">
+				<div class="galpreview">
+
+					{% set mainIsExists = false %}
+
+					{% set mainPhoto = user.getMainPhoto %}
+
+
+					{% set isActive = false %}
+
+					{% if mainPhoto is not null %}
+						{% set mainIsExists = true %}
+						<div data-pic="main" class="active" style="background-image: url({{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto  }})">
+
+{#							<img src="{{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }}">#}
+							<input type="hidden" value="{{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }}">
+						</div>
+					{% endif %}
+
+					{% set i = 0 %}
+					{% set openPhotoIndex = -1 %}
+					{% set loopIndex = 1 %}
+
+					{% for photo in user.photos %}
+					{% if not photo.getIsMain %}
+						{% set loopIndex = loopIndex + 1%}
+					{% endif %}
+					{# for do the photos array for big image only not private photos #}
+						{% if not photo.isPrivate %}
+							{% set openPhotoIndex = openPhotoIndex + 1 %}
+						{% endif %}
+
+					{% if photo.getIsValid and not photo.getIsMain %}
+						{% set i = i + 1 %}
+					{% if (i + 1) % 5 == 0 %}
+					{#close galpreview and open new row if mre than 4 photos ( the "+ 1" because the main photo )#}
+
+						</div>
+						<div class="galpreview">
+
+					{% endif %}
+
+					{% set canSee = not photo.isPrivate %}
+					{% if not canSee and status == 'allow' %}
+						{% set canSee = true %}
+					{% endif %}
+
+					<div data-pic="{{ loopIndex }}"
+						{% if not mainIsExists and not isActive %}
+							{% set isActive = true %} class="active"
+						{% endif %}
+					 	style="{% if (loop.index >= 4) %} margin-top: 10px; {% endif %} background-image: url({{ not canSee ? user.getNoPhoto : photo.getFaceWebPath  }})"
+					>
+
+{#						<img {% if cantSee %} class="private-image" {% endif %}src="{{  cantSee ? user.getNoPhoto : photo.getFaceWebPath }}">#}
+
+						{% if not canSee %}
+							<img src="{{ user.getNoPhoto }}" alt="" class="ask_photo" data-id="{{ user.id }}">
+							<span class="private-text" onclick="$('.ask_photo').click()"> {% trans %} Private image. {% endtrans %} <br> {{ text[status] }}</span>
+						{% else %}
+{#								<img src="{{ photo.getFaceWebPath }}" alt="">#}
+						{% endif %}
+						<input type="hidden" value="{{ not canSee ? user.getNoPhoto : photo.getFaceWebPath }}">
+					</div>
+
+					{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+        <div class="clear"></div>
+        <div class="fields">
+            <li>
+                <b>{% trans %} About me {% endtrans %}: </b>
+                <span>{{ user.about }}</span>
+            </li>
+
+            <li>
+                <b>{% trans %} Looking for {% endtrans %}: </b>
+                <span>{{ user.looking }}</span>
+            </li>
+        </div>
+
+    </div>
+
+	<div class="poprgt">
+		<ul>
+            <li>
+                <b>{% trans %} Gender {% endtrans %}: </b>
+                <span>{{ user.gender.name }}</span>
+            </li>
+
+			<li>
+				<b>{% trans %} From {% endtrans %}: </b>
+				<span>{{ user.region.name }}</span>
+			</li>
+			<li>
+				<b>{% trans %} City {% endtrans %}: </b>
+				<span>{{ user.city.name }}</span>
+			</li>
+			<li>
+				<b>{% trans %} Relationship status {% endtrans %}: </b>
+				<span>{{ user.relationshipStatus.name }}</span>
+			</li>
+			<li>
+				<b>{% trans %} Relationship I'm in {% endtrans %}: </b>
+				<span>{{ user.relationshipType.name }}</span>
+			</li>
+			<li>
+				<b>{% trans %} Relationship type details {% endtrans %}: </b>
+				<span class="details-field">{{ user.relationshipTypeDetails }} </span>
+			</li>
+			<li>
+				<b>{% trans %} Sexual orientation {% endtrans %}: </b>
+				<span>{{ user.sexOrientation.name }}</span>
+			</li>
+			<li>
+				<b>{% trans %} Smoking {% endtrans %}: </b>
+				<span>{{ user.smoking.name }}</span>
+			</li>
+			{% if (user.body) %}
+				<li>
+					<b>{% trans %} Build{% endtrans %}: </b>
+					<span>{{ user.body.name }}</span>
+				</li>
+			{% endif %}
+			<li>
+				<b>{% trans %} Height {% endtrans %}: </b>
+				<span>{{ user.height }}</span>
+			</li>
+			<li>
+				<b>{% trans %} Looking for {% endtrans %}: </b>
+				<span>
+				 {% for lookingFor in user.lookingFor  %}
+					 {% if loop.index  ==  user.lookingFor | length %}
+						 {{ lookingFor.name }}
+					 {% else %}
+						 {{  lookingFor.name   }},
+					 {% endif %}
+				 {% endfor %}
+				</span>
+			</li>
+			{% if user.lookingForDetails %}
+			<li>
+				<b>{% trans %} Looking for details {% endtrans %}: </b>
+				<span class="details-field">{{ user.LookingForDetails }}</span>
+			</li>
+			{% endif %}
+			{% if user.origin %}
+				<li>
+					<b>{% trans %} Origin {% endtrans %}: </b>
+					<span>{{ user.origin.name }}</span>
+				</li>
+			{% endif %}
+
+			{% if user.children %}
+				<li>
+					<b>{% trans %} Children {% endtrans %}: </b>
+					<span>{{ user.children.name }}</span>
+				</li>
+			{% endif %}
+
+			{% if user.religion %}
+				<li>
+					<b>{% trans %} Religious outlook {% endtrans %}: </b>
+					<span>{{ user.religion.name }}</span>
+				</li>
+			{% endif %}
+
+			{% if user.nutrition %}
+				<li>
+					<b>{% trans %} Nutrition {% endtrans %}: </b>
+					<span>{{ user.nutrition.name }}</span>
+				</li>
+			{% endif %}
+			<li>
+				<b>{% trans %} Zodiac {% endtrans %}: </b>
+				<span>{{ user.zodiac }}</span>
+			</li>
+		</ul>
+	</div>
+	<div class="clear"></div>
+</div>

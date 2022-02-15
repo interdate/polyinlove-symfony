@@ -1,0 +1,163 @@
+{% extends "backend/layout.html.twig" %}
+
+{% block content %}
+
+    {{ include('backend/header.html.twig', { 'header': 'Settings', 'icon': 'settings' }) }}
+
+<div class="page_content settings_content">
+
+    <div class="ui segment settings">
+
+
+            <form class="ui form" method="post">
+
+                <h4 class="ui center aligned icon header">
+                    <i class="circular mail red icon"></i>
+                    emails
+                </h4>
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.reportEmail) }}</div>
+                    <br><br>
+                    {{ form_widget(form.reportEmail) }}
+                </div>
+                <br>
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.contactEmail) }}</div>
+                    <br><br>
+                    {{ form_widget(form.contactEmail) }}
+                </div>
+                <br>
+
+
+                <h4 class="ui center aligned icon header">
+                    <i class="circular chat red icon"></i>
+                    messages
+                </h4>
+
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.deleteMessagesAfterDaysNumber) }}</div>
+                    <br><br>
+                    {{ form_widget(form.deleteMessagesAfterDaysNumber) }}
+                </div>
+                <br>
+
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.sendMessageUsersNumber) }}</div>
+                    <br><br>
+                    {{ form_widget(form.sendMessageUsersNumber) }}
+                </div>
+                <br>
+
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.sendMessageUsersNumberWithoutPhoto) }}</div>
+                    <br><br>
+                    {{ form_widget(form.sendMessageUsersNumberWithoutPhoto) }}
+                </div>
+                <br>
+
+
+                <h4 class="ui center aligned icon header">
+                    <i class="circular users red icon"></i>
+                    search members </h4>
+
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.usersPerPage) }}</div>
+                    <br><br>
+                    {{ form_widget(form.usersPerPage) }}
+                </div>
+                <br>
+
+
+                <h4 class="ui center aligned icon header">
+                    <i class="circular checkmark red icon"></i>
+                    general
+                </h4>
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.isCharge) }}</div>
+                    <br><br>
+                    <div class="ui compact segment">
+                        <div class="ui slider fitted checkbox">
+                            {{ form_widget(form.isCharge) }}
+                            <label></label>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.messagePopularityDaysNumber) }}</div>
+                    <br><br>
+                    {{ form_widget(form.messagePopularityDaysNumber) }}
+                </div>
+                <br>
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.userConsideredAsOnlineAfterLastActivityMinutesNumber) }}</div>
+                    <br><br>
+                    {{ form_widget(form.userConsideredAsOnlineAfterLastActivityMinutesNumber) }}
+                </div>
+                <br>
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.userConsideredAsNewAfterDaysNumber) }}</div>
+                    <br><br>
+                    {{ form_widget(form.userConsideredAsNewAfterDaysNumber) }}
+                </div>
+                <br>
+
+
+                <h4 class="ui center aligned icon header">
+                    <i class="circular chat red icon"></i>
+                    sms api
+                </h4>
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.smsUsername) }}</div>
+                    <br><br>
+                    {{ form_widget(form.smsUsername) }}
+                </div>
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.smsPassword) }}</div>
+                    <br><br>
+                    {{ form_widget(form.smsPassword) }}
+                </div>
+
+                <div class="field">
+                    <div class="ui big ribbon label">{{ form_label(form.smsSufix) }}</div>
+                    <br><br>
+                    {{ form_widget(form.smsSufix) }}
+                </div>
+
+                {{ form_rest(form) }}
+
+
+                <div class="clear"></div>
+                <br><br><br>
+
+
+                <div class="ui one column centered grid">
+                    <button class="ui labeled icon red approve big button right">
+                        <i class="save icon"></i>
+                        save
+                    </button>
+                </div>
+
+                <br><br><br>
+
+
+            </form>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

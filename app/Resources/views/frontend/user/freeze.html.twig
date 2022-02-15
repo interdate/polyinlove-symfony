@@ -1,0 +1,50 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+    <script type="text/javascript">
+        function freeze_confirm() {
+            if (confirm(
+                    {% trans %}
+                'Are you sure you would like to freeze your account?\r\n' +
+                'Click "Ok" to freeze you account, or "cancel" to return\r\n' +
+                'You may reactivate a frozen account by logging in to it.'
+                    {% endtrans %})) {
+                $('#save_data').click();
+            }
+        }
+    </script>
+
+    <div class="midsec">
+
+        <h1>
+            {% trans %}Freeze Account
+            {% endtrans %}
+        </h1>
+
+        <form action="{{ app.request.requesturi }}" method="post">
+            <div class="harsama-midsec">
+                <div class="freeze_cont">
+                    <br>
+                    {% trans %}
+                        FYI: Freezing an account does not delete it. It will not appear on the site, but will still exist, so you can reactivate it by logging in.
+                        Frozen accounts will be removed after a certain period of inactivity.
+                    {% endtrans %}
+
+                    <br>
+
+                    <textarea id="freeze_account_reason" name="freeze_account_reason"
+                              placeholder="{% trans %}I want my account frozen because...{% endtrans %}"></textarea>
+                </div>
+            </div>
+
+            <div class="clearfix">
+                <input type="button" value="freeze" class="free" onclick="freeze_confirm();">
+                <input type="submit" id="save_data" class="hidden">
+            </div>
+
+        </form>
+
+
+    </div><!-- midsec end -->
+
+{% endblock %}

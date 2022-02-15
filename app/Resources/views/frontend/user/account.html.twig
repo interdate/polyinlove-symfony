@@ -1,0 +1,24 @@
+{% extends "frontend/layout.html.twig" %}
+
+
+{% block content %}
+	<div class="asideR mobile">
+    	{% if app.user %}
+			<div class="greybox">
+            	<a href="#" class="tgl">{% trans %} My Profile {% endtrans %}</a>
+                <h3>{% trans %} My Profile {% endtrans %}</h3>
+                <div class="greyboxmid">
+                	<ul>
+                    	<li><a href="{{ path('user_profile') }}"><i><img src="/images/right-menu-9.png" alt="" /></i> {% trans %} Edit Profile {% endtrans %}</a></li>
+                        <li><a href="{{ path('user_profile', {'tab': 4}) }}"><i><img src="/images/right-menu-10.png" alt="" /></i> {% trans %} Edit Photos {% endtrans %} </a></li>
+                        <li><a href="{{ path('user_manage_list_favorited') }}"><i><img src="/images/right-menu-11.png" alt="" /></i> {% trans %} Edit Favorited List {% endtrans %}</a></li>
+                        <li><a href="{{ path('user_change_password') }}"><i><img src="/images/right-menu-12.png" alt="" /></i> {% trans %} Change Password {% endtrans %}</a></li>
+                        <li><a href="{{ path('user_manage_list_black_listed') }}"><i><img src="/images/right-menu-14.png" alt="" /></i> {% trans %} Edit Black List {% endtrans %}</a></li>
+                        <li><a href="{{ path('user_freeze_account') }}"><i><img src="/images/right-menu-15.png" alt="" /></i> {% trans %} Freeze Account {% endtrans %}ןן</a></li>
+                        <li><a href="{{ path('user_search_advanced') }}"><i><img src="/images/right-menu-16.png" alt="" /></i> {% trans %} Advance Search {% endtrans %}</a></li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

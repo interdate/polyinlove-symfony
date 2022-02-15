@@ -1,0 +1,66 @@
+
+<html>
+<head>
+    <title>How to Crop an Image using jQuery</title>
+    <link rel="stylesheet" href="https://www.polydate.co.il/js/crop/jquery.Jcrop.min.css" type="text/css" />
+    <script src="https://www.polydate.co.il/js/crop/jquery.min.js"></script>
+    <script src="https://www.polydate.co.il/js/crop/jquery.Jcrop.min.js"></script>
+
+    <style>
+        body {
+            width: 550px;
+            font-family: Arial;
+        }
+
+        input#crop {
+            padding: 5px 25px 5px 25px;
+            background: lightseagreen;
+            border: #485c61 1px solid;
+            color: #FFF;
+            visibility: hidden;
+        }
+
+        #cropped_img {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <img src="{{ photo.getWebPath() }}" id="cropbox" class="img" /><br />
+</div>
+<div id="btn">
+    <input type='button' id="crop" value='CROP'>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        var size;
+        $('#cropbox').Jcrop({
+            trackDocument: true,
+            onSelect: function(c){
+                size = {x:c.x,y:c.y,w:c.w,h:c.h};
+
+                console.log(size)
+
+                $("#crop").css("visibility", "visible");
+            }
+        });
+
+        $("#crop").click(function(){
+            console.log(size)
+            $.ajax({
+                url: '/he/admin/edit/face/' + {{ photo.getId() }},
+                method: 'post',
+                data: size,
+                success: function (res) {
+                    alert('התמונה נשמרה')
+                }
+            })
+        });
+
+    });
+</script>
+
+</body>
+</html>

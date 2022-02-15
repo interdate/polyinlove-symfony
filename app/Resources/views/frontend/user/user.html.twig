@@ -1,0 +1,758 @@
+{# {% extends 'frontend/main_layout.html.twig' %} #}
+{% extends 'frontend/layout.html.twig' %}
+{% block content %}
+    {% set settings = getSettings() %}
+    {% set canSee = status == 'allow' or app.user.isverify() %}
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('#responsive').lightSlider({
+                item: 4,
+                loop: false,
+                slideMove: 2,
+                easing: 'cubic-bezier(0.25, 0, 0.25, 1)',
+                speed: 600,
+                responsive: [
+                    {
+                        breakpoint: 800,
+                        settings: {
+                            item: 3,
+                            slideMove: 1,
+                            slideMargin: 6,
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            item: 2,
+                            slideMove: 1
+                        }
+                    }
+                ]
+            });
+
+
+            $('#save_note').click(function () {
+                var memberId = $(this).siblings('.memberId').val()
+                var text = $(this).siblings('textarea').val();
+                saveNote(memberId, text);
+            });
+
+            $('.report_abuse').click(function (e) {
+                e.preventDefault();
+
+
+                console.log($('.report-cont'));
+                $('.report-success').hide();
+                $(this).parents('ul').find('.report-cont').slideDown('slow');
+
+                if ($(this).hasClass('bottom')) {
+
+                }
+
+            });
+
+            $('.btn.report').click(function () {
+                var memberId = $(this).parents('.report-cont').find('.memberId').val();
+                var text = $(this).parents('.report-cont').find('textarea').val();
+                reportAbuse(memberId, text, $(this));
+
+            });
+
+            favAndBlackListActionsInit();
+
+            if ($(window).width() <= 640) {
+                $('.popbox .ttl.tog_click').click(function () {
+                    if ($(this).hasClass('open')) {
+                        $(this).next().hide();
+                    } else {
+                        $(this).next().show();
+                    }
+                    $(this).toggleClass('open');
+                });
+            }
+
+            var photoCount = {{ user.photos|length }};
+            console.log('photo count: {{ user.photos | length }}')
+            var photoArray = [];
+            photoArray[1] = "{{ user.getMainPhoto ? user.getMainPhoto.getWebPath() : user.getNoPhoto() }}";
+
+
+            var clickedImage;
+            var loopIndex = 1;
+            {% for photo in user.photos %}
+
+            {% if not photo.isMain %}
+            loopIndex++;
+            {% if not photo.isPrivate or status == 'allow' %}
+            photoArray[loopIndex] = "{{ photo.getWebPath() }}";
+            console.log('loop index: ' + loopIndex);
+
+            {% endif %}
+
+            {% endif %}
+            {% endfor %}
+
+            console.log(photoArray);
+
+            $('.profile-details-container .galpreview div, .galcont .galpreview div ').click(function () {
+                console.log($(this));
+
+                clickedImage = $(this).attr('data-pic');
+                console.log(photoArray);
+                console.log($(this).attr('data-pic'));
+
+                if (photoArray[clickedImage] || clickedImage == 'main') {
+                    $(this).attr('data-pic') != 'main' ?
+                        $('.ui.modal.user-images').css({'background-image': 'url(' + photoArray[clickedImage] + ')'}) /* */
+                        : $('.ui.modal.user-images').css({'background-image': 'url(' + photoArray[1] + ')'});
+                    if (!$('.private-text-big-photo').hasClass('hidden')) {
+                        $('.private-text-big-photo').addClass('hidden')
+                    }
+                } else {
+                    $('.ui.modal.user-images').css({'background-image': 'url(' + "{{ user.getNoPhoto() }}" + ')'});
+                }
+
+                $('.ui.modal.user-images').addClass('active');
+                $('.fullscreen-container').css({'display': 'block'});
+
+                myElement = document.getElementsByClassName('user-images')[0];
+                var mc = new Hammer(myElement);
+                var dir = '';
+                mc.on("swiperight", function (ev) {
+                    $('.user-images .right').click();
+                    if (!$('.private-text-big-photo').hasClass('hidden')) {
+                        $('.private-text-big-photo').addClass('hidden');
+                    }
+
+                });
+                mc.on("swipeleft", function (ev) {
+                    $('.user-images .left').click();
+                    if (!$('.private-text-big-photo').hasClass('hidden')) {
+                        $('.private-text-big-photo').addClass('hidden');
+                    }
+
+                });
+
+            });
+
+            $('.user-images .right').click(function () {
+                console.log(photoCount);
+                if (clickedImage == 'main') clickedImage = 1;
+                clickedImage = photoCount >= clickedImage + 1 ? clickedImage + 1 : 1;
+
+                if (photoArray[clickedImage]) {
+                    $('.ui.modal.user-images').css({'background-image': 'url(' + photoArray[clickedImage] + ')'})
+                    if (!$('.private-text-big-photo').hasClass('hidden')) {
+                        $('.private-text-big-photo').addClass('hidden');
+                    }
+                } else {
+                    $('.ui.modal.user-images').css({'background-image': 'url( {{ user.getNoPhoto }} )'})
+                    $('.private-text-big-photo').removeClass('hidden')
+                }
+
+            });
+
+            $('.user-images .left').click(function () {
+                //alert(1);
+                clickedImage = clickedImage > 1 ? clickedImage - 1 : photoCount;
+
+
+                if (photoArray[clickedImage]) {
+                    $('.ui.modal.user-images').css({'background-image': 'url(' + photoArray[clickedImage] + ')'})
+                    if (!$('.private-text-big-photo').hasClass('hidden')) {
+                        $('.private-text-big-photo').addClass('hidden');
+                    }
+                } else {
+                    $('.ui.modal.user-images').css({'background-image': 'url( {{ user.getNoPhoto }} )'})
+                    $('.private-text-big-photo').removeClass('hidden');
+                }
+            });
+
+
+            {% if mobile %}
+            var currentImage = 1;
+            var mobileSlider = document.getElementsByClassName('galpic')[0];
+            var ms = new Hammer(mobileSlider);
+            ms.on('swiperight', function () {
+                var willShow = currentImage - 1 < 1 ? photoCount : currentImage - 1;
+                $('.dot').removeClass('active');
+                $('.dot').eq(willShow - 1).addClass('active');
+                console.log(photoArray[willShow]);
+                if (photoArray[willShow]) {
+                    $(mobileSlider).css({'background-image': 'url(' + photoArray[willShow] + ')'});
+                    $(mobileSlider).find('.private-text').addClass('hidden');
+                } else {
+                    $(mobileSlider).css({'background-image': 'url("{{ user.getNoPhoto() }}")'});
+                    $(mobileSlider).find('.private-text').removeClass('hidden');
+
+                }
+                currentImage = willShow;
+            });
+
+            ms.on('swipeleft', function () {
+                var willShow = currentImage + 1 > photoCount ? 1 : ++currentImage;
+                $('.dot').removeClass('active');
+                $('.dot').eq(willShow - 1).addClass('active');
+                if (photoArray[willShow]) {
+                    $(mobileSlider).css({'background-image': 'url(' + photoArray[willShow] + ')'});
+                    $(mobileSlider).find('.private-text').addClass('hidden');
+                    currentImage = willShow;
+                } else {
+                    $(mobileSlider).css({'background-image': 'url("{{ user.getNoPhoto() }}")'});
+                    $(mobileSlider).find('.private-text').removeClass('hidden');
+                }
+
+
+            })
+            {% endif %}
+
+
+            $('.favorite-profile-btn').click(function () {
+                var isAddTo = $(this).hasClass('addToFav');
+                var mobile = $('.isMobile').val();
+                if (mobile) {
+                    $('.favorite-profile-btn').toggleClass('hidden');
+                }
+
+                isAddTo ? alert('{% trans %}User was added to your liked list{% endtrans %}') :
+                    alert('{% trans %}User has been removed from the liked list{% endtrans %}');
+                $.ajax({
+                    url: isAddTo ? '/' + '/user/users/favorite/{{ user.id }}'
+                        : '/' + '/user/users/favorite/delete/{{ user.id }}',
+                });
+            });
+        });
+
+
+        function reportAbuse(memberId, text, elem) {
+
+            if (text.length == '') {
+                return;
+            }
+
+            $.ajax({
+                url: '/user/report/abuse/' + memberId,
+                type: 'Post',
+                data: 'text=' + text,
+                error: function (response) {
+                    console.log("Error:" + JSON.stringify(response));
+                },
+                success: function (response) {
+                    console.log("Success:" + JSON.stringify(response));
+                    elem.parents('ul').find('.report-cont').slideUp('slow');
+                    elem.parents('ul').find('.report-success').slideDown('slow');
+                }
+            });
+        }
+
+        function saveNote(memberId, text) {
+            $.ajax({
+                url: '/' + '/user/notes/' + memberId,
+                type: 'Post',
+                data: 'text=' + text,
+                error: function (response) {
+                    console.log("Error:" + JSON.stringify(response));
+                },
+                success: function (response) {
+                    console.log("Success:" + JSON.stringify(response));
+                    alert('{% trans %}Notes saved{% endtrans %}');
+                }
+            });
+        }
+
+        function sendInstantMessage(contactId, textarea) {
+
+            $.ajax({
+                url: '/messenger/message/send/userId:{{ app.user.id }}/contactId:' + contactId,
+                headers: {'apiKey': Messenger.apiKey},
+                timeout: 80000,
+                dataType: 'json',
+                type: 'Post',
+                data: 'message=' + encodeURIComponent(message) + "&tag=" + textarea.prop("tagName") + "&val=" + textarea.val(),
+                context: this,
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                error: function (response) {
+                    console.log(JSON.stringify(response));
+                },
+                success: function (response, status) {
+                    if (response.success) {
+                        console.log('MESSAGE:' + JSON.stringify(response.message));
+                        console.log('END SENDING');
+                        alert("{% trans %} Message sent successfully{% endtrans %} ");
+                    } else {
+                        console.log(JSON.stringify(response));
+
+                        if (response.contactIsFrozen) {
+                            alert(response.errMess);
+                            return;
+                        }
+
+                        if (response.chatIsForbidden) {
+                            alert('{% trans %}This message was not sent because this user is in your blocked list or you are in their blocked list.{% endtrans %}');
+                            return;
+                        }
+
+                        if (response.isLimit) {
+                            alert('{% trans %} You have reached the maximum amount of messages{% endtrans %} ');
+                            return;
+                        }
+
+                        if (response.cantContact) {
+                            alert('{% trans %} User settings do not allow you to message to them {% endtrans %}');
+                            return;
+                        }
+
+                    }
+                }
+            });
+        }
+
+
+        function action(action) {
+            var userId = '{{ user.id }}';
+            $.ajax({
+                url: '/' + '/user/users/' + action + '/' + userId,
+                success: function (res) {
+                    console.log(res);
+                }
+            })
+        }
+
+    </script>
+
+
+    {% if app.user.id != user.id %}
+        {% if not mobile %}
+        {% endif %}
+        <!-- end -->
+
+    {% endif %}
+
+
+    <div class="popup-midsec clearfix">
+
+        <div class="poprgt">
+
+            {% if not mobile %}
+                <div class="profile-top-container">
+                    <div class="image">
+                        <div class="img"
+                             style="background-image: url({{ user.getMainPhoto() ? user.getMainPhoto.getWebPath() : user.getNoPhoto }}); position: relative">
+                            {% if user.isOnline(settings.userConsideredAsOnlineAfterLastActivityMinutesNumber) %}
+                                <div class="online"></div>  {% endif %}
+                            {% if user.isPaying %}
+                                <div class="queen-icon"></div> {% endif %}
+                        </div>
+                    </div>
+                    <div class="top-container-left">
+                        <div class="info">
+                            <div class="popbox clearfix title_profile">
+                                <h3 class="clearfix">
+                                    <span>{{ user.username }} </span>
+                                </h3>
+                                <div class="desp">{{ user.age }}, {{ user.city.name }}</div>
+                            </div>
+                        </div>
+                        <div class="icons">
+                            {% if user.isNew %}<img src="/images/main/new.png" alt=""
+                                                    title="{% trans %}new user{% endtrans %}"
+                                                    class="smimg"/>{% endif %}
+                            {% if user.isVerify %}<img src="/images/main/verify.png"
+                                                       title="{% trans %}verified user{% endtrans %}"
+                                                       alt=""/>{% endif %}
+                        </div>
+                        {% if user.id != app.user.id %}
+                            <div class="btns">
+                                <a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}">
+                                    <button class="btn-send-msg">
+                                        {% trans %}Send me message{% endtrans %}
+                                    </button>
+                                </a>
+                                {% if not (app.user.isAddLike(user)) %}
+                                    <button class="btn-like addLike" data-id="{{ user.id }}"
+                                            data-username="{{ user.username }}">
+                                        {# <a href="#" class="addLike" data-id="{{ user.id }}"> #}
+                                        {% trans %}Like{% endtrans %}
+                                        {# </a> #}
+                                    </button>
+                                {% endif %}
+                                {% if not user.isAddVerify(app.user) and not user.isVerify() %}
+                                    <button class="btn-verify addVerify {{ user.isAddVerify(app.user) }}"
+                                            data-id="{{ user.id }}">
+                                        {# <a href="#" class="" data-id="{{ user.id }}"> #}
+                                        {% trans %}Verify{% endtrans %}
+                                        {# </a> #}
+                                    </button>
+                                {% endif %}
+
+                                {# {% if not app.user.isAddFavorite(user.id) %} #}
+                                <button class="btn-favorite add_to_fav {% if app.user.isAddFavorite(user.id) %} hidden-important {% endif %}"
+                                        data-id="{{ user.id }}" data-full-profile="true">
+                                    <a href="#" class="addFav" data-id="{{ user.id }}" data-full-profile="true">
+                                        {% trans %}Add to Favorites{% endtrans %}
+                                    </a>
+                                </button>
+                                {# {% endif %} #}
+                                <button class="btn-favorite delete_from_fav  {% if not app.user.isAddFavorite(user.id) %} hidden-important {% endif %}"
+                                        data-id="{{ user.id }}" data-full-profile="true">
+                                    <a href="#" class="addFav" data-id="{{ user.id }}" data-full-profile="true">
+                                        {% trans %}Remove from Favorites{% endtrans %}
+                                        <span> - </span>
+                                    </a>
+                                </button>
+                            </div>
+                        {% else %}
+                            <div class="btns">
+                                <a href="{{ path('user_profile') }}">
+                                    <button class="flex flex-space-between">
+                                        <span>
+                                        {% trans %}Edit Profile{% endtrans %}
+                                            </span>
+                                        <i class="blacken"><img src="/images/main/edit-profile.png"
+                                                alt=""/></i>
+                                    </button>
+                                </a>
+                                <a href="{{ path('user_profile', {'tab': 4}) }}">
+                                    <button class="flex flex-space-between">
+                                        <span>
+                                        {% trans %}Edit Photos{% endtrans %}
+                                            </span>
+                                        <i class="blacken"><img src="/images/main/edit-photos.png" alt=""/></i>
+                                    </button>
+                                </a>
+                            </div>
+                        {% endif %}
+                        <div class="clear"></div>
+
+                        {% if app.user.id != user.id %}
+                            <div class="profile-nav">
+                                <ul>
+                                    <li>
+                                        <a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}">Send
+                                            message </a></li>
+                                    {% if not app.user.isAddFavorite(user.id) %}
+                                        <li><a class="add_to_fav" data-full-profile="true" href="#"
+                                               data-id="{{ user.id }}">{% trans %} Add to Favorites{% endtrans %} </a>
+                                        </li>
+                                    {% else %}
+                                        <li><a class="delete_from_fav" data-full-profile="true" href="#"
+                                               data-id="{{ user.id }}" data-full-profile="true">{% trans %} Remove from
+                                                    Favorite {% endtrans %}</a></li>
+                                    {% endif %}
+                                    {% if  (app.user.isAddBlackListed(user.id)) %}
+                                        <li><a class="delete_from_black_list" href="#" data-id="{{ user.id }}">
+                                                {% trans %}Unblock {% endtrans %}</a></li>
+                                    {% else %}
+                                        <li><a class="add_to_back_list" href="#"
+                                               data-id="{{ user.id }}">{% trans %} Block {% endtrans %}</a>
+                                        </li>
+                                    {% endif %}
+                                    {% if not (app.user.isAddLike(user)) %}
+                                        <li class=""><a href="#" class="addLike" data-id="{{ user.id }}"
+                                                        data-username="{{ user.username }}">
+
+                                                Like {% trans %}</a>{% endtrans %}</li>
+                                    {% endif %}
+
+                                    <div class="report-cont hidden">
+                                        <textarea placeholder="{% trans %}notes{% endtrans %}"></textarea>
+                                        <input type="hidden" value="{{ user.id }}" class="memberId">
+                                        <button class="btn report">{% trans %}Send{% endtrans %}</button>
+                                        <div class="report-close btn">
+                                            {% trans %}
+                                                Cancel
+                                            {% endtrans %}
+                                        </div>
+                                    </div>
+
+                                    <div class="report-success hidden"> {% trans %}Thank you! A message sent to Polydate's team.{% endtrans %}
+                                    </div>{# תודה! הודעה נשלחה לצוות גרינדייט. #}
+                                    <li><a class="report_abuse" href="#">{% trans %} Report abuse{% endtrans %} </a>
+                                    </li>
+                                    {% if not user.isAddVerify(app.user) %}
+                                        <li class="icon" style="border: none"><a href="#" class="addVerify"
+                                                                                 data-id="{{ user.id }}">{% trans %} Verify {% endtrans %}</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                                <div class="popup-head clearfix"></div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+            {% endif %}
+            {% if mobile %}
+                <div class="sgallery">
+                    <div class="galcont">
+                        <div class="galpic"
+                             style="background-image: url({{ user.getMainPhoto() ? user.getMainPhoto().getWebPath() : user.getNoPhoto() }})">
+
+                            <div class="ui active disabled dimmer inverted" id="main_photo_dimmer">
+                                <div class="ui text large loader disabled">{% trans %} Loading{% endtrans %}</div>{# טעינה #}
+                            </div>
+
+                            <div>
+                                {% if mobile and user.id != app.user.id %}
+                                    <div class="profile-buttons">
+                                        <a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}">
+                                            <div class="message-profile-btn">
+                                                <li class="mobmsg big"></li>
+                                            </div>
+                                        </a>
+
+                                        {% if app.user.isAddLike(user) %}
+                                            <div class="a-disabled like-profile-btn " data-id="{{ user.id }}">
+                                                <li class="like-red big"></li>
+                                            </div>
+                                        {% else %}
+                                            <div class="like-profile-btn addLike" data-id="{{ user.id }}"
+                                                 data-name="{{ user.username }}">
+                                                <li class="like-red big"></li>
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="favorite-profile-btn delete_from_fav {% if not app.user.isAddFavorite(user.id) %} hidden {% endif %}"
+                                             data-full-profile="true" data-id="{{ user.id }}">
+                                            <li class="remove-green big"></li>
+                                        </div>
+
+                                        <div class="favorite-profile-btn add_to_fav {% if app.user.isAddFavorite(user.id) %} hidden {% endif %}"
+                                             data-full-profile="true" data-id="{{ user.id }}">
+                                            <li class="add-green big"></li>
+                                        </div>
+
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% if app.user.id == user.id %}
+                                <div class="private-text hidden">{% trans %} Private image{% endtrans %}</div>
+                            {% else %}
+                                <div class="private-text ask_photo hidden" data-id="{{ user.id }}"> {% trans %}
+                                        Private image
+                                    {% endtrans %}
+                                    <br> {{ text[status] }}
+                                </div>
+                            {% endif %}
+                            <div class="mobile-image-counter">
+                                {% for i in 1..user.photos|length %}
+                                    <div class="dot {% if loop.index == 1 %} active {% endif %}"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="userQuickInfo">
+                        <span><b>{{ user.username }}, {{ user.age }}</b></span>
+                        <div><span>{{ user.city.name }}</span></div>
+                        {% if user.isNew %}
+                            <div class="new-user full"></div>
+                        {% endif %}
+                        {% if user.isOnline(settings.userConsideredAsOnlineAfterLastActivityMinutesNumber) %}
+                            <div class="online"></div>  {% endif %}
+                        {% if user.isVerify %}
+                            <div class="verify-icon full"></div>{% endif %}
+                        {% if user.isPaying %}
+                            <div class="paying full"></div>  {% endif %}
+
+                    </div>
+                    {% if not mobile %}
+                        <div class="galpreview">
+
+                        {% set mainIsExists = false %}
+
+                        {% set mainPhoto = user.getMainPhoto %}
+
+
+                        {% set isActive = false %}
+
+                        {% if mainPhoto is not null %}
+
+                            {% set mainIsExists = true %}
+
+                            <div data-pic="main" class="active">
+
+                                <img src="{{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }}">
+                                <input type="hidden"
+                                       value="{{ user.getMainPhoto ? user.getMainPhoto.getFaceWebPath : user.getNoPhoto }}">
+                            </div>
+                        {% endif %}
+                        {% set i = 0 %}
+                        {% set openPhotoIndex = -1 %}
+                        {% for photo in user.photos %}
+                            {# for do the photos array for big image only not private photos #}
+                            {% if not photo.isPrivate %}
+                                {% set openPhotoIndex = openPhotoIndex + 1 %}
+                            {% endif %}
+
+                            {% if photo.getIsValid and not photo.getIsMain %}
+                                {% set i = i + 1 %}
+                                {% if (i + 1) % 5 == 0 %} # close galpreview and open new row if mre than 4 photos ( + 1 - main )
+
+                                    </div>
+                                    <div class="galpreview">
+
+                                {% endif %}
+
+                                {{ canSee }}
+                                {% if canSee == false %}
+                                    <img src="{{ user.getNoPhoto }}" alt="" class="ask_photo" data-id="{{ user.id }}">
+                                    <span class="private-text ">
+                                        {% trans %}
+                                            Private photo. Click to send request
+                                        {% endtrans %}
+                                    </span>
+                                {% else %}
+                                    123
+                                    <img src="{{ photo.getFaceWebPath }}" alt="">
+                                {% endif %}
+
+                                {% if not canSee %}
+                                    <div data-pic="{{ loop.index }}" {% if not mainIsExists and not isActive %}
+                                        {% set isActive = true %} class="active" {% endif %} style="margin-top: 10px;">
+                                        <img src="{{ user.getNoPhoto }}" data-id="{{ user.id }}">
+                                        <span class="private-text">
+                                        {% trans %}
+                                            Private photo. Click to send request.
+                                        {% endtrans %}
+                                        </span>
+                                    </div>
+                                {% else %}
+                                    <div data-pic="{{ loop.index }}" {% if not mainIsExists and not isActive %}
+                                            {% set isActive = true %} class="active" {% endif %}>
+                                        <img src="{{ photo.getFaceWebPath }}">
+                                    </div>
+                                {% endif %}
+
+                            {% endif %}
+                        {% endfor %}
+
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if(bottomBanners) %}
+                {% set i = random(bottomBanners|length -1) %}
+                <a href="{{ bottomBanners[i].href }}" target="_blank">
+                    <img class="banner" src="{{ asset(bottomBanners[i].img) }}" style="margin: 0 auto;"
+                         data-id="{{ bottomBanners[i].id }}"/>
+                </a>
+            {% endif %}
+        </div>
+        <!-- end -->
+
+
+        {% if not mobile %}
+            {{ include ('frontend/user/user_data.html.twig') }}
+
+            {% if app.user.id != user.id %}
+                <div class="profile-nav">
+                    <ul>
+                        <li><a href="{{ path('messenger_dialog_open',{'userId': app.user.id, 'contactId': user.id}) }}">Send
+                                message </a></li>
+                        {% if not app.user.isAddFavorite(user.id) %}
+                            <li><a class="add_to_fav" data-full-profile="true" href="#" data-id="{{ user.id }}">
+                                    {% trans %}
+                                        Add to Favorite
+                                    {% endtrans %}
+                                </a></li>
+                        {% else %}
+                            <li><a class="delete_from_fav" data-full-profile="true" href="#" data-id="{{ user.id }}"
+                                   data-full-profile="true">
+                                    {% trans %}
+                                        Remove from Favorite
+                                    {% endtrans %}
+                                </a></li>
+                        {% endif %}
+                        {% if  (app.user.isAddBlackListed(user.id)) %}
+                            <li><a class="delete_from_black_list" href="#" data-id="{{ user.id }}">
+                                    {% trans %}
+                                        Unblock
+                                    {% endtrans %}
+                                </a></li>
+                        {% else %}
+                            <li><a class="add_to_back_list" href="#" data-id="{{ user.id }}">
+                                    {% trans %}
+                                        Block
+                                    {% endtrans %}
+                                </a></li>
+                        {% endif %}
+                        {% if not (app.user.isAddLike(user)) %}
+                            <li class=""><a href="#" class="addLike" data-id="{{ user.id }}"
+                                            data-username="{{ user.username }}">
+                                    {% trans %}
+                                        Like
+                                    {% endtrans %}
+                                </a></li>
+                        {% endif %}
+                        <div class="report-cont bottom hidden">
+                            <textarea placeholder=
+                                      "{% trans %}
+                                      Notes
+                                      {% endtrans %}"
+                            ></textarea>
+                            <input type="hidden" value="{{ user.id }}" class="memberId">
+                            <button class="btn report">
+                                {% trans %}
+                                    Send
+                                {% endtrans %}
+                            </button>
+                            <div class="report-close btn">
+                                {% trans %}
+                                    Cancel
+                                {% endtrans %}
+                            </div>
+                        </div>
+                        <div class="report-success bottom hidden">
+                                Thank you! A message was
+                                sent to {{ site_name }}'s team.
+                        </div>
+
+                        <li><a class="report_abuse" href="#">
+                                {% trans %}
+                                    Report an incorrect card
+                                {% endtrans %}
+                            </a></li>
+                        {% if not user.isAddVerify(app.user) %}
+                            <li class="icon" style="border: none"><a href="#" class="addVerify" data-id="{{ user.id }}">
+                                    {% trans %}
+                                        Verify
+                                    {% endtrans %}
+                                </a></li>
+                        {% endif %}
+                    </ul>
+                    <div class="popup-head clearfix"></div>
+                </div>
+
+            {% endif %}
+        {% else %}
+            {{ include ('frontend/user/mobile_user_data.html.twig') }}
+
+        {% endif %}
+
+    </div>
+    <!-- end -->
+
+    <div class="ui modal tiny user-images">
+        <div class="image content">
+
+            <div class="description">
+                {% if user.photos|length > 1 %}
+                    <div class="left"></div>
+                    <div class="right"></div>
+                {% endif %}
+            </div>
+            <div class="private-text-big-photo hidden private-text" onclick="$('.ask_photo').click()">
+                {% trans %}
+                    Private Image
+                {% endtrans %}
+                <br>{{ text[status] }}</div>
+        </div>
+
+    </div>
+
+{% endblock %}
