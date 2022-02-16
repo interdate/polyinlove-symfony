@@ -50,7 +50,11 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F7XYR7GL23"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
 
         gtag('config', 'G-F7XYR7GL23');
@@ -131,13 +135,11 @@
                             {% endif %}
                         {% endfor %}
                         {% if loop.index == 1 %}
+                            <li><a href="{{ path('faq') }}">{% trans %} Faq {% endtrans %}</a></li>
                             {% if not app.user %}
                                 <li><a href="{{ path('users_public_list') }}">{% trans %}
                                             Members online{% endtrans %}</a></li>
                             {% endif %}
-                        {% endif %}
-                        {% if loop.index == 3 %}
-                            <li><a href="{{ path('faq') }}">{% trans %} Faq {% endtrans %}</a></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -164,13 +166,13 @@
                                                              alt="{{ site_name }}"></a>
                     </div>
                 </div>
-{#                <div class="facebook-row">#}
-{#                    <img src="/images/footer-facebook.png" alt="{{ site_name }}" onclick="checkLoginState()">#}
-{#                    <button class="footer-free-signup"> {% trans %} Free sign up {% endtrans %}#}
-{#                        <a href="{{ path('sign_up') }}">#}
-{#                        </a>#}
-{#                    </button>#}
-{#                </div>#}
+                {#                <div class="facebook-row"> #}
+                {#                    <img src="/images/footer-facebook.png" alt="{{ site_name }}" onclick="checkLoginState()"> #}
+                {#                    <button class="footer-free-signup"> {% trans %} Free sign up {% endtrans %} #}
+                {#                        <a href="{{ path('sign_up') }}"> #}
+                {#                        </a> #}
+                {#                    </button> #}
+                {#                </div> #}
                 {# </div> #}
                 {# <div class="fb-regist"><a href="#"></a></div> #}
             </div>
