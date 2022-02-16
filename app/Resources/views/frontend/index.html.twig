@@ -73,11 +73,11 @@
                             <input type="hidden" name="_target_path" value="{{ path('homepage') }}">
                             <input type="hidden" class="facebookLoginId" name="facebook" value="0">
                             <input type="hidden" class="fb" name="fb" value="0">
-{#                            <button class="facebook-mobile-login-btn" onclick="checkLoginState()">#}
-{#                                {% trans %}Login with#}
-{#                                {% endtrans %}#}
-{#                                <div class="ficon"><i class="facebook f icon"></i></div>#}
-{#                            </button>#}
+                            {#                            <button class="facebook-mobile-login-btn" onclick="checkLoginState()"> #}
+                            {#                                {% trans %}Login with #}
+                            {#                                {% endtrans %} #}
+                            {#                                <div class="ficon"><i class="facebook f icon"></i></div> #}
+                            {#                            </button> #}
                         </form>
                     </div>
                 </div>
@@ -129,8 +129,8 @@
                     <input type="submit" value="{% trans %}Login{% endtrans %}">
                     {# <button class="facebook-login"> {% trans %} Login with facebook {% endtrans %} </button> #}
                 </form>
-{#                <button class="facebook-mobile-login-btn" onclick="checkLoginState()">{% trans %} Login with#}
-{#                        <div class="ficon"><i class="facebook f icon"></i></div> {% endtrans %}</button>#}
+                {#                <button class="facebook-mobile-login-btn" onclick="checkLoginState()">{% trans %} Login with #}
+                {#                        <div class="ficon"><i class="facebook f icon"></i></div> {% endtrans %}</button> #}
             </div>
             <div class="first-login-mobile-btns">
                 <button class="first-mobile-login-btn">{% trans %} Login {% endtrans %}</button>
@@ -182,80 +182,80 @@
     <div class="freereg"><a href="{{ path('sign_up') }}">{% trans %} Join Free Now {% endtrans %}</a></div>
     </div>
     <!-- whyjoin end -->
-{#    <div class="qsearch">#}
+    {#    <div class="qsearch"> #}
 
-{#        <div class="wrap" id="faces_container">#}
+    {#        <div class="wrap" id="faces_container"> #}
 
-{#            <div id="faces_init_data" class="hidden">#}
-{#                {% for user in users %}#}
-{#                    <div class="item">#}
-{#                        <input type="hidden" class="faceImageName" value="{{ user.getMainPhoto.getFaceWebPath }}">#}
-{#                        <input type="hidden" class="url" value="{{ user.getMainPhoto.getFaceWebPath }}">#}
-{#                        <input type="hidden" class="username" value="{{ user.username }}">#}
-{#                        <input type="hidden" class="age" value="{{ user.age }}">#}
-{#                    </div>#}
-{#                {% endfor %}#}
-{#            </div>#}
+    {#            <div id="faces_init_data" class="hidden"> #}
+    {#                {% for user in users %} #}
+    {#                    <div class="item"> #}
+    {#                        <input type="hidden" class="faceImageName" value="{{ user.getMainPhoto.getFaceWebPath }}"> #}
+    {#                        <input type="hidden" class="url" value="{{ user.getMainPhoto.getFaceWebPath }}"> #}
+    {#                        <input type="hidden" class="username" value="{{ user.username }}"> #}
+    {#                        <input type="hidden" class="age" value="{{ user.age }}"> #}
+    {#                    </div> #}
+    {#                {% endfor %} #}
+    {#            </div> #}
 
-{#            <div class="face_wrapper first"><img class="face" alt="{{ site_name }}"></div>#}
-{#            <div class="face_wrapper second"><img class="face" alt="{{ site_name }}"></div>#}
-{#            <div class="face_wrapper third"><img class="face" alt="{{ site_name }}"></div>#}
-{#            <div class="face_wrapper fourth"><img class="face" alt="{{ site_name }}"></div>#}
-{#            <div class="face_wrapper fifth"><img class="face" alt="{{ site_name }}"></div>#}
+    {#            <div class="face_wrapper first"><img class="face" alt="{{ site_name }}"></div> #}
+    {#            <div class="face_wrapper second"><img class="face" alt="{{ site_name }}"></div> #}
+    {#            <div class="face_wrapper third"><img class="face" alt="{{ site_name }}"></div> #}
+    {#            <div class="face_wrapper fourth"><img class="face" alt="{{ site_name }}"></div> #}
+    {#            <div class="face_wrapper fifth"><img class="face" alt="{{ site_name }}"></div> #}
 
-{#            <script src="{{ asset('js/faces.js') }}"></script>#}
-{#            <input type="hidden" id="sign_up_path" value="{{ path('sign_up') }}">#}
+    {#            <script src="{{ asset('js/faces.js') }}"></script> #}
+    {#            <input type="hidden" id="sign_up_path" value="{{ path('sign_up') }}"> #}
 
-{#            <div class="heading"><{{ homePageBlocks[1].headerType }}#}
-{#                >{{ homePageBlocks[1].name }}</{{ homePageBlocks[1].headerType }}>#}
-{#        </div>#}
-{#        <div class="qform">#}
+    {#            <div class="heading"><{{ homePageBlocks[1].headerType }} #}
+    {#                >{{ homePageBlocks[1].name }}</{{ homePageBlocks[1].headerType }}> #}
+    {#        </div> #}
+    {#        <div class="qform"> #}
 
-{#            <form action="{{ path('public_search_results') }}" method="post">#}
+    {#            <form action="{{ path('public_search_results') }}" method="post"> #}
 
-{#                <div class="field">#}
-{#                    <div class="label">{{ form_label(form.gender) }}</div>#}
-{#                    <div class="select">{{ form_widget(form.gender) }}</div>#}
-{#                </div>#}
-
-
-{#                <div class="field">#}
-{#                    <div class="label">{{ form_label(form.contactGender) }}</div>#}
-{#                    <div class="select">{{ form_widget(form.contactGender) }}</div>#}
-{#                </div>#}
+    {#                <div class="field"> #}
+    {#                    <div class="label">{{ form_label(form.gender) }}</div> #}
+    {#                    <div class="select">{{ form_widget(form.gender) }}</div> #}
+    {#                </div> #}
 
 
-{#                <div class="field">#}
-{#                    <div class="label">{{ form_label(form.lookingFor) }}</div>#}
-{#                    <div class="select">{{ form_widget(form.lookingFor) }}</div>#}
-{#                </div>#}
+    {#                <div class="field"> #}
+    {#                    <div class="label">{{ form_label(form.contactGender) }}</div> #}
+    {#                    <div class="select">{{ form_widget(form.contactGender) }}</div> #}
+    {#                </div> #}
 
 
-{#                {{ form_rest(form) }}#}
+    {#                <div class="field"> #}
+    {#                    <div class="label">{{ form_label(form.lookingFor) }}</div> #}
+    {#                    <div class="select">{{ form_widget(form.lookingFor) }}</div> #}
+    {#                </div> #}
 
-{#                <div class="field">#}
-{#                    <div class="field2">#}
-{#                        <input type="button" value="{% trans %} Search {% endtrans %}" class="btn"#}
-{#                               onclick="$(this).siblings('input[type=submit]').click()">#}
-{#                        <input type="submit" class="hidden">#}
-{#                    </div>#}
-{#                </div>#}
 
-{#            </form>#}
+    {#                {{ form_rest(form) }} #}
 
-{#        </div>#}
-{#    </div>#}
+    {#                <div class="field"> #}
+    {#                    <div class="field2"> #}
+    {#                        <input type="button" value="{% trans %} Search {% endtrans %}" class="btn" #}
+    {#                               onclick="$(this).siblings('input[type=submit]').click()"> #}
+    {#                        <input type="submit" class="hidden"> #}
+    {#                    </div> #}
+    {#                </div> #}
+
+    {#            </form> #}
+
+    {#        </div> #}
+    {#    </div> #}
     </div>
     <!-- qsearch end -->
-{#Hidden untill we get some users to display#}
-{#    <div class="parallax">#}
-{#        <div class="wrap">#}
-{#            <div class="contbox">#}
-{#                <p>{{ homePageBlocks[2].block1 }}</p>#}
-{#                <div class="freereg"><a href="{{ path('sign_up') }}">{% trans %} To Join Free {% endtrans %}</a></div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
+    {# Hidden untill we get some users to display #}
+    {#    <div class="parallax"> #}
+    {#        <div class="wrap"> #}
+    {#            <div class="contbox"> #}
+    {#                <p>{{ homePageBlocks[2].block1 }}</p> #}
+    {#                <div class="freereg"><a href="{{ path('sign_up') }}">{% trans %} To Join Free {% endtrans %}</a></div> #}
+    {#            </div> #}
+    {#        </div> #}
+    {#    </div> #}
     <!-- parallax end -->
 
     <div class="hp-articles">
@@ -302,50 +302,50 @@
     </div>
     <!-- howjoin -->
 
-    <div class="connect">
-        <div class="wrap clearfix">
-            <div class="heading"><{{ homePageBlocks[5].headerType }}
-                >{{ homePageBlocks[5].name }}</{{ homePageBlocks[5].headerType }}>
-        </div>
-        <div class="connect-background"></div>
-        <div class="applinks">
-            <a href="{{ google_play }}" class="android"
-               target="_blank">
-                <div class="background-links"></div>
-            </a>
-        </div>
-    </div>
+{#    <div class="connect">#}
+{#        <div class="wrap clearfix">#}
+{#            <div class="heading"><{{ homePageBlocks[5].headerType }}#}
+{#                >{{ homePageBlocks[5].name }}</{{ homePageBlocks[5].headerType }}>#}
+{#        </div>#}
+{#        <div class="connect-background"></div>#}
+{#        <div class="applinks">#}
+{#            <a href="{{ google_play }}" class="android"#}
+{#               target="_blank">#}
+{#                <div class="background-links"></div>#}
+{#            </a>#}
+{#        </div>#}
+{#    </div>#}
     </div>
     <!-- connect end -->
 
     </div>
 
-{#    <div class="ui mini facebookLoginPop modal" style="display:none!important;">#}
-{#        <div class="header">#}
-{#            {% trans %}#}
-{#                Login with Facebook#}
-{#            {% endtrans %}#}
-{#        </div>#}
-{#        <div class="content">#}
-{#            {% trans %}Would you like to log into an existing account or create a new one with Facebook?#}
-{#            {% endtrans %}#}
-{#        </div>#}
+    {#    <div class="ui mini facebookLoginPop modal" style="display:none!important;"> #}
+    {#        <div class="header"> #}
+    {#            {% trans %} #}
+    {#                Login with Facebook #}
+    {#            {% endtrans %} #}
+    {#        </div> #}
+    {#        <div class="content"> #}
+    {#            {% trans %}Would you like to log into an existing account or create a new one with Facebook? #}
+    {#            {% endtrans %} #}
+    {#        </div> #}
 
-{#        <div class="facebookLoginPop-actions">#}
-{#            <a class="login" onclick="loginFacebookWithExistAccount()">#}
-{#                #}{##}{# <i class="checkmark icon"></i> #}
-{#                {% trans %}Use existing account#}
-{#                {% endtrans %}#}
-{#            </a>#}
-{#            <a href="" class="registration">#}
-{#                #}{##}{# <div class="ui green ok button " style="float:left"> #}
-{#                #}{##}{# <i class="checkmark icon"></i> #}
-{#                {% trans %}Create new account#}
-{#                {% endtrans %}#}
-{#                #}{##}{# </div> #}
-{#            </a>#}
-{#        </div>#}
-{#    </div>#}
+    {#        <div class="facebookLoginPop-actions"> #}
+    {#            <a class="login" onclick="loginFacebookWithExistAccount()"> #}
+    {#                #}{# #}{# <i class="checkmark icon"></i> #}
+    {#                {% trans %}Use existing account #}
+    {#                {% endtrans %} #}
+    {#            </a> #}
+    {#            <a href="" class="registration"> #}
+    {#                #}{# #}{# <div class="ui green ok button " style="float:left"> #}
+    {#                #}{# #}{# <i class="checkmark icon"></i> #}
+    {#                {% trans %}Create new account #}
+    {#                {% endtrans %} #}
+    {#                #}{# #}{# </div> #}
+    {#            </a> #}
+    {#        </div> #}
+    {#    </div> #}
 
     <!-- Main Container -->
 {% endblock %}
