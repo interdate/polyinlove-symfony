@@ -418,6 +418,14 @@ services:
     arguments: [ ~, AppBundle\Entity\PhoneBlocked, ~ ]
     tags:
       - { name: sonata.admin, manager_type: orm, label: PhoneBlocked }
+
+  sonata_admin.inline_messages:
+    class: AppBundle\SonataAdmin\InlineMessagesAdmin
+    arguments: [ ~, AppBundle\Entity\InlineMessages, ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: InlineMessages }
+
+
 # Nelmio CORS Configuration
 nelmio_cors:
   defaults:
