@@ -136,11 +136,23 @@
                                 {% endif %}
                             {% endfor %}
                             {% if loop.index == 1 %}
-                                <li><a href="{{ path('faq') }}">{% trans %} Faq {% endtrans %}</a></li>
+                                <li>
+                                    <a href="{{ path('faq') }}">{% trans %} Faq {% endtrans %}</a>
+                                </li>
                                 {% if not app.user %}
-                                    <li><a href="{{ path('users_public_list') }}">{% trans %}
-                                                Members online{% endtrans %}</a></li>
+                                    <li>
+                                        <a href="{{ path('users_public_list') }}">{% trans %}Members online{% endtrans %}</a>
+                                    </li>
                                 {% endif %}
+                            {% endif %}
+                            {% if loop.index == 3 %}
+                                <li>
+                                    <a href="{{ path('sign_up') }}">{% trans %} Join Us {% endtrans %}</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('contact') }}">{% trans %}Email Us{% endtrans %}</a>
+                                </li>
+
                             {% endif %}
                         </ul>
                     </div>
