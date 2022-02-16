@@ -968,6 +968,7 @@ footer .flex {
 footer > .flex {
     column-gap: 20px;
     padding-inline: 32px;
+    align-items: flex-start;
 }
 
 footer .flex-end {
@@ -1054,6 +1055,7 @@ footer .flex-end h5 {
     font-size: 110%;
     color: #bdbebe;
     font-weight: bold;
+    margin-block-end: 16px;
 }
 
 footer .fb-regist a {
