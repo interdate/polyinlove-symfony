@@ -126,23 +126,25 @@
         {# <div class="wrap clearfix"> #}
         <div class="flex">
             {% for block in footerBlocks %}
-                <div class="menudiv{{ loop.index }}">
-                    <h4>{{ block.name }}</h4>
-                    <ul>
-                        {% for page in block.pages %}
-                            {% if page.isActive %}
-                                <li><a href="{{ path('pages_page', {'uri': page.uri}) }}">{{ page.name }}</a></li>
+                {% if block.name %}
+                    <div class="menudiv{{ loop.index }}">
+                        <h4>{{ block.name }}</h4>
+                        <ul>
+                            {% for page in block.pages %}
+                                {% if page.isActive %}
+                                    <li><a href="{{ path('pages_page', {'uri': page.uri}) }}">{{ page.name }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if loop.index == 1 %}
+                                <li><a href="{{ path('faq') }}">{% trans %} Faq {% endtrans %}</a></li>
+                                {% if not app.user %}
+                                    <li><a href="{{ path('users_public_list') }}">{% trans %}
+                                                Members online{% endtrans %}</a></li>
+                                {% endif %}
                             {% endif %}
-                        {% endfor %}
-                        {% if loop.index == 1 %}
-                            <li><a href="{{ path('faq') }}">{% trans %} Faq {% endtrans %}</a></li>
-                            {% if not app.user %}
-                                <li><a href="{{ path('users_public_list') }}">{% trans %}
-                                            Members online{% endtrans %}</a></li>
-                            {% endif %}
-                        {% endif %}
-                    </ul>
-                </div>
+                        </ul>
+                    </div>
+                {% endif %}
             {% endfor %}
             {# <div class="leftsect"> #}
             <div class="flex-end">
