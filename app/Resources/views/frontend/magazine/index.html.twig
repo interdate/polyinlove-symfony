@@ -10,64 +10,65 @@
 
     <div class="midsec magazine">
 
-            {% if article is defined %}
-                <{{ article.headerType  }}>{{ article.name }}</{{ article.headerType }}>
-            {% else %}
-                <h1>{{ header }}</h1>
-            {% endif %}
+    {% if article is defined %}
+        <{{ article.headerType }}>{{ article.name }}</{{ article.headerType }}>
+    {% else %}
+        <h1>{{ header }}</h1>
+    {% endif %}
 
-        <div class="magcont">
+    <div class="magcont">
 
-            {% if article is defined %}
+        {% if article is defined %}
 
-                <div class="box dtl">
-                    <div class="ttlspace">
+            <div class="box dtl">
+                <div class="ttlspace">
+                    <div class="datecal">{{ article.date|date('d/m/Y') }}</div>
+                </div>
+
+                <div class="imgbox2">
+                    <img src="{{ asset(article.imageName) }}" alt="{{ article.imageAlt }}">
+                </div>
+
+                {{ article.content|raw }}
+
+                <div class="share-buttons">
+                </div>
+
+                <a href="{{ path('magazine') }}">{% trans %}Back to Magazine{% endtrans %}</a>
+            </div>
+
+        {% else %}
+
+            {% for article in articles %}
+
+                <div class="box clearfix">
+                    <div class="imgbox">
+                        <img src="{{ article.imageName }}" alt="" {{ article.imageAlt }}>
+                        <input type="hidden" value="{{ article.imageName }}" class="previewImageName">
+                    </div>
+                    <div class="desc">
+                        <h3><a href="{{ path('magazine_article', {'uri': article.uri}) }}">{{ article.name }}</a></h3>
                         <div class="datecal">{{ article.date|date('d/m/Y') }}</div>
+                        <p>
+                            {% if article.brief|length > 250 %}
+                                {{ article.brief|slice(0,249) }}...
+                            {% else %}
+                                {{ article.brief }}
+                            {% endif %}
+                        </p>
+                        <div class="readmore"><a
+                                    href="{{ path('magazine_article', {'uri': article.uri}) }}">continue</a></div>
                     </div>
-
-                    <div class="imgbox2">
-                        <img src="{{ asset(article.imageName) }}" alt="{{ article.imageAlt }}">
-                    </div>
-
-                    {{ article.content|raw }}
-
-                    <div class="share-buttons">
-                     </div>
-
-                    <a href="{{ path('magazine') }}">{% trans %}Back to Magazine{% endtrans %}</a>
                 </div>
+                <!-- end -->
+            {% endfor %}
 
-            {% else %}
+            <div class="pages">
+                {{ knp_pagination_render(articles) }}
+            </div>
 
-                {% for article in articles %}
-
-                    <div class="box clearfix">
-                        <div class="imgbox">
-                            <img src="{{ article.imageName }}" alt="" {{ article.imageAlt }}>
-                            <input type="hidden" value="{{ article.imageName }}" class="previewImageName">
-                        </div>
-                        <div class="desc">
-                            <h3><a href="{{ path('magazine_article', {'uri': article.uri}) }}">{{ article.name }}</a></h3>
-                            <div class="datecal">{{ article.date|date('d/m/Y') }}</div>
-                            <p>
-                                {% if article.brief|length > 250 %}
-                                    {{ article.brief|slice(0,249) }}...
-                                {% else %}
-                                    {{ article.brief }}
-                                {% endif %}
-                            </p>
-                            <div class="readmore"><a href="{{ path('magazine_article', {'uri': article.uri}) }}">continue</a></div>
-                        </div>
-                    </div>
-                    <!-- end -->
-                {% endfor %}
-
-                <div class="pages">
-                    {{ knp_pagination_render(articles) }}
-                </div>
-
-            {% endif %}
-        </div>
+        {% endif %}
+    </div>
 
 
 

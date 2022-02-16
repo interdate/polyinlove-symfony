@@ -17,7 +17,6 @@ class MagazineController extends Controller
         $articlesRepo = $this->getDoctrine()->getManager()->getRepository('AppBundle:Article');
         $articles = $articlesRepo->findBy(
             array(
-                'locale' => $request->getLocale(),
                 'isActive' => true
             ),
             array(
@@ -33,7 +32,7 @@ class MagazineController extends Controller
 
         return $this->render('frontend/magazine/index.html.twig', array(
             'articles' => $articles,
-            'header' => $this->get('translator')->trans('Magazine'),
+            'header' => $this->get('translator')->trans('Magazine', 'polyinlove'),
             'seo' => $this->getDoctrine()->getRepository('AppBundle:Seo')->findOneByPage('magazine'),
             'mobile' => $this->detectIsMobile(),
         ));
